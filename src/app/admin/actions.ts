@@ -1,0 +1,248 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import {
+  checkPassword,
+  clearSessionCookie,
+  isAuthed,
+  setSessionCookie,
+} from "@/lib/auth";
+import { ensureInitialized, getPool } from "@/lib/db";
+import { slugify } from "@/lib/blog";
+import { randomUUID } from "node:crypto";
+
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "image/gif",
+  "image/svg+xml",
+]);
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB
+
+async function requireAuth() {
+  if (!(await isAuthed())) {
+    redirect("/admin");
+  }
+}
+
+export async function loginAction(formData: FormData) {
+  const password = String(formData.get("password") ?? "");
+  if (!checkPassword(password)) {
+    return { ok: false as const, error: "Incorrect password." };
+  }
+  await setSessionCookie();
+  redirect("/admin/dashboard");
+}
+
+export async function logoutAction() {
+  await clearSessionCookie();
+  redirect("/admin");
+}
+
+export type PostFormState = {
+  ok: boolean;
+  error?: string;
+  fieldErrors?: Record<string, string>;
+};
+
+function parsePublishAt(input: string | null | undefined): Date | null {
+  if (!input) return null;
+  const d = new Date(input);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function parseTags(input: string | null | undefined): string[] {
+  if (!input) return [];
+  return input
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .slice(0, 20);
+}
+
+export async function uploadImageAction(formData: FormData): Promise<{
+  ok: boolean;
+  url?: string;
+  id?: string;
+  error?: string;
+}> {
+  await requireAuth();
+  const file = formData.get("file");
+  if (!(file instanceof File)) return { ok: false, error: "No file provided." };
+  if (!ALLOWED_IMAGE_TYPES.has(file.type))
+    return { ok: false, error: `Unsupported type: ${file.type}` };
+  if (file.size > MAX_IMAGE_BYTES)
+    return { ok: false, error: `File too large (max ${Math.round(MAX_IMAGE_BYTES / 1024 / 1024)}MB)` };
+
+  const buf = Buffer.from(await file.arrayBuffer());
+  await ensureInitialized();
+  const id = randomUUID();
+  await getPool().query(
+    `INSERT INTO images (id, filename, mime_type, size, data) VALUES ($1, $2, $3, $4, $5)`,
+    [id, file.name || "upload", file.type, buf.length, buf]
+  );
+  return { ok: true, url: `/api/images/${id}`, id };
+}
+
+type PostInput = {
+  id?: string;
+  title: string;
+  slug: string;
+  description: string;
+  body_md: string;
+  cover_image_id: string | null;
+  cover_url: string | null;
+  category: string | null;
+  tags: string[];
+  author: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  publish_at: Date | null;
+  published: boolean;
+};
+
+function readPostInput(formData: FormData): PostInput {
+  const title = String(formData.get("title") ?? "").trim();
+  const rawSlug = String(formData.get("slug") ?? "").trim();
+  const slug = slugify(rawSlug || title);
+  const description = String(formData.get("description") ?? "").trim();
+  const body_md = String(formData.get("body_md") ?? "");
+  const cover_image_id = (String(formData.get("cover_image_id") ?? "").trim() || null) as
+    | string
+    | null;
+  const cover_url = (String(formData.get("cover_url") ?? "").trim() || null) as
+    | string
+    | null;
+  const category = (String(formData.get("category") ?? "").trim() || null) as string | null;
+  const tags = parseTags(String(formData.get("tags") ?? ""));
+  const author = (String(formData.get("author") ?? "").trim() || null) as string | null;
+  const meta_title = (String(formData.get("meta_title") ?? "").trim() || null) as string | null;
+  const meta_description = (String(formData.get("meta_description") ?? "").trim() || null) as
+    | string
+    | null;
+  const status = String(formData.get("status") ?? "draft");
+  const publish_at = parsePublishAt(String(formData.get("publish_at") ?? "") || null);
+  const published = status === "published" || status === "scheduled";
+  return {
+    id: (String(formData.get("id") ?? "").trim() || undefined) as string | undefined,
+    title,
+    slug,
+    description,
+    body_md,
+    cover_image_id,
+    cover_url,
+    category,
+    tags,
+    author,
+    meta_title,
+    meta_description,
+    publish_at: status === "scheduled" ? publish_at : status === "published" ? publish_at ?? new Date() : null,
+    published,
+  };
+}
+
+function validate(input: PostInput): Record<string, string> | null {
+  const errors: Record<string, string> = {};
+  if (!input.title) errors.title = "Title is required.";
+  if (!input.slug) errors.slug = "Slug is required.";
+  if (!/^[a-z0-9-]+$/.test(input.slug)) errors.slug = "Slug may only contain lowercase letters, digits, and hyphens.";
+  return Object.keys(errors).length ? errors : null;
+}
+
+export async function savePostAction(formData: FormData) {
+  await requireAuth();
+  const input = readPostInput(formData);
+  const fieldErrors = validate(input);
+  if (fieldErrors) {
+    return { ok: false as const, fieldErrors };
+  }
+
+  await ensureInitialized();
+  const pool = getPool();
+
+  try {
+    if (input.id) {
+      await pool.query(
+        `UPDATE posts SET
+           slug = $2,
+           title = $3,
+           description = $4,
+           body_md = $5,
+           cover_image_id = $6,
+           cover_url = $7,
+           category = $8,
+           tags = $9,
+           author = $10,
+           meta_title = $11,
+           meta_description = $12,
+           published = $13,
+           publish_at = $14,
+           updated_at = NOW()
+         WHERE id = $1`,
+        [
+          input.id,
+          input.slug,
+          input.title,
+          input.description,
+          input.body_md,
+          input.cover_image_id,
+          input.cover_url,
+          input.category,
+          input.tags,
+          input.author,
+          input.meta_title,
+          input.meta_description,
+          input.published,
+          input.publish_at,
+        ]
+      );
+    } else {
+      await pool.query(
+        `INSERT INTO posts (slug, title, description, body_md, cover_image_id, cover_url, category, tags, author, meta_title, meta_description, published, publish_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+        [
+          input.slug,
+          input.title,
+          input.description,
+          input.body_md,
+          input.cover_image_id,
+          input.cover_url,
+          input.category,
+          input.tags,
+          input.author,
+          input.meta_title,
+          input.meta_description,
+          input.published,
+          input.publish_at,
+        ]
+      );
+    }
+  } catch (err: unknown) {
+    const msg = (err as { code?: string; message?: string }).message ?? "Save failed.";
+    if ((err as { code?: string }).code === "23505") {
+      return {
+        ok: false as const,
+        fieldErrors: { slug: "A post with this slug already exists." },
+      };
+    }
+    return { ok: false as const, error: msg };
+  }
+
+  revalidatePath("/blog");
+  revalidatePath(`/blog/${input.slug}`);
+  revalidatePath("/admin/dashboard");
+  redirect("/admin/dashboard");
+}
+
+export async function deletePostAction(formData: FormData) {
+  await requireAuth();
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+  await ensureInitialized();
+  await getPool().query(`DELETE FROM posts WHERE id = $1`, [id]);
+  revalidatePath("/blog");
+  revalidatePath("/admin/dashboard");
+  redirect("/admin/dashboard");
+}

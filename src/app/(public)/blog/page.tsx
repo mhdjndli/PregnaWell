@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { formatDate, getAllPosts } from "@/lib/blog";
+import { formatDate, getPublicPosts } from "@/lib/blog";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -9,8 +9,10 @@ export const metadata: Metadata = {
     "Evidence-based articles on fertility, pregnancy, and postpartum from Maha Hommos and the PregnaWell team.",
 };
 
-export default function BlogIndex() {
-  const posts = getAllPosts();
+export const revalidate = 60;
+
+export default async function BlogIndex() {
+  const posts = await getPublicPosts();
 
   return (
     <>
@@ -61,6 +63,7 @@ export default function BlogIndex() {
                         fill
                         className="object-cover transition group-hover:scale-[1.02]"
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        unoptimized={post.cover.startsWith("/api/images/")}
                       />
                     </div>
                   )}
@@ -71,7 +74,7 @@ export default function BlogIndex() {
                           {post.category}
                         </span>
                       )}
-                      <span>{formatDate(post.date)}</span>
+                      <span>{formatDate(post.publishAt)}</span>
                       <span>· {post.readingMinutes} min read</span>
                     </div>
                     <h2

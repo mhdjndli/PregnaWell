@@ -2,30 +2,33 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { formatDate, getAllSlugs, getPost } from "@/lib/blog";
+import { formatDate, getPublicSlugs, getPublicPost } from "@/lib/blog";
 import { site } from "@/lib/site";
 
 type Params = { slug: string };
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({ slug }));
+  const slugs = await getPublicSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(
   { params }: { params: Promise<Params> }
 ): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPublicPost(slug);
   if (!post) return { title: "Article not found" };
   return {
-    title: post.title,
-    description: post.description,
+    title: post.metaTitle ?? post.title,
+    description: post.metaDescription ?? post.description,
     openGraph: {
-      title: post.title,
-      description: post.description,
+      title: post.metaTitle ?? post.title,
+      description: post.metaDescription ?? post.description,
       images: post.cover ? [post.cover] : undefined,
       type: "article",
-      publishedTime: post.date,
+      publishedTime: post.publishAt ?? undefined,
     },
   };
 }
@@ -34,7 +37,7 @@ export default async function BlogPostPage(
   { params }: { params: Promise<Params> }
 ) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPublicPost(slug);
   if (!post) notFound();
 
   return (
@@ -56,7 +59,7 @@ export default async function BlogPostPage(
                 {post.category}
               </span>
             )}
-            <span>{formatDate(post.date)}</span>
+            <span>{formatDate(post.publishAt)}</span>
             <span>· {post.readingMinutes} min read</span>
             {post.author && <span>· by {post.author}</span>}
           </div>
@@ -79,6 +82,7 @@ export default async function BlogPostPage(
               height={900}
               className="h-[420px] w-full object-cover"
               priority
+              unoptimized={post.cover.startsWith("/api/images/")}
             />
           </div>
         </div>

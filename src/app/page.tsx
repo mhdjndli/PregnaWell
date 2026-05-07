@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/lib/site";
 import PressMarquee from "@/components/PressMarquee";
+import Programs from "@/components/Programs";
+import Testimonials from "@/components/Testimonials";
+import Faq from "@/components/Faq";
 
 export default function HomePage() {
   return (
@@ -86,41 +89,27 @@ export default function HomePage() {
       <PressMarquee />
 
       {/* Why PregnaWell */}
-      <section className="py-20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="max-w-2xl">
-            <p className="text-xs uppercase tracking-[0.25em] text-[var(--brand-rose)] font-semibold">
-              Why PregnaWell
-            </p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl text-[var(--brand-purple-deep)]">
-              Compassionate, evidence-based care for every mom-to-be.
-            </h2>
-            <p className="mt-4 text-[var(--brand-muted)] leading-relaxed">
-              Maha Hommos blends clinical nutrition expertise with a decade of helping
-              women understand their bodies, hormones, and choices — building the
-              tools you actually need.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            <FeatureCard
-              kicker="01"
-              title="Understand the HPO Axis"
-              body="Our free masterclass walks you through the hypothalamic-pituitary-ovarian system — the foundation of fertility, in plain language."
-            />
-            <FeatureCard
-              kicker="02"
-              title="Know Your Fertility Score"
-              body="A guided self-assessment that surfaces what's actually moving the needle for your fertility, without the noise."
-            />
-            <FeatureCard
-              kicker="03"
-              title="Track Your Pregnancy"
-              body="The PregnaScan App turns medical scans and labs into clear, week-by-week understanding for expecting parents."
-            />
-          </div>
+      <section className="py-20 lg:py-24">
+        <div className="mx-auto max-w-4xl px-6 lg:px-10 text-center">
+          <p className="text-xs uppercase tracking-[0.25em] text-[var(--brand-rose)] font-semibold">
+            Why PregnaWell
+          </p>
+          <h2 className="mt-3 font-display text-3xl md:text-5xl text-[var(--brand-purple-deep)]">
+            Compassionate, evidence-based care for every mom-to-be.
+          </h2>
+          <p className="mt-5 max-w-2xl mx-auto text-[var(--brand-muted)] leading-relaxed">
+            Maha Hommos blends clinical nutrition expertise with a decade of helping
+            women understand their bodies, hormones, and choices — building the tools
+            you actually need.
+          </p>
         </div>
       </section>
+
+      <Programs />
+
+      <Testimonials />
+
+      <Faq />
 
       {/* Featured CTA bands */}
       <section className="pb-20 lg:pb-28">
@@ -196,24 +185,6 @@ function Stat({ value, label }: { value: string; label: string }) {
     <div>
       <p className="font-display text-3xl text-[var(--brand-purple-deep)]">{value}</p>
       <p className="mt-1 text-xs uppercase tracking-wider text-[var(--brand-muted)]">{label}</p>
-    </div>
-  );
-}
-
-function FeatureCard({
-  kicker,
-  title,
-  body,
-}: {
-  kicker: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <div className="group relative rounded-3xl bg-white p-7 ring-1 ring-[var(--brand-purple)]/10 shadow-[0_15px_40px_-25px_rgba(61,42,110,0.35)] hover:-translate-y-1 transition-transform">
-      <span className="font-display text-sm font-semibold text-[var(--brand-rose)]">{kicker}</span>
-      <h3 className="mt-2 font-display text-xl text-[var(--brand-purple-deep)]">{title}</h3>
-      <p className="mt-3 text-sm text-[var(--brand-muted)] leading-relaxed">{body}</p>
     </div>
   );
 }

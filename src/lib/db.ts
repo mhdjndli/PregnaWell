@@ -136,12 +136,12 @@ async function seedFromFiles(pool: Pool) {
 
 async function seedLanguageFromDir(pool: Pool, language: "en" | "ar", dir: string) {
   if (!fs.existsSync(dir)) return;
-  const { rows } = await pool.query<{ count: string }>(
-    "SELECT COUNT(*) AS count FROM posts WHERE language = $1",
-    [language]
-  );
-  if (Number(rows[0]?.count ?? 0) > 0) return;
 
+  // Iterate every file. ON CONFLICT (slug, language) DO NOTHING means existing
+  // rows are untouched (so admin edits are preserved across deploys), and any
+  // new files get inserted. Note: if a seeded post is deleted in admin, the
+  // next deploy will re-create it as a draft. To prevent a post from coming
+  // back, also remove its .md from this directory.
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") || f.endsWith(".mdx"));
   for (const file of files) {
     const raw = fs.readFileSync(path.join(dir, file), "utf8");

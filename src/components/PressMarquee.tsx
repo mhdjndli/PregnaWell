@@ -24,8 +24,8 @@ export default function PressMarquee({ locale }: { locale: Locale }) {
               </div>
             ))}
           </div>
-          <div className="pointer-events-none absolute inset-y-0 start-0 w-16 bg-gradient-to-r from-[var(--brand-cream)] to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 end-0 w-16 bg-gradient-to-l from-[var(--brand-cream)] to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 start-0 w-16 bg-gradient-to-r rtl:bg-gradient-to-l from-[var(--brand-cream)] to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 end-0 w-16 bg-gradient-to-l rtl:bg-gradient-to-r from-[var(--brand-cream)] to-transparent" />
         </div>
       </div>
     </section>

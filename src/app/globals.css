@@ -54,6 +54,32 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-fraunces), ui-serif, Georgia, serif;
 }
 
+/* ============================================================
+   Arabic locale: use Cairo for everything (body + headings +
+   .font-display) so the whole site renders in one Arabic-aware
+   typeface, not Latin-only Inter/Fraunces with system fallback.
+   ============================================================ */
+html[lang="ar"],
+html[lang="ar"] body,
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3,
+html[lang="ar"] h4,
+html[lang="ar"] h5,
+html[lang="ar"] h6,
+html[lang="ar"] .font-display,
+html[lang="ar"] .prose-pregna h1,
+html[lang="ar"] .prose-pregna h2,
+html[lang="ar"] .prose-pregna h3 {
+  font-family: var(--font-cairo), "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+  letter-spacing: 0;
+}
+
+html[lang="ar"] {
+  /* Slightly larger line-height for Arabic readability. */
+  line-height: 1.65;
+}
+
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -93,6 +119,9 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-1px);
 }
 
+/* ============================================================
+   Prose (story body, blog post body)
+   ============================================================ */
 .prose-pregna h1,
 .prose-pregna h2,
 .prose-pregna h3 {
@@ -103,21 +132,35 @@ h1, h2, h3, h4, h5, h6 {
 .prose-pregna h3 { font-size: 1.4rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
 .prose-pregna p { margin-bottom: 1rem; line-height: 1.8; color: #3a3454; }
 .prose-pregna a { color: var(--brand-rose); text-decoration: underline; text-underline-offset: 3px; }
-.prose-pregna ul, .prose-pregna ol { margin: 1rem 0 1rem 1.25rem; line-height: 1.8; }
+.prose-pregna ul, .prose-pregna ol {
+  margin-block: 1rem;
+  padding-inline-start: 1.25rem; /* logical: indent on the start side */
+  line-height: 1.8;
+}
 .prose-pregna li { margin-bottom: 0.4rem; }
 .prose-pregna blockquote {
-  border-left: 4px solid var(--brand-rose-soft);
-  padding-left: 1rem;
+  border-inline-start: 4px solid var(--brand-rose-soft); /* logical: mirrors in RTL */
+  padding-inline-start: 1rem;
   font-style: italic;
   color: var(--brand-purple);
   margin: 1.5rem 0;
 }
 .prose-pregna img { border-radius: 1rem; margin: 1.5rem 0; }
 
+/* ============================================================
+   Marquee (LTR scrolls leftward; RTL scrolls rightward)
+   ============================================================ */
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+@keyframes marquee-rtl {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); }
+}
 .animate-marquee {
   animation: marquee 35s linear infinite;
+}
+[dir="rtl"] .animate-marquee {
+  animation: marquee-rtl 35s linear infinite;
 }

@@ -19,15 +19,7 @@ export default async function LocaleLayout({
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   return (
-    <div
-      className="flex min-h-full flex-col"
-      style={{
-        fontFamily:
-          locale === "ar"
-            ? "var(--font-cairo), ui-sans-serif, system-ui, sans-serif"
-            : undefined,
-      }}
-    >
+    <div className="flex min-h-full flex-col">
       <Header locale={locale} />
       <main className="flex-1">{children}</main>
       <Footer locale={locale} />

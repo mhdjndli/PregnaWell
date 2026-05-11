@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import MarkdownEditor from "./MarkdownEditor";
+import RichEditor from "./RichEditor";
 import {
   savePostAction,
   deletePostAction,
@@ -132,9 +132,15 @@ export default function PostEditor({ initial }: Props) {
           <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--brand-muted)] mb-2">
             Body
           </label>
-          <MarkdownEditor name="body_md" initialValue={initial?.body_md ?? ""} uploadAction={uploadImageAction} />
+          <RichEditor
+            name="body_md"
+            initialValue={initial?.body_md ?? ""}
+            language={language}
+            uploadAction={uploadImageAction}
+          />
           <p className="mt-2 text-xs text-[var(--brand-muted)]">
-            Drop or paste images directly into the editor — they upload automatically.
+            What you type is exactly how it will appear on the site. Drop or paste images
+            directly to upload.
           </p>
         </Card>
 

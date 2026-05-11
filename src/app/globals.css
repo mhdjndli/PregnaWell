@@ -148,6 +148,43 @@ html[lang="ar"] {
 .prose-pregna img { border-radius: 1rem; margin: 1.5rem 0; }
 
 /* ============================================================
+   Admin: TipTap rich text editor — render content the same way
+   the published page does, so "what you see is what gets shipped".
+   ============================================================ */
+.tiptap {
+  min-height: 420px;
+}
+.tiptap:focus { outline: none; }
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--brand-muted);
+  content: attr(data-placeholder);
+  float: inline-start;
+  height: 0;
+  pointer-events: none;
+}
+.tiptap [dir="rtl"] p.is-editor-empty:first-child::before {
+  float: inline-start;
+}
+.tiptap ul, .tiptap ol {
+  margin-block: 1rem;
+  padding-inline-start: 1.25rem;
+}
+.tiptap blockquote {
+  border-inline-start: 4px solid var(--brand-rose-soft);
+  padding-inline-start: 1rem;
+  font-style: italic;
+  color: var(--brand-purple);
+  margin: 1.25rem 0;
+}
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  margin: 1.25rem 0;
+}
+.tiptap a { color: var(--brand-rose); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ============================================================
    Marquee (LTR scrolls leftward; RTL scrolls rightward)
    ============================================================ */
 @keyframes marquee {

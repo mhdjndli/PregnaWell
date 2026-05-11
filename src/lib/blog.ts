@@ -1,6 +1,7 @@
 import "server-only";
 import { marked } from "marked";
 import { ensureInitialized, getPool } from "./db";
+import type { Locale } from "./i18n";
 
 export type BlogStatus = "draft" | "scheduled" | "published";
 
@@ -17,6 +18,7 @@ export type BlogRow = {
   author: string | null;
   meta_title: string | null;
   meta_description: string | null;
+  language: Locale;
   published: boolean;
   publish_at: string | null;
   created_at: string;
@@ -32,6 +34,7 @@ export type BlogSummary = {
   category: string | null;
   tags: string[];
   author: string | null;
+  language: Locale;
   publishAt: string | null;
   status: BlogStatus;
   readingMinutes: number;
@@ -70,6 +73,7 @@ function toSummary(row: BlogRow): BlogSummary {
     category: row.category,
     tags: row.tags ?? [],
     author: row.author,
+    language: row.language ?? "en",
     publishAt: row.publish_at,
     status: statusOf(row),
     readingMinutes: readingTime(row.body_md),
@@ -88,29 +92,31 @@ async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   }
 }
 
-export async function getPublicPosts(): Promise<BlogSummary[]> {
+export async function getPublicPosts(language: Locale): Promise<BlogSummary[]> {
   return safe(async () => {
     const { rows } = await getPool().query<BlogRow>(
-      `SELECT * FROM posts WHERE ${PUBLIC_FILTER} ORDER BY publish_at DESC NULLS LAST, created_at DESC`
+      `SELECT * FROM posts WHERE language = $1 AND ${PUBLIC_FILTER} ORDER BY publish_at DESC NULLS LAST, created_at DESC`,
+      [language]
     );
     return rows.map(toSummary);
   }, []);
 }
 
-export async function getPublicSlugs(): Promise<string[]> {
+export async function getPublicSlugs(language: Locale): Promise<string[]> {
   return safe(async () => {
     const { rows } = await getPool().query<{ slug: string }>(
-      `SELECT slug FROM posts WHERE ${PUBLIC_FILTER}`
+      `SELECT slug FROM posts WHERE language = $1 AND ${PUBLIC_FILTER}`,
+      [language]
     );
     return rows.map((r) => r.slug);
   }, []);
 }
 
-export async function getPublicPost(slug: string): Promise<BlogPost | null> {
+export async function getPublicPost(slug: string, language: Locale): Promise<BlogPost | null> {
   return safe(async () => {
     const { rows } = await getPool().query<BlogRow>(
-      `SELECT * FROM posts WHERE slug = $1 AND ${PUBLIC_FILTER} LIMIT 1`,
-      [slug]
+      `SELECT * FROM posts WHERE slug = $1 AND language = $2 AND ${PUBLIC_FILTER} LIMIT 1`,
+      [slug, language]
     );
     const row = rows[0];
     if (!row) return null;
@@ -137,11 +143,14 @@ export async function getPostByIdAdmin(id: string): Promise<BlogPost | null> {
   return rowToPost(row);
 }
 
-export async function getPostBySlugAdmin(slug: string): Promise<BlogPost | null> {
+export async function getPostBySlugAdmin(
+  slug: string,
+  language: Locale
+): Promise<BlogPost | null> {
   await ensureInitialized();
   const { rows } = await getPool().query<BlogRow>(
-    `SELECT * FROM posts WHERE slug = $1 LIMIT 1`,
-    [slug]
+    `SELECT * FROM posts WHERE slug = $1 AND language = $2 LIMIT 1`,
+    [slug, language]
   );
   const row = rows[0];
   if (!row) return null;
@@ -159,10 +168,10 @@ function rowToPost(row: BlogRow): BlogPost {
   };
 }
 
-export function formatDate(iso: string | null | undefined): string {
+export function formatDate(iso: string | null | undefined, locale: Locale = "en"): string {
   if (!iso) return "";
   try {
-    return new Date(iso).toLocaleDateString("en-US", {
+    return new Date(iso).toLocaleDateString(locale === "ar" ? "ar" : "en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",

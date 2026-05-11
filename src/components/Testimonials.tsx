@@ -1,35 +1,7 @@
-type Testimonial = {
-  quote: string;
-  name: string;
-  role: string;
-};
+import { getDict, type Locale } from "@/lib/i18n";
 
-const testimonials: Testimonial[] = [
-  {
-    quote: "PregnaWell's tips on managing gestational diabetes were life-changing!",
-    name: "Sarah",
-    role: "Mom of 2",
-  },
-  {
-    quote: "I loved the Green Placenta Program — it helped me recover so much faster!",
-    name: "Amanda",
-    role: "New Mom",
-  },
-  {
-    quote:
-      "As a first-time mom, I had so many questions. PregnaWell's resources made everything feel manageable and even enjoyable!",
-    name: "Layla",
-    role: "New Mom",
-  },
-  {
-    quote:
-      "Their holistic approach to postpartum recovery helped me regain my strength and confidence faster than I ever imagined.",
-    name: "Maya",
-    role: "Mom of Twins",
-  },
-];
-
-export default function Testimonials() {
+export default function Testimonials({ locale }: { locale: Locale }) {
+  const dict = getDict(locale);
   return (
     <section className="relative py-20 lg:py-28">
       <div className="absolute inset-0 -z-10">
@@ -38,15 +10,15 @@ export default function Testimonials() {
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="max-w-2xl">
           <p className="text-xs uppercase tracking-[0.25em] text-[var(--brand-rose)] font-semibold">
-            What moms say
+            {dict.testimonials.eyebrow}
           </p>
           <h2 className="mt-3 font-display text-3xl md:text-4xl text-[var(--brand-purple-deep)]">
-            Loved by women on every stage of the journey.
+            {dict.testimonials.title}
           </h2>
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {testimonials.map((t) => (
+          {dict.testimonials.items.map((t) => (
             <figure
               key={t.name}
               className="group rounded-3xl bg-white p-7 ring-1 ring-[var(--brand-purple)]/10 shadow-[0_15px_40px_-30px_rgba(61,42,110,0.35)] hover:-translate-y-1 transition"

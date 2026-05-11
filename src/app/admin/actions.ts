@@ -10,6 +10,7 @@ import {
 } from "@/lib/auth";
 import { ensureInitialized, getPool } from "@/lib/db";
 import { slugify } from "@/lib/blog";
+import { isCategoryId, isLocale, type Locale, type CategoryId } from "@/lib/i18n";
 import { randomUUID } from "node:crypto";
 
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -94,11 +95,12 @@ type PostInput = {
   body_md: string;
   cover_image_id: string | null;
   cover_url: string | null;
-  category: string | null;
+  category: CategoryId | null;
   tags: string[];
   author: string | null;
   meta_title: string | null;
   meta_description: string | null;
+  language: Locale;
   publish_at: Date | null;
   published: boolean;
 };
@@ -115,8 +117,11 @@ function readPostInput(formData: FormData): PostInput {
   const cover_url = (String(formData.get("cover_url") ?? "").trim() || null) as
     | string
     | null;
-  const category = (String(formData.get("category") ?? "").trim() || null) as string | null;
+  const rawCategory = String(formData.get("category") ?? "").trim();
+  const category: CategoryId | null = isCategoryId(rawCategory) ? rawCategory : null;
   const tags = parseTags(String(formData.get("tags") ?? ""));
+  const rawLanguage = String(formData.get("language") ?? "en").trim();
+  const language: Locale = isLocale(rawLanguage) ? (rawLanguage as Locale) : "en";
   const author = (String(formData.get("author") ?? "").trim() || null) as string | null;
   const meta_title = (String(formData.get("meta_title") ?? "").trim() || null) as string | null;
   const meta_description = (String(formData.get("meta_description") ?? "").trim() || null) as
@@ -138,6 +143,7 @@ function readPostInput(formData: FormData): PostInput {
     author,
     meta_title,
     meta_description,
+    language,
     publish_at: status === "scheduled" ? publish_at : status === "published" ? publish_at ?? new Date() : null,
     published,
   };
@@ -177,8 +183,9 @@ export async function savePostAction(formData: FormData) {
            author = $10,
            meta_title = $11,
            meta_description = $12,
-           published = $13,
-           publish_at = $14,
+           language = $13,
+           published = $14,
+           publish_at = $15,
            updated_at = NOW()
          WHERE id = $1`,
         [
@@ -194,14 +201,15 @@ export async function savePostAction(formData: FormData) {
           input.author,
           input.meta_title,
           input.meta_description,
+          input.language,
           input.published,
           input.publish_at,
         ]
       );
     } else {
       await pool.query(
-        `INSERT INTO posts (slug, title, description, body_md, cover_image_id, cover_url, category, tags, author, meta_title, meta_description, published, publish_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+        `INSERT INTO posts (slug, title, description, body_md, cover_image_id, cover_url, category, tags, author, meta_title, meta_description, language, published, publish_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
           input.slug,
           input.title,
@@ -214,6 +222,7 @@ export async function savePostAction(formData: FormData) {
           input.author,
           input.meta_title,
           input.meta_description,
+          input.language,
           input.published,
           input.publish_at,
         ]
@@ -230,8 +239,8 @@ export async function savePostAction(formData: FormData) {
     return { ok: false as const, error: msg };
   }
 
-  revalidatePath("/blog");
-  revalidatePath(`/blog/${input.slug}`);
+  revalidatePath(`/${input.language}/blog`);
+  revalidatePath(`/${input.language}/blog/${input.slug}`);
   revalidatePath("/admin/dashboard");
   redirect("/admin/dashboard");
 }
@@ -242,7 +251,8 @@ export async function deletePostAction(formData: FormData) {
   if (!id) return;
   await ensureInitialized();
   await getPool().query(`DELETE FROM posts WHERE id = $1`, [id]);
-  revalidatePath("/blog");
+  revalidatePath("/en/blog");
+  revalidatePath("/ar/blog");
   revalidatePath("/admin/dashboard");
   redirect("/admin/dashboard");
 }

@@ -1,15 +1,24 @@
 import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/lib/site";
+import { getDict, type Locale } from "@/lib/i18n";
 
 const socials = [
-  { label: "Instagram", href: site.social.instagram },
-  { label: "Podcast", href: site.social.podcast },
-  { label: "LinkedIn", href: site.social.linkedin },
-  { label: "Facebook", href: site.social.facebook },
-];
+  { key: "instagram", href: site.social.instagram },
+  { key: "podcast", href: site.social.podcast },
+  { key: "linkedin", href: site.social.linkedin },
+  { key: "facebook", href: site.social.facebook },
+] as const;
 
-export default function Footer() {
+const socialLabels: Record<(typeof socials)[number]["key"], { en: string; ar: string }> = {
+  instagram: { en: "Instagram", ar: "إنستغرام" },
+  podcast: { en: "Podcast", ar: "بودكاست" },
+  linkedin: { en: "LinkedIn", ar: "لينكدإن" },
+  facebook: { en: "Facebook", ar: "فيسبوك" },
+};
+
+export default function Footer({ locale }: { locale: Locale }) {
+  const dict = getDict(locale);
   return (
     <footer className="mt-24 border-t border-[var(--brand-purple)]/10 bg-[var(--brand-cream)]">
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-14 grid gap-10 md:grid-cols-3">
@@ -22,8 +31,7 @@ export default function Footer() {
             className="h-10 w-auto"
           />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--brand-muted)]">
-            Compassionate, evidence-based guidance for women on their journey from
-            fertility to motherhood.
+            {dict.footer.tagline}
           </p>
           <a
             href={`mailto:${site.email}`}
@@ -35,22 +43,22 @@ export default function Footer() {
 
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-purple)]">
-            Explore
+            {dict.footer.explore}
           </h4>
           <ul className="mt-4 space-y-2 text-sm">
             <li>
-              <Link href="/" className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]">
-                Home
+              <Link href={`/${locale}`} className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]">
+                {dict.nav.home}
               </Link>
             </li>
             <li>
-              <Link href="/story" className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]">
-                Our Story
+              <Link href={`/${locale}/story`} className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]">
+                {dict.nav.story}
               </Link>
             </li>
             <li>
-              <Link href="/blog" className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]">
-                Blog
+              <Link href={`/${locale}/blog`} className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]">
+                {dict.nav.blog}
               </Link>
             </li>
             <li>
@@ -60,7 +68,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]"
               >
-                PregnaScan App ↗
+                {dict.nav.pregnaScanApp} ↗
               </a>
             </li>
             <li>
@@ -70,7 +78,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]"
               >
-                Free Masterclass ↗
+                {dict.cta.masterclass} ↗
               </a>
             </li>
           </ul>
@@ -78,18 +86,18 @@ export default function Footer() {
 
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-purple)]">
-            Follow
+            {dict.footer.follow}
           </h4>
           <ul className="mt-4 space-y-2 text-sm">
             {socials.map((s) => (
-              <li key={s.label}>
+              <li key={s.key}>
                 <a
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]"
                 >
-                  {s.label} ↗
+                  {socialLabels[s.key][locale]} ↗
                 </a>
               </li>
             ))}
@@ -99,8 +107,8 @@ export default function Footer() {
 
       <div className="border-t border-[var(--brand-purple)]/10">
         <div className="mx-auto max-w-7xl px-6 lg:px-10 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-[var(--brand-muted)]">
-          <p>© {new Date().getFullYear()} PregnaWell Inc. All rights reserved.</p>
-          <p>Made with care for moms-to-be everywhere.</p>
+          <p>© {new Date().getFullYear()} PregnaWell Inc. {dict.footer.rights}</p>
+          <p>{dict.footer.closing}</p>
         </div>
       </div>
     </footer>

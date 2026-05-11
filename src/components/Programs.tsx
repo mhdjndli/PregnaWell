@@ -1,139 +1,73 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
+import { getDict, type Locale } from "@/lib/i18n";
 
-type Program = {
-  badge?: string;
-  title: string;
-  subtitle?: string;
-  description: string;
-  features: string[];
-  href: string;
-  external?: boolean;
-  cta: string;
-  tone: "rose" | "purple" | "cream";
-};
+type ProgramKey = keyof ReturnType<typeof getDict>["programs"]["items"];
 
-const programs: Program[] = [
-  {
-    badge: "Nawat",
-    title: "Pregnancy Preparation Program",
-    description:
-      "A complete wellness program to prepare your body for pregnancy with expert-guided nutrition and holistic care.",
-    features: [
-      "Assessments & recommendations",
-      "Tailored fertility-boosting meal plans",
-      "Mind-body exercises",
-    ],
-    href: site.ctas.whatsapp,
-    external: true,
-    cta: "Inquire on WhatsApp",
-    tone: "rose",
-  },
-  {
-    badge: "Green Placenta",
-    title: "Postpartum Recovery Program",
-    description:
-      "A post-pregnancy recovery program with customized diet plans and health tips to restore energy and vitality.",
-    features: [
-      "Customized meal plans",
-      "Expert one-on-one advice",
-      "Community access",
-    ],
-    href: site.ctas.whatsapp,
-    external: true,
-    cta: "Inquire on WhatsApp",
-    tone: "purple",
-  },
-  {
-    badge: "Soukkara",
-    title: "Gestational Diabetes Program",
-    description:
-      "A focused program to help manage gestational diabetes with personalized meal plans, expert tips, and emotional support.",
-    features: [
-      "Personalized meal plans",
-      "Weekly glucose tracking",
-      "Expert tips and exercises",
-    ],
-    href: site.ctas.whatsapp,
-    external: true,
-    cta: "Inquire on WhatsApp",
-    tone: "cream",
-  },
-  {
-    badge: "Self-paced",
-    title: "Crash Courses",
-    description:
-      "Affordable, focused sessions on labor prep, postpartum care, and nutrition — with lifetime access.",
-    features: [
-      "Affordable, focused sessions",
-      "Downloadable resources",
-      "Flexible, self-paced learning",
-    ],
-    href: site.ctas.masterclass,
-    external: true,
-    cta: "Browse courses",
-    tone: "cream",
-  },
-  {
-    badge: "Free",
-    title: "Masterclasses",
-    subtitle: "Start with the HPO Axis masterclass",
-    description:
-      "Free, expert-led sessions providing actionable insights into fertility, pregnancy, and postpartum care.",
-    features: [
-      "Live Q&A sessions",
-      "Downloadable Pregnancy Wellness Checklist",
-      "Lifetime access to the recording",
-    ],
-    href: site.ctas.masterclass,
-    external: true,
-    cta: "Watch the free masterclass",
-    tone: "purple",
-  },
-  {
-    badge: "Library",
-    title: "Free Resources",
-    description:
-      "A collection of free eBooks, checklists, and video tutorials to support moms during pregnancy and postpartum.",
-    features: [
-      "Free eBooks and guides",
-      "Printable checklists",
-      "Relaxation video tutorials",
-    ],
-    href: "/blog",
-    cta: "Browse the library",
-    tone: "rose",
-  },
+const PROGRAM_KEYS: { key: ProgramKey; href: string; external?: boolean; ctaKey: keyof ReturnType<typeof getDict>["cta"]; tone: "rose" | "purple" | "cream" }[] = [
+  { key: "nawat",         href: site.ctas.whatsapp,    external: true, ctaKey: "inquireWhatsapp",  tone: "rose"   },
+  { key: "greenPlacenta", href: site.ctas.whatsapp,    external: true, ctaKey: "inquireWhatsapp",  tone: "purple" },
+  { key: "soukkara",      href: site.ctas.whatsapp,    external: true, ctaKey: "inquireWhatsapp",  tone: "cream"  },
+  { key: "crash",         href: site.ctas.masterclass, external: true, ctaKey: "browseCourses",    tone: "cream"  },
+  { key: "masterclasses", href: site.ctas.masterclass, external: true, ctaKey: "watchNow",          tone: "purple" },
+  { key: "freeResources", href: "/blog",                                ctaKey: "browseLibrary",    tone: "rose"   },
 ];
 
-export default function Programs() {
+export default function Programs({ locale }: { locale: Locale }) {
+  const dict = getDict(locale);
   return (
     <section id="programs" className="py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="max-w-2xl">
           <p className="text-xs uppercase tracking-[0.25em] text-[var(--brand-rose)] font-semibold">
-            Programs &amp; Services
+            {dict.programs.eyebrow}
           </p>
           <h2 className="mt-3 font-display text-3xl md:text-4xl text-[var(--brand-purple-deep)]">
-            Expert-led programs for every stage of motherhood.
+            {dict.programs.title}
           </h2>
           <p className="mt-4 text-[var(--brand-muted)] leading-relaxed">
-            From fertility preparation to postpartum recovery — pick the path that meets
-            you where you are.
+            {dict.programs.subtitle}
           </p>
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {programs.map((p) => (
-            <ProgramCard key={p.title} {...p} />
-          ))}
+          {PROGRAM_KEYS.map(({ key, href, external, ctaKey, tone }) => {
+            const item = dict.programs.items[key];
+            const finalHref = href === "/blog" ? `/${locale}/blog` : href;
+            return (
+              <ProgramCard
+                key={key}
+                badge={item.badge}
+                title={item.title}
+                subtitle={item.subtitle}
+                description={item.description}
+                features={item.features}
+                href={finalHref}
+                external={external}
+                cta={dict.cta[ctaKey]}
+                tone={tone}
+              />
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
-function ProgramCard(p: Program) {
+type CardProps = {
+  badge: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+  features: readonly string[];
+  href: string;
+  external?: boolean;
+  cta: string;
+  tone: "rose" | "purple" | "cream";
+};
+
+function ProgramCard(p: CardProps) {
   const toneClasses =
     p.tone === "rose"
       ? "bg-[var(--brand-blush)] ring-[var(--brand-rose-soft)]/40"

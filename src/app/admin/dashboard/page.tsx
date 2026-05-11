@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAuthed } from "@/lib/auth";
 import { formatDate, getAllPostsAdmin } from "@/lib/blog";
+import { categoryLabel } from "@/lib/i18n";
 import AdminShell from "@/components/admin/AdminShell";
 
 export const dynamic = "force-dynamic";
@@ -72,6 +73,7 @@ export default async function DashboardPage() {
               <tr className="text-left text-xs uppercase tracking-wider text-[var(--brand-muted)] border-b border-[var(--brand-purple)]/10">
                 <th className="px-6 py-4 font-semibold">Title</th>
                 <th className="px-4 py-4 font-semibold">Status</th>
+                <th className="px-4 py-4 font-semibold">Lang</th>
                 <th className="px-4 py-4 font-semibold">Publish date</th>
                 <th className="px-4 py-4 font-semibold">Category</th>
                 <th className="px-4 py-4 font-semibold w-1"></th>
@@ -90,8 +92,13 @@ export default async function DashboardPage() {
                     <div className="mt-0.5 text-xs text-[var(--brand-muted)] font-mono">/{p.slug}</div>
                   </td>
                   <td className="px-4 py-4"><StatusPill status={p.status} /></td>
-                  <td className="px-4 py-4 text-[var(--brand-muted)]">{formatDate(p.publishAt) || "—"}</td>
-                  <td className="px-4 py-4 text-[var(--brand-muted)]">{p.category ?? "—"}</td>
+                  <td className="px-4 py-4">
+                    <span className="inline-flex items-center rounded-full bg-[var(--brand-blush)] px-2 py-0.5 text-xs font-mono font-semibold text-[var(--brand-rose)] uppercase">
+                      {p.language}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4 text-[var(--brand-muted)]">{formatDate(p.publishAt, p.language) || "—"}</td>
+                  <td className="px-4 py-4 text-[var(--brand-muted)]">{categoryLabel(p.category, p.language) ?? "—"}</td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <Link
                       href={`/admin/posts/${p.id}/edit`}

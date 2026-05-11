@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS images (
 
 CREATE TABLE IF NOT EXISTS posts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  slug TEXT UNIQUE NOT NULL,
+  slug TEXT NOT NULL,
   title TEXT NOT NULL,
   description TEXT NOT NULL DEFAULT '',
   body_md TEXT NOT NULL DEFAULT '',
@@ -55,14 +55,41 @@ CREATE TABLE IF NOT EXISTS posts (
   author TEXT,
   meta_title TEXT,
   meta_description TEXT,
+  language TEXT NOT NULL DEFAULT 'en',
   published BOOLEAN NOT NULL DEFAULT FALSE,
   publish_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Idempotent migration: add language column if upgrading from earlier schema.
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS language TEXT NOT NULL DEFAULT 'en';
+
+-- Ensure language is one of our supported locales.
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'posts_language_check'
+  ) THEN
+    ALTER TABLE posts
+      ADD CONSTRAINT posts_language_check CHECK (language IN ('en','ar'));
+  END IF;
+END $$;
+
+-- Slug must be unique per language (en + ar can each have their own "welcome").
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'posts_slug_key'
+  ) THEN
+    ALTER TABLE posts DROP CONSTRAINT posts_slug_key;
+  END IF;
+END $$;
+CREATE UNIQUE INDEX IF NOT EXISTS posts_slug_language_uniq ON posts (slug, language);
+
 CREATE INDEX IF NOT EXISTS posts_publish_at_idx ON posts (publish_at);
 CREATE INDEX IF NOT EXISTS posts_published_idx ON posts (published);
+CREATE INDEX IF NOT EXISTS posts_language_idx ON posts (language);
 `;
 
 export async function ensureInitialized(): Promise<void> {

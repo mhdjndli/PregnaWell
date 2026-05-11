@@ -10,6 +10,7 @@ import {
   uploadImageAction,
 } from "@/app/admin/actions";
 import type { BlogPost, BlogStatus } from "@/lib/blog";
+import { categories, isCategoryId, type CategoryId, type Locale } from "@/lib/i18n";
 
 type Props = {
   initial?: BlogPost | null;
@@ -40,7 +41,10 @@ export default function PostEditor({ initial }: Props) {
   const [slugTouched, setSlugTouched] = useState(!!initial);
   const [description, setDescription] = useState(initial?.description ?? "");
   const [author, setAuthor] = useState(initial?.author ?? "Maha Hommos");
-  const [category, setCategory] = useState(initial?.category ?? "");
+  const [language, setLanguage] = useState<Locale>(initial?.language ?? "en");
+  const [category, setCategory] = useState<CategoryId | "">(
+    isCategoryId(initial?.category) ? (initial!.category as CategoryId) : ""
+  );
   const [tags, setTags] = useState((initial?.tags ?? []).join(", "));
   const [coverUrl, setCoverUrl] = useState(initial?.cover ?? "");
   const [coverImageId, setCoverImageId] = useState<string>(
@@ -82,6 +86,8 @@ export default function PostEditor({ initial }: Props) {
     if (initial?.id) fd.set("id", initial.id);
     fd.set("status", status);
     fd.set("publish_at", publishAt);
+    fd.set("language", language);
+    fd.set("category", category);
     fd.set("cover_image_id", coverImageId);
     fd.set("cover_url", coverImageId ? "" : coverUrl);
     startTransition(async () => {
@@ -283,17 +289,51 @@ export default function PostEditor({ initial }: Props) {
         </Card>
 
         <Card>
-          <h3 className="font-display text-lg text-[var(--brand-purple-deep)]">Taxonomy</h3>
-          <div className="mt-3 space-y-3">
-            <Field label="Category">
-              <input
-                name="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="Fertility · Pregnancy · Postpartum…"
-                className={inputCls}
+          <h3 className="font-display text-lg text-[var(--brand-purple-deep)]">Language</h3>
+          <p className="mt-1 text-xs text-[var(--brand-muted)]">
+            Posts only appear on the blog matching their language.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <LangButton
+              active={language === "en"}
+              onClick={() => setLanguage("en")}
+              label="English"
+              hint="/en/blog"
+            />
+            <LangButton
+              active={language === "ar"}
+              onClick={() => setLanguage("ar")}
+              label="العربية"
+              hint="/ar/blog"
+            />
+          </div>
+        </Card>
+
+        <Card>
+          <h3 className="font-display text-lg text-[var(--brand-purple-deep)]">Category</h3>
+          <p className="mt-1 text-xs text-[var(--brand-muted)]">Pick one. Optional.</p>
+          <div className="mt-3 space-y-2">
+            <CategoryChoice
+              checked={category === ""}
+              onClick={() => setCategory("")}
+              label="None"
+              labelAr=""
+            />
+            {categories.map((c) => (
+              <CategoryChoice
+                key={c.id}
+                checked={category === c.id}
+                onClick={() => setCategory(c.id)}
+                label={c.en}
+                labelAr={c.ar}
               />
-            </Field>
+            ))}
+          </div>
+        </Card>
+
+        <Card>
+          <h3 className="font-display text-lg text-[var(--brand-purple-deep)]">Tags &amp; author</h3>
+          <div className="mt-3 space-y-3">
             <Field label="Tags" hint="Comma-separated.">
               <input
                 name="tags"
@@ -382,6 +422,65 @@ function Field({
       {hint && !error && <span className="mt-1 block text-xs text-[var(--brand-muted)]">{hint}</span>}
       {error && <span className="mt-1 block text-xs text-red-700">{error}</span>}
     </label>
+  );
+}
+
+function LangButton({
+  active,
+  onClick,
+  label,
+  hint,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  hint: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-xl px-3 py-3 text-center ring-1 transition ${
+        active
+          ? "bg-[var(--brand-purple-deep)] ring-[var(--brand-purple-deep)] text-white"
+          : "bg-white ring-[var(--brand-purple)]/15 text-[var(--brand-ink)] hover:ring-[var(--brand-purple)]/40"
+      }`}
+    >
+      <div className="font-semibold text-sm">{label}</div>
+      <div className={`mt-0.5 text-[11px] font-mono ${active ? "text-white/70" : "text-[var(--brand-muted)]"}`}>
+        {hint}
+      </div>
+    </button>
+  );
+}
+
+function CategoryChoice({
+  checked,
+  onClick,
+  label,
+  labelAr,
+}: {
+  checked: boolean;
+  onClick: () => void;
+  label: string;
+  labelAr: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-start ring-1 transition ${
+        checked
+          ? "bg-[var(--brand-blush)] ring-[var(--brand-rose)] text-[var(--brand-purple-deep)]"
+          : "bg-white ring-[var(--brand-purple)]/10 text-[var(--brand-ink)] hover:ring-[var(--brand-purple)]/30"
+      }`}
+    >
+      <span className="flex items-center gap-2">
+        <span className={`inline-block h-3 w-3 rounded-full ring-2 ring-current ${checked ? "bg-current" : ""}`} />
+        <span className="font-semibold text-sm">{label}</span>
+      </span>
+      {labelAr && <span dir="rtl" className="text-sm text-[var(--brand-muted)]">{labelAr}</span>}
+    </button>
   );
 }
 

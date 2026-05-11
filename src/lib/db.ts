@@ -1,8 +1,19 @@
 import "server-only";
+import dns from "node:dns";
 import { Pool } from "pg";
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+
+// Railway's private network (postgres.railway.internal) is IPv6-only.
+// Node 18+ defaults to IPv4 first, which makes the lookup fail with
+// "getaddrinfo ENOTFOUND". Prefer IPv6 (or fall back to verbatim) so
+// private DATABASE_URL just works.
+try {
+  dns.setDefaultResultOrder("ipv6first");
+} catch {
+  // Older Node versions: ignore.
+}
 
 declare global {
   // eslint-disable-next-line no-var

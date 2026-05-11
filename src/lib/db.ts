@@ -137,9 +137,9 @@ async function seedFromFiles(pool: Pool) {
     const publishAt = fm.date ? new Date(fm.date) : new Date();
     const published = !fm.draft;
     await pool.query(
-      `INSERT INTO posts (slug, title, description, body_md, cover_url, category, tags, author, published, publish_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-       ON CONFLICT (slug) DO NOTHING`,
+      `INSERT INTO posts (slug, title, description, body_md, cover_url, category, tags, author, language, published, publish_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       ON CONFLICT (slug, language) DO NOTHING`,
       [
         slug,
         fm.title,
@@ -149,6 +149,7 @@ async function seedFromFiles(pool: Pool) {
         fm.category ?? null,
         fm.tags ?? [],
         fm.author ?? null,
+        "en",
         published,
         publishAt,
       ]

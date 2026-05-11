@@ -111,34 +111,49 @@ export async function ensureInitialized(): Promise<void> {
   global._pgInitDone = true;
 }
 
-async function seedFromFiles(pool: Pool) {
-  const { rows } = await pool.query<{ count: string }>("SELECT COUNT(*) AS count FROM posts");
-  if (Number(rows[0]?.count ?? 0) > 0) return;
+type SeedFrontmatter = {
+  title?: string;
+  description?: string;
+  date?: string;
+  author?: string;
+  category?: string;
+  tags?: string[];
+  cover?: string;
+  draft?: boolean;
+  slug?: string;
+  language?: string;
+  meta_title?: string;
+  meta_description?: string;
+};
 
-  const dir = path.join(process.cwd(), "content", "blog");
+async function seedFromFiles(pool: Pool) {
+  // Seed each language independently. We only seed a given language when no
+  // posts exist for it yet — so adding files later for one language doesn't
+  // duplicate the other.
+  await seedLanguageFromDir(pool, "en", path.join(process.cwd(), "content", "blog"));
+  await seedLanguageFromDir(pool, "ar", path.join(process.cwd(), "content", "blog-ar"));
+}
+
+async function seedLanguageFromDir(pool: Pool, language: "en" | "ar", dir: string) {
   if (!fs.existsSync(dir)) return;
+  const { rows } = await pool.query<{ count: string }>(
+    "SELECT COUNT(*) AS count FROM posts WHERE language = $1",
+    [language]
+  );
+  if (Number(rows[0]?.count ?? 0) > 0) return;
 
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") || f.endsWith(".mdx"));
   for (const file of files) {
     const raw = fs.readFileSync(path.join(dir, file), "utf8");
     const { data, content } = matter(raw);
-    const slug = file.replace(/\.(md|mdx)$/i, "");
-    const fm = data as {
-      title?: string;
-      description?: string;
-      date?: string;
-      author?: string;
-      category?: string;
-      tags?: string[];
-      cover?: string;
-      draft?: boolean;
-    };
+    const fm = data as SeedFrontmatter;
     if (!fm.title) continue;
+    const slug = (fm.slug ?? file.replace(/\.(md|mdx)$/i, "")).trim();
     const publishAt = fm.date ? new Date(fm.date) : new Date();
     const published = !fm.draft;
     await pool.query(
-      `INSERT INTO posts (slug, title, description, body_md, cover_url, category, tags, author, language, published, publish_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      `INSERT INTO posts (slug, title, description, body_md, cover_url, category, tags, author, meta_title, meta_description, language, published, publish_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        ON CONFLICT (slug, language) DO NOTHING`,
       [
         slug,
@@ -149,7 +164,9 @@ async function seedFromFiles(pool: Pool) {
         fm.category ?? null,
         fm.tags ?? [],
         fm.author ?? null,
-        "en",
+        fm.meta_title ?? null,
+        fm.meta_description ?? null,
+        language,
         published,
         publishAt,
       ]

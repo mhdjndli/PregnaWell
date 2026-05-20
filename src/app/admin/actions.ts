@@ -191,6 +191,130 @@ export async function generateCoverImageAction(formData: FormData): Promise<{
   return { ok: true, url: `/api/images/${id}`, id };
 }
 
+type GeminiTextPart = { text?: string };
+type GeminiTextResponse = {
+  candidates?: { content?: { parts?: GeminiTextPart[] } }[];
+  promptFeedback?: { blockReason?: string };
+  error?: { message?: string };
+};
+
+function stripMarkdownToPlainText(md: string): string {
+  return md
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`[^`]*`/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[#>*_~-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export async function generateSeoAction(formData: FormData): Promise<{
+  ok: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+  keywords?: string[];
+  error?: string;
+}> {
+  await requireAuth();
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return { ok: false, error: "GEMINI_API_KEY is not configured on the server." };
+  }
+  const title = String(formData.get("title") ?? "").trim();
+  const body = String(formData.get("body_md") ?? "");
+  if (!title) return { ok: false, error: "Add a title first." };
+  if (!body.trim()) return { ok: false, error: "Add some content first." };
+
+  const rawLanguage = String(formData.get("language") ?? "en").trim();
+  const language: Locale = isLocale(rawLanguage) ? (rawLanguage as Locale) : "en";
+
+  const plain = stripMarkdownToPlainText(body).slice(0, 6000);
+  const langName = language === "ar" ? "Arabic" : "English";
+  const prompt =
+    `You write SEO metadata for a women's health blog. Given the post title and content below, ` +
+    `produce SEO metadata in ${langName}, in the same language and tone as the post.\n\n` +
+    `Rules:\n` +
+    `- metaTitle: max 60 characters, compelling, includes the primary keyword, no quotes.\n` +
+    `- metaDescription: 140-160 characters, plain sentence(s), no quotes, no emoji.\n` +
+    `- keywords: 5 to 8 short lowercase keywords or short phrases (no hashtags), ` +
+    `ordered from most to least relevant. Each keyword 1-4 words.\n\n` +
+    `Title: ${title}\n\nContent:\n${plain}`;
+
+  const model = "gemini-2.5-flash";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              metaTitle: { type: "STRING" },
+              metaDescription: { type: "STRING" },
+              keywords: { type: "ARRAY", items: { type: "STRING" } },
+            },
+            required: ["metaTitle", "metaDescription", "keywords"],
+          },
+        },
+      }),
+    });
+  } catch (err) {
+    return {
+      ok: false,
+      error: `Failed to reach Gemini: ${(err as Error).message ?? "network error"}`,
+    };
+  }
+
+  let body_: GeminiTextResponse;
+  try {
+    body_ = (await res.json()) as GeminiTextResponse;
+  } catch {
+    return { ok: false, error: `Gemini returned non-JSON (HTTP ${res.status}).` };
+  }
+  if (!res.ok) {
+    return { ok: false, error: body_.error?.message ?? `Gemini error (HTTP ${res.status}).` };
+  }
+  if (body_.promptFeedback?.blockReason) {
+    return { ok: false, error: `Gemini blocked the prompt: ${body_.promptFeedback.blockReason}` };
+  }
+
+  const text = body_.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+  if (!text.trim()) return { ok: false, error: "Gemini returned an empty response." };
+
+  let parsed: { metaTitle?: unknown; metaDescription?: unknown; keywords?: unknown };
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    return { ok: false, error: "Gemini returned malformed JSON." };
+  }
+
+  const metaTitle = typeof parsed.metaTitle === "string" ? parsed.metaTitle.trim() : "";
+  const metaDescription =
+    typeof parsed.metaDescription === "string" ? parsed.metaDescription.trim() : "";
+  const keywords = Array.isArray(parsed.keywords)
+    ? parsed.keywords
+        .map((k) => (typeof k === "string" ? k.trim().toLowerCase() : ""))
+        .filter((k) => k.length > 0 && k.length <= 60)
+        .slice(0, 12)
+    : [];
+
+  if (!metaTitle && !metaDescription && keywords.length === 0) {
+    return { ok: false, error: "Gemini did not return any SEO fields." };
+  }
+  return { ok: true, metaTitle, metaDescription, keywords };
+}
+
 type PostInput = {
   id?: string;
   title: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import RichEditor from "./RichEditor";
@@ -9,6 +9,7 @@ import {
   deletePostAction,
   uploadImageAction,
   generateCoverImageAction,
+  generateSeoAction,
 } from "@/app/admin/actions";
 import type { BlogPost, BlogStatus } from "@/lib/blog";
 import { categories, isCategoryId, type CategoryId, type Locale } from "@/lib/i18n";
@@ -60,9 +61,13 @@ export default function PostEditor({ initial }: Props) {
   const [coverUploading, setCoverUploading] = useState(false);
   const [coverGenerating, setCoverGenerating] = useState(false);
   const [coverError, setCoverError] = useState<string | null>(null);
+  const [seoGenerating, setSeoGenerating] = useState(false);
+  const [seoError, setSeoError] = useState<string | null>(null);
+  const [seoNote, setSeoNote] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [topError, setTopError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   async function handleCoverUpload(file: File) {
     setCoverError(null);
@@ -79,6 +84,41 @@ export default function PostEditor({ initial }: Props) {
       setCoverUrl(res.url);
     } finally {
       setCoverUploading(false);
+    }
+  }
+
+  async function handleGenerateSeo() {
+    setSeoError(null);
+    setSeoNote(null);
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) {
+      setSeoError("Add a title first.");
+      return;
+    }
+    const form = formRef.current;
+    if (!form) return;
+    const body = String(new FormData(form).get("body_md") ?? "").trim();
+    if (!body) {
+      setSeoError("Add some body content first.");
+      return;
+    }
+    setSeoGenerating(true);
+    try {
+      const fd = new FormData();
+      fd.set("title", trimmedTitle);
+      fd.set("body_md", body);
+      fd.set("language", language);
+      const res = await generateSeoAction(fd);
+      if (!res.ok) {
+        setSeoError(res.error ?? "SEO generation failed.");
+        return;
+      }
+      if (res.metaTitle) setMetaTitle(res.metaTitle);
+      if (res.metaDescription) setMetaDescription(res.metaDescription);
+      if (res.keywords && res.keywords.length > 0) setTags(res.keywords.join(", "));
+      setSeoNote("Filled meta title, meta description, and tags from Gemini. Review before saving.");
+    } finally {
+      setSeoGenerating(false);
     }
   }
 
@@ -128,7 +168,7 @@ export default function PostEditor({ initial }: Props) {
   }
 
   return (
-    <form onSubmit={submit} className="grid gap-6 lg:grid-cols-12">
+    <form ref={formRef} onSubmit={submit} className="grid gap-6 lg:grid-cols-12">
       <div className="lg:col-span-8 space-y-6">
         <Card>
           <Field label="Title" error={errors.title}>
@@ -173,10 +213,33 @@ export default function PostEditor({ initial }: Props) {
         </Card>
 
         <Card>
-          <h3 className="font-display text-lg text-[var(--brand-purple-deep)]">SEO</h3>
-          <p className="mt-1 text-xs text-[var(--brand-muted)]">
-            Override the title and description used by search engines and social previews.
-          </p>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h3 className="font-display text-lg text-[var(--brand-purple-deep)]">SEO</h3>
+              <p className="mt-1 text-xs text-[var(--brand-muted)]">
+                Override the title and description used by search engines and social previews.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleGenerateSeo}
+              disabled={seoGenerating || !title.trim()}
+              className="shrink-0 inline-flex items-center justify-center rounded-full border border-[var(--brand-purple)]/30 bg-white px-4 py-2 text-sm font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)] disabled:cursor-not-allowed disabled:opacity-50"
+              title={!title.trim() ? "Add a title first" : "Generate meta title, description, and tags using Gemini"}
+            >
+              {seoGenerating ? "Generating…" : "Generate SEO settings"}
+            </button>
+          </div>
+          {seoError && (
+            <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-red-100">
+              {seoError}
+            </p>
+          )}
+          {seoNote && !seoError && (
+            <p className="mt-3 rounded-xl bg-[var(--brand-blush)]/60 px-3 py-2 text-sm text-[var(--brand-purple-deep)] ring-1 ring-[var(--brand-purple)]/15">
+              {seoNote}
+            </p>
+          )}
           <div className="mt-4 space-y-4">
             <Field label="Meta title" hint="Optional — defaults to the post title.">
               <input

@@ -87,6 +87,110 @@ export async function uploadImageAction(formData: FormData): Promise<{
   return { ok: true, url: `/api/images/${id}`, id };
 }
 
+type GeminiInlineData = { mimeType?: string; mime_type?: string; data: string };
+type GeminiPart = { inlineData?: GeminiInlineData; inline_data?: GeminiInlineData };
+type GeminiResponse = {
+  candidates?: { content?: { parts?: GeminiPart[] } }[];
+  promptFeedback?: { blockReason?: string };
+  error?: { message?: string };
+};
+
+export async function generateCoverImageAction(formData: FormData): Promise<{
+  ok: boolean;
+  url?: string;
+  id?: string;
+  error?: string;
+}> {
+  await requireAuth();
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return { ok: false, error: "GEMINI_API_KEY is not configured on the server." };
+  }
+  const title = String(formData.get("title") ?? "").trim();
+  if (!title) return { ok: false, error: "Add a title first." };
+  const rawLanguage = String(formData.get("language") ?? "en").trim();
+  const language: Locale = isLocale(rawLanguage) ? (rawLanguage as Locale) : "en";
+
+  const scriptHint =
+    language === "ar"
+      ? "Render the title in Arabic script exactly as given (right-to-left)."
+      : "Render the title in Latin script exactly as given.";
+
+  const prompt =
+    `Design a simple, modern blog cover image with the title "${title}" written in a clean, ` +
+    `modern sans-serif font, positioned in the middle of the design. ` +
+    `${scriptHint} Use a soft, elegant background with subtle shapes or gradients. ` +
+    `No additional text, watermarks, or logos. Wide 16:9 landscape format.`;
+
+  const model = "gemini-3.1-flash-image-preview";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseModalities: ["IMAGE"],
+          responseFormat: { image: { aspectRatio: "16:9", imageSize: "2K" } },
+        },
+      }),
+    });
+  } catch (err) {
+    return {
+      ok: false,
+      error: `Failed to reach Gemini: ${(err as Error).message ?? "network error"}`,
+    };
+  }
+
+  let body: GeminiResponse;
+  try {
+    body = (await res.json()) as GeminiResponse;
+  } catch {
+    return { ok: false, error: `Gemini returned non-JSON (HTTP ${res.status}).` };
+  }
+
+  if (!res.ok) {
+    return { ok: false, error: body.error?.message ?? `Gemini error (HTTP ${res.status}).` };
+  }
+  if (body.promptFeedback?.blockReason) {
+    return { ok: false, error: `Gemini blocked the prompt: ${body.promptFeedback.blockReason}` };
+  }
+
+  const parts = body.candidates?.[0]?.content?.parts ?? [];
+  const inline = parts
+    .map((p) => p.inlineData ?? p.inline_data)
+    .find((d): d is GeminiInlineData => !!d && typeof d.data === "string");
+  if (!inline) {
+    return { ok: false, error: "Gemini did not return an image." };
+  }
+
+  const mime = inline.mimeType ?? inline.mime_type ?? "image/png";
+  if (!ALLOWED_IMAGE_TYPES.has(mime)) {
+    return { ok: false, error: `Unsupported image type from Gemini: ${mime}` };
+  }
+  const buf = Buffer.from(inline.data, "base64");
+  if (buf.length === 0) return { ok: false, error: "Gemini returned an empty image." };
+  if (buf.length > MAX_IMAGE_BYTES) {
+    return { ok: false, error: "Generated image exceeded size limit." };
+  }
+
+  await ensureInitialized();
+  const id = randomUUID();
+  const ext = mime.split("/")[1] ?? "png";
+  const filename = `${slugify(title) || "cover"}-gemini.${ext}`;
+  await getPool().query(
+    `INSERT INTO images (id, filename, mime_type, size, data) VALUES ($1, $2, $3, $4, $5)`,
+    [id, filename, mime, buf.length, buf]
+  );
+  return { ok: true, url: `/api/images/${id}`, id };
+}
+
 type PostInput = {
   id?: string;
   title: string;

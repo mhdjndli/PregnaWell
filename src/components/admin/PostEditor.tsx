@@ -8,6 +8,7 @@ import {
   savePostAction,
   deletePostAction,
   uploadImageAction,
+  generateCoverImageAction,
 } from "@/app/admin/actions";
 import type { BlogPost, BlogStatus } from "@/lib/blog";
 import { categories, isCategoryId, type CategoryId, type Locale } from "@/lib/i18n";
@@ -57,24 +58,51 @@ export default function PostEditor({ initial }: Props) {
   const [status, setStatus] = useState<BlogStatus>(initial?.status ?? "draft");
   const [publishAt, setPublishAt] = useState(toLocalInput(initial?.publishAt ?? ""));
   const [coverUploading, setCoverUploading] = useState(false);
+  const [coverGenerating, setCoverGenerating] = useState(false);
+  const [coverError, setCoverError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [topError, setTopError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   async function handleCoverUpload(file: File) {
+    setCoverError(null);
     setCoverUploading(true);
     try {
       const fd = new FormData();
       fd.set("file", file);
       const res = await uploadImageAction(fd);
       if (!res.ok || !res.url) {
-        setTopError(res.error ?? "Cover upload failed.");
+        setCoverError(res.error ?? "Cover upload failed.");
         return;
       }
       setCoverImageId(res.id ?? "");
       setCoverUrl(res.url);
     } finally {
       setCoverUploading(false);
+    }
+  }
+
+  async function handleGenerateCover() {
+    setCoverError(null);
+    const trimmed = title.trim();
+    if (!trimmed) {
+      setCoverError("Add a title before generating a cover.");
+      return;
+    }
+    setCoverGenerating(true);
+    try {
+      const fd = new FormData();
+      fd.set("title", trimmed);
+      fd.set("language", language);
+      const res = await generateCoverImageAction(fd);
+      if (!res.ok || !res.url) {
+        setCoverError(res.error ?? "Cover generation failed.");
+        return;
+      }
+      setCoverImageId(res.id ?? "");
+      setCoverUrl(res.url);
+    } finally {
+      setCoverGenerating(false);
     }
   }
 
@@ -279,19 +307,35 @@ export default function PostEditor({ initial }: Props) {
           ) : (
             <p className="mt-2 text-sm text-[var(--brand-muted)]">No cover image yet.</p>
           )}
-          <label className="mt-3 inline-flex cursor-pointer items-center justify-center rounded-full border border-dashed border-[var(--brand-purple)]/30 px-4 py-2 text-sm font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)]">
-            {coverUploading ? "Uploading…" : coverUrl ? "Replace cover" : "Upload cover"}
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) handleCoverUpload(f);
-                e.target.value = "";
-              }}
-            />
-          </label>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <label className="inline-flex cursor-pointer items-center justify-center rounded-full border border-dashed border-[var(--brand-purple)]/30 px-4 py-2 text-sm font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)]">
+              {coverUploading ? "Uploading…" : coverUrl ? "Replace cover" : "Upload cover"}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleCoverUpload(f);
+                  e.target.value = "";
+                }}
+              />
+            </label>
+            <button
+              type="button"
+              onClick={handleGenerateCover}
+              disabled={coverGenerating || coverUploading || !title.trim()}
+              className="inline-flex items-center justify-center rounded-full border border-[var(--brand-purple)]/30 bg-white px-4 py-2 text-sm font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)] disabled:cursor-not-allowed disabled:opacity-50"
+              title={!title.trim() ? "Add a title first" : "Generate a cover from the title using Gemini"}
+            >
+              {coverGenerating ? "Generating…" : "Generate with Gemini"}
+            </button>
+          </div>
+          {coverError && (
+            <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-red-100">
+              {coverError}
+            </p>
+          )}
         </Card>
 
         <Card>

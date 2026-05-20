@@ -120,7 +120,7 @@ export async function generateCoverImageAction(formData: FormData): Promise<{
     `Design a simple, modern blog cover image with the title "${title}" written in a clean, ` +
     `modern sans-serif font, positioned in the middle of the design. ` +
     `${scriptHint} Use a soft, elegant background with subtle shapes or gradients. ` +
-    `No additional text, watermarks, or logos. Wide 16:9 landscape format.`;
+    `No additional text, watermarks, or logos.`;
 
   const model = "gemini-3.1-flash-image-preview";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
@@ -137,7 +137,6 @@ export async function generateCoverImageAction(formData: FormData): Promise<{
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           responseModalities: ["IMAGE"],
-          responseFormat: { image: { aspectRatio: "16:9", imageSize: "2K" } },
         },
       }),
     });

@@ -14,7 +14,7 @@ remove posts here without any developer involvement.
 ---
 title: "Article title shown on the page"
 description: "1–2 sentence meta description (used for SEO + previews)"
-date: "YYYY-MM-DD"           # publish date — controls sort order
+date: "YYYY-MM-DD"           # publish date, controls sort order
 author: "Maha Hommos"
 category: "Fertility"          # one short category label
 tags: ["fertility", "hormones"] # optional
@@ -35,7 +35,7 @@ After the closing `---`, write the article body in Markdown:
 ## SEO edits to live posts
 
 Editing the `title`, `description`, `slug` (file name), or body of an already
-published post is safe — Next.js will regenerate the page automatically. If you
+published post is safe, Next.js will regenerate the page automatically. If you
 rename a file you should add a redirect for the old slug in `next.config.ts` so
 no inbound link breaks.
 

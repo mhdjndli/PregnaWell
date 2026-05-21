@@ -44,7 +44,7 @@ export default async function DashboardPage() {
           <p className="font-semibold">Database not reachable</p>
           <p className="mt-1">{error}</p>
           <p className="mt-2 text-red-700/80">
-            Add a Postgres plugin to your Railway service — it sets <code>DATABASE_URL</code>{" "}
+            Add a Postgres plugin to your Railway service, it sets <code>DATABASE_URL</code>{" "}
             automatically.
           </p>
         </div>
@@ -97,8 +97,8 @@ export default async function DashboardPage() {
                       {p.language}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-[var(--brand-muted)]">{formatDate(p.publishAt, p.language) || "—"}</td>
-                  <td className="px-4 py-4 text-[var(--brand-muted)]">{categoryLabel(p.category, p.language) ?? "—"}</td>
+                  <td className="px-4 py-4 text-[var(--brand-muted)]">{formatDate(p.publishAt, p.language) || "-"}</td>
+                  <td className="px-4 py-4 text-[var(--brand-muted)]">{categoryLabel(p.category, p.language) ?? "-"}</td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <Link
                       href={`/admin/posts/${p.id}/edit`}

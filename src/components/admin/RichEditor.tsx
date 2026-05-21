@@ -146,7 +146,7 @@ export default function RichEditor({ name, initialValue = "", language, uploadAc
 
   return (
     <div className="rounded-2xl ring-1 ring-[var(--brand-purple)]/15 bg-white overflow-hidden">
-      {/* Hidden value — what the form actually submits */}
+      {/* Hidden value, what the form actually submits */}
       <input type="hidden" name={name} value={markdown} />
 
       <Toolbar

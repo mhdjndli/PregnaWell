@@ -241,7 +241,7 @@ export default function PostEditor({ initial }: Props) {
             </p>
           )}
           <div className="mt-4 space-y-4">
-            <Field label="Meta title" hint="Optional — defaults to the post title.">
+            <Field label="Meta title" hint="Optional, defaults to the post title.">
               <input
                 name="meta_title"
                 value={metaTitle}
@@ -250,7 +250,7 @@ export default function PostEditor({ initial }: Props) {
                 className={inputCls}
               />
             </Field>
-            <Field label="Meta description" hint="Optional — defaults to the description above.">
+            <Field label="Meta description" hint="Optional, defaults to the description above.">
               <textarea
                 name="meta_description"
                 value={metaDescription}
@@ -294,7 +294,7 @@ export default function PostEditor({ initial }: Props) {
               hint={
                 status === "scheduled"
                   ? "Visible on the site once this date passes."
-                  : "Optional — leave blank to use right now."
+                  : "Optional, leave blank to use right now."
               }
             >
               <input

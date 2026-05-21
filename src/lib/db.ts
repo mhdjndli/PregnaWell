@@ -128,7 +128,7 @@ type SeedFrontmatter = {
 
 async function seedFromFiles(pool: Pool) {
   // Seed each language independently. We only seed a given language when no
-  // posts exist for it yet — so adding files later for one language doesn't
+  // posts exist for it yet, so adding files later for one language doesn't
   // duplicate the other.
   await seedLanguageFromDir(pool, "en", path.join(process.cwd(), "content", "blog"));
   await seedLanguageFromDir(pool, "ar", path.join(process.cwd(), "content", "blog-ar"));

@@ -8,7 +8,7 @@ tags: ["welcome", "pregnawell"]
 cover: "/assets/maha-1.jpg"
 ---
 
-Welcome — and thank you for being here. PregnaWell is a place for women who want to
+Welcome, and thank you for being here. PregnaWell is a place for women who want to
 understand their bodies, their cycles, their pregnancies, and their postpartum
 journeys with the same depth their doctors do, but in language that actually feels
 human.
@@ -17,7 +17,7 @@ human.
 
 We're going to use this blog to share three kinds of writing:
 
-1. **Explainers.** Short, careful walk-throughs of one concept at a time — from the
+1. **Explainers.** Short, careful walk-throughs of one concept at a time, from the
    HPO axis to gestational diabetes to the first 40 days postpartum.
 2. **Field notes.** What I'm hearing in clinic, in DMs, and in conversations with
    women who keep showing up to do the work.
@@ -33,4 +33,4 @@ We're going to use this blog to share three kinds of writing:
 
 If something resonates, reply on Instagram or LinkedIn. I read everything.
 
-— Maha
+Maha

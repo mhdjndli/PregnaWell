@@ -12,7 +12,7 @@ function getKey(): Buffer {
       "ADMIN_PASSWORD is not set. Set it on Railway (or in .env.local) to enable the admin panel."
     );
   }
-  // Derive HMAC key from the admin password — sessions invalidate when password rotates.
+  // Derive HMAC key from the admin password, sessions invalidate when password rotates.
   return createHmac("sha256", "pregnawell-session-v1").update(password).digest();
 }
 
@@ -52,7 +52,7 @@ export function checkPassword(input: string): boolean {
   const a = Buffer.from(input, "utf8");
   const b = Buffer.from(expected, "utf8");
   if (a.length !== b.length) {
-    // length-mismatch — make the timing similar by comparing against equal-length buffer
+    // length-mismatch, make the timing similar by comparing against equal-length buffer
     timingSafeEqual(b, b);
     return false;
   }

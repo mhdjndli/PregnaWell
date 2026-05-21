@@ -146,10 +146,10 @@ const en: Dict = {
     titleAccent: "motherhood",
     titleTrail: ".",
     subtitle:
-      "From fertility to postpartum, our expert-led programs and resources are here to guide you with science, compassion, and real-world wisdom — every step of the way.",
+      "From fertility to postpartum, our expert-led programs and resources are here to guide you with science, compassion, and real-world wisdom, every step of the way.",
     free: "Free 60-minute masterclass on the HPO axis · No credit card required",
     quote: "“Science-backed care, delivered with warmth.”",
-    quoteAttribution: "— Maha Hommos, Founder",
+    quoteAttribution: "Maha Hommos, Founder",
   },
   stats: {
     videoViews: "Video views",
@@ -161,13 +161,13 @@ const en: Dict = {
     eyebrow: "Why PregnaWell",
     title: "Compassionate, evidence-based care for every mom-to-be.",
     subtitle:
-      "Maha Hommos blends clinical nutrition expertise with a decade of helping women understand their bodies, hormones, and choices — building the tools you actually need.",
+      "Maha Hommos blends clinical nutrition expertise with a decade of helping women understand their bodies, hormones, and choices, building the tools you actually need.",
   },
   programs: {
     eyebrow: "Programs & Services",
     title: "Expert-led programs for every stage of motherhood.",
     subtitle:
-      "From fertility preparation to postpartum recovery — pick the path that meets you where you are.",
+      "From fertility preparation to postpartum recovery, pick the path that meets you where you are.",
     items: {
       nawat: {
         badge: "Nawat",
@@ -202,7 +202,7 @@ const en: Dict = {
         badge: "Self-paced",
         title: "Crash Courses",
         description:
-          "Affordable, focused sessions on labor prep, postpartum care, and nutrition — with lifetime access.",
+          "Affordable, focused sessions on labor prep, postpartum care, and nutrition, with lifetime access.",
         features: [
           "Affordable, focused sessions",
           "Downloadable resources",
@@ -240,7 +240,7 @@ const en: Dict = {
         role: "Mom of 2",
       },
       {
-        quote: "I loved the Green Placenta Program — it helped me recover so much faster!",
+        quote: "I loved the Green Placenta Program, it helped me recover so much faster!",
         name: "Amanda",
         role: "New Mom",
       },
@@ -266,7 +266,7 @@ const en: Dict = {
     items: [
       {
         q: "What is PregnaWell, and how can it help me?",
-        a: "PregnaWell is a virtual health clinic specializing in fertility, pregnancy, and postpartum support. We provide expert-led programs, masterclasses, and resources to empower women throughout their motherhood journey — grounded in current evidence and delivered with warmth.",
+        a: "PregnaWell is a virtual health clinic specializing in fertility, pregnancy, and postpartum support. We provide expert-led programs, masterclasses, and resources to empower women throughout their motherhood journey, grounded in current evidence and delivered with warmth.",
       },
       {
         q: "Are your services available internationally?",
@@ -274,26 +274,26 @@ const en: Dict = {
       },
       {
         q: "Can I access support during the programs?",
-        a: "Absolutely. Each program includes direct access to our team for your questions, regular check-ins, and a private community of women going through the same season — so you're never doing this alone.",
+        a: "Absolutely. Each program includes direct access to our team for your questions, regular check-ins, and a private community of women going through the same season, so you're never doing this alone.",
       },
       {
         q: "Is the masterclass really free?",
-        a: "Yes — the HPO Axis masterclass is free, on-demand, and requires no credit card. It's the best place to start if you want a foundation in fertility before committing to anything else.",
+        a: "Yes, the HPO Axis masterclass is free, on-demand, and requires no credit card. It's the best place to start if you want a foundation in fertility before committing to anything else.",
       },
       {
         q: "What does the Fertility Score tool actually measure?",
-        a: "The Fertility Score is a 5-minute self-assessment that surfaces what your hormones, cycle, and lifestyle are telling you about your fertility — and what's most worth your attention next. It's not a diagnostic tool; it's a clarity tool.",
+        a: "The Fertility Score is a 5-minute self-assessment that surfaces what your hormones, cycle, and lifestyle are telling you about your fertility, and what's most worth your attention next. It's not a diagnostic tool; it's a clarity tool.",
       },
       {
         q: "How is PregnaScan different from the website?",
-        a: "PregnaScan is a separate app built for expecting parents — it turns your medical scans and labs into clear, week-by-week understanding. You can find it at pregnascan.app.",
+        a: "PregnaScan is a separate app built for expecting parents, it turns your medical scans and labs into clear, week-by-week understanding. You can find it at pregnascan.app.",
       },
     ],
   },
   founder: {
     eyebrow: "Meet your guide",
     title: "Hi, I'm Maha Hommos.",
-    body: "Clinical dietitian, mother, and founder of PregnaWell. For over a decade I've helped women decode their bodies — from PCOS and gestational diabetes to postpartum recovery. PregnaWell is the playbook I wish every mom-to-be had.",
+    body: "Clinical dietitian, mother, and founder of PregnaWell. For over a decade I've helped women decode their bodies, from PCOS and gestational diabetes to postpartum recovery. PregnaWell is the playbook I wish every mom-to-be had.",
     masterclass: "Watch the masterclass ↗",
   },
   footer: {
@@ -308,18 +308,18 @@ const en: Dict = {
     eyebrow: "Our Story",
     title: "Built from real motherhood, backed by real science.",
     intro:
-      "PregnaWell began with one belief: every woman deserves to understand her own body before, during, and after pregnancy — without confusion, fear, or guesswork.",
+      "PregnaWell began with one belief: every woman deserves to understand her own body before, during, and after pregnancy, without confusion, fear, or guesswork.",
     body: `## Meet Maha
 
-Maha Hommos is a clinical dietitian, public-health advocate, and founder of PregnaWell. Over the last decade she has guided more than 50,000 women through the physical and emotional landscape of fertility, pregnancy, and postpartum — across the Middle East, Europe, and North America.
+Maha Hommos is a clinical dietitian, public-health advocate, and founder of PregnaWell. Over the last decade she has guided more than 50,000 women through the physical and emotional landscape of fertility, pregnancy, and postpartum, across the Middle East, Europe, and North America.
 
 Her work has been featured by Qatar Foundation, MBC Group, Rotana, Al Sharq, UAE Stories, Qatar TV, USA News, and Al Jazeera, and her social platforms reach millions of women each month with content that translates obstetric and endocrinology research into language anyone can act on.
 
 ## Why PregnaWell exists
 
-*(Founder copy to be finalized.)* Maha started PregnaWell after years of watching the same pattern: women arriving overwhelmed, under-informed, and unsupported — even with the best healthcare around them. PregnaWell is the bridge: between the clinic and the kitchen, between the lab work and the lived experience, between the textbook and the woman holding the test.
+*(Founder copy to be finalized.)* Maha started PregnaWell after years of watching the same pattern: women arriving overwhelmed, under-informed, and unsupported, even with the best healthcare around them. PregnaWell is the bridge: between the clinic and the kitchen, between the lab work and the lived experience, between the textbook and the woman holding the test.
 
-> "I want every woman to feel the way she deserves to feel during the most important season of her life — informed, prepared, and softly supported."
+> "I want every woman to feel the way she deserves to feel during the most important season of her life, informed, prepared, and softly supported."
 
 ## What we believe
 
@@ -358,7 +358,7 @@ PregnaWell now spans a free masterclass, a fertility self-assessment, the Pregna
       eyebrow: "Keep going",
       title: "Watch the free masterclass on the HPO axis",
       body:
-        "60 minutes that change how you think about fertility — built on the same framework we use in clinic.",
+        "60 minutes that change how you think about fertility, built on the same framework we use in clinic.",
     },
   },
   language: { en: "English", ar: "العربية", switchLabel: "Language" },
@@ -388,7 +388,7 @@ const ar: Dict = {
       "من الخصوبة إلى ما بعد الولادة، برامجنا ومواردنا التي يُشرف عليها خبراء ترافقك بالعلم والحنان والحكمة العملية في كل خطوة.",
     free: "درس مجاني مدّته ٦٠ دقيقة عن محور HPO · بدون بطاقة ائتمان",
     quote: "«رعاية مدعومة بالعلم، تُقدَّم بالدفء.»",
-    quoteAttribution: "— مها حُمُّص، المؤسِّسة",
+    quoteAttribution: "مها حُمُّص، المؤسِّسة",
   },
   stats: {
     videoViews: "مشاهدة فيديو",
@@ -400,13 +400,13 @@ const ar: Dict = {
     eyebrow: "لماذا PregnaWell",
     title: "رعاية حانية مبنية على الأدلة لكل أم منتظَرة.",
     subtitle:
-      "تجمع مها حُمُّص بين خبرتها كأخصائية تغذية إكلينيكية وعقد من العمل مع النساء لفهم أجسادهن وهرموناتهن وخياراتهن — وتبني الأدوات التي تحتجنها فعلاً.",
+      "تجمع مها حُمُّص بين خبرتها كأخصائية تغذية إكلينيكية وعقد من العمل مع النساء لفهم أجسادهن وهرموناتهن وخياراتهن, وتبني الأدوات التي تحتجنها فعلاً.",
   },
   programs: {
     eyebrow: "البرامج والخدمات",
     title: "برامج بإشراف الخبراء لكل مرحلة من مراحل الأمومة.",
     subtitle:
-      "من الاستعداد للحمل إلى التعافي بعد الولادة — اختاري المسار الذي يُلائم مرحلتك.",
+      "من الاستعداد للحمل إلى التعافي بعد الولادة, اختاري المسار الذي يُلائم مرحلتك.",
     items: {
       nawat: {
         badge: "نواة",
@@ -441,7 +441,7 @@ const ar: Dict = {
         badge: "تعلُّم ذاتي",
         title: "دورات مكثَّفة",
         description:
-          "جلسات مُركَّزة وميسورة عن الاستعداد للولادة، الرعاية بعد الولادة، والتغذية — مع وصول مدى الحياة.",
+          "جلسات مُركَّزة وميسورة عن الاستعداد للولادة، الرعاية بعد الولادة، والتغذية, مع وصول مدى الحياة.",
         features: [
           "جلسات مُركَّزة وميسورة",
           "موارد قابلة للتنزيل",
@@ -483,7 +483,7 @@ const ar: Dict = {
         role: "أم لطفلين",
       },
       {
-        quote: "أحببتُ برنامج المشيمة الخضراء — ساعدني على التعافي بسرعة أكبر بكثير!",
+        quote: "أحببتُ برنامج المشيمة الخضراء, ساعدني على التعافي بسرعة أكبر بكثير!",
         name: "أماندا",
         role: "أم جديدة",
       },
@@ -510,7 +510,7 @@ const ar: Dict = {
     items: [
       {
         q: "ما هي PregnaWell، وكيف يمكن أن تساعدني؟",
-        a: "PregnaWell عيادة صحية افتراضية متخصّصة في الخصوبة والحمل ودعم ما بعد الولادة. نُقدّم برامج بإشراف الخبراء، ودروساً، وموارد لتمكين النساء طوال رحلة الأمومة — مبنية على الأدلة الحديثة ومُقدَّمة بالدفء.",
+        a: "PregnaWell عيادة صحية افتراضية متخصّصة في الخصوبة والحمل ودعم ما بعد الولادة. نُقدّم برامج بإشراف الخبراء، ودروساً، وموارد لتمكين النساء طوال رحلة الأمومة, مبنية على الأدلة الحديثة ومُقدَّمة بالدفء.",
       },
       {
         q: "هل خدماتكم متاحة دولياً؟",
@@ -518,19 +518,19 @@ const ar: Dict = {
       },
       {
         q: "هل يمكنني الحصول على دعم خلال البرامج؟",
-        a: "بالتأكيد. كل برنامج يتضمّن وصولاً مباشراً إلى فريقنا للأسئلة، ومتابعات منتظمة، ومجتمع خاص من النساء اللواتي يمررن بنفس المرحلة — لن تكوني وحدك أبداً.",
+        a: "بالتأكيد. كل برنامج يتضمّن وصولاً مباشراً إلى فريقنا للأسئلة، ومتابعات منتظمة، ومجتمع خاص من النساء اللواتي يمررن بنفس المرحلة, لن تكوني وحدك أبداً.",
       },
       {
         q: "هل الدرس المتقدّم مجاني فعلاً؟",
-        a: "نعم — درس محور HPO مجاني، عند الطلب، ولا يحتاج إلى بطاقة ائتمان. هو أفضل نقطة بداية إذا أردت أساساً متيناً في الخصوبة قبل الالتزام بأي شيء آخر.",
+        a: "نعم, درس محور HPO مجاني، عند الطلب، ولا يحتاج إلى بطاقة ائتمان. هو أفضل نقطة بداية إذا أردت أساساً متيناً في الخصوبة قبل الالتزام بأي شيء آخر.",
       },
       {
         q: "ماذا تقيس أداة مؤشر الخصوبة فعلاً؟",
-        a: "مؤشر الخصوبة تقييم ذاتي مدّته ٥ دقائق يكشف ما تقوله هرموناتك ودورتك ونمط حياتك عن خصوبتك — وما الأَوْلى بالاهتمام تالياً. ليست أداة تشخيصية، بل أداة وضوح.",
+        a: "مؤشر الخصوبة تقييم ذاتي مدّته ٥ دقائق يكشف ما تقوله هرموناتك ودورتك ونمط حياتك عن خصوبتك, وما الأَوْلى بالاهتمام تالياً. ليست أداة تشخيصية، بل أداة وضوح.",
       },
       {
         q: "كيف يختلف PregnaScan عن الموقع؟",
-        a: "PregnaScan تطبيق منفصل مخصّص للأبوين المنتظَرَين — يُحوّل الفحوصات والتحاليل إلى فهم واضح أسبوعاً بأسبوع. تجدينه على pregnascan.app.",
+        a: "PregnaScan تطبيق منفصل مخصّص للأبوين المنتظَرَين, يُحوّل الفحوصات والتحاليل إلى فهم واضح أسبوعاً بأسبوع. تجدينه على pregnascan.app.",
       },
     ],
   },
@@ -538,7 +538,7 @@ const ar: Dict = {
     eyebrow: "تعرّفي على دليلتك",
     title: "أهلاً، أنا مها حُمُّص.",
     body:
-      "أخصائية تغذية إكلينيكية، وأم، ومؤسِّسة PregnaWell. منذ أكثر من عقد وأنا أساعد النساء على فهم أجسادهن — من تكيُّس المبايض وسكري الحمل إلى التعافي بعد الولادة. PregnaWell هي الدليل الذي تمنّيت لو كان بين يدي كل أم منتظَرة.",
+      "أخصائية تغذية إكلينيكية، وأم، ومؤسِّسة PregnaWell. منذ أكثر من عقد وأنا أساعد النساء على فهم أجسادهن, من تكيُّس المبايض وسكري الحمل إلى التعافي بعد الولادة. PregnaWell هي الدليل الذي تمنّيت لو كان بين يدي كل أم منتظَرة.",
     masterclass: "شاهدي الدرس ↗",
   },
   footer: {
@@ -553,18 +553,18 @@ const ar: Dict = {
     eyebrow: "قصتنا",
     title: "بُنيت من واقع الأمومة، ومدعومة بالعلم الحقيقي.",
     intro:
-      "بدأت PregnaWell بقناعة واحدة: كل امرأة تستحق أن تفهم جسدها قبل الحمل وأثناءه وبعده — بلا تشوش أو خوف أو تخمين.",
+      "بدأت PregnaWell بقناعة واحدة: كل امرأة تستحق أن تفهم جسدها قبل الحمل وأثناءه وبعده, بلا تشوش أو خوف أو تخمين.",
     body: `## تعرّفي على مها
 
-مها حُمُّص أخصائية تغذية إكلينيكية، وناشطة في الصحة العامة، ومؤسِّسة PregnaWell. على مدى العقد الماضي، رافقت أكثر من ٥٠٬٠٠٠ امرأة عبر المشهد الجسدي والعاطفي للخصوبة والحمل وما بعد الولادة — في الشرق الأوسط وأوروبا وأمريكا الشمالية.
+مها حُمُّص أخصائية تغذية إكلينيكية، وناشطة في الصحة العامة، ومؤسِّسة PregnaWell. على مدى العقد الماضي، رافقت أكثر من ٥٠٬٠٠٠ امرأة عبر المشهد الجسدي والعاطفي للخصوبة والحمل وما بعد الولادة, في الشرق الأوسط وأوروبا وأمريكا الشمالية.
 
 ظهر عملها على Qatar Foundation و MBC Group وروتانا والشرق و UAE Stories وقناة قطر و USA News والجزيرة، وتصل منصاتها الاجتماعية إلى ملايين النساء شهرياً بمحتوى يُترجم أبحاث التوليد والغدد الصمّ إلى لغة قابلة للتطبيق.
 
 ## لماذا وُجدت PregnaWell
 
-*(نص المؤسِّسة قيد الإعداد.)* بدأت مها PregnaWell بعد سنوات من رؤية النمط ذاته يتكرر: نساء يصلن مرهقات، ناقصات المعلومات، وغير مدعومات — حتى مع أفضل أنظمة الرعاية حولهن. PregnaWell هي الجسر: بين العيادة والمطبخ، بين التحاليل والتجربة المعاشة، بين الكتاب والمرأة التي تحمل الفحص.
+*(نص المؤسِّسة قيد الإعداد.)* بدأت مها PregnaWell بعد سنوات من رؤية النمط ذاته يتكرر: نساء يصلن مرهقات، ناقصات المعلومات، وغير مدعومات, حتى مع أفضل أنظمة الرعاية حولهن. PregnaWell هي الجسر: بين العيادة والمطبخ، بين التحاليل والتجربة المعاشة، بين الكتاب والمرأة التي تحمل الفحص.
 
-> «أريد كل امرأة أن تشعر كما تستحق أن تشعر في أهم مرحلة من حياتها — مُطّلعة، مُستعدّة، ومُحاطة بالدفء.»
+> «أريد كل امرأة أن تشعر كما تستحق أن تشعر في أهم مرحلة من حياتها, مُطّلعة، مُستعدّة، ومُحاطة بالدفء.»
 
 ## ما الذي نؤمن به
 
@@ -604,7 +604,7 @@ const ar: Dict = {
       eyebrow: "تابعي",
       title: "شاهدي الدرس المجاني عن محور HPO",
       body:
-        "٦٠ دقيقة تُغيّر طريقة تفكيرك في الخصوبة — مبنية على نفس الإطار الذي نستخدمه في العيادة.",
+        "٦٠ دقيقة تُغيّر طريقة تفكيرك في الخصوبة, مبنية على نفس الإطار الذي نستخدمه في العيادة.",
     },
   },
   language: { en: "English", ar: "العربية", switchLabel: "اللغة" },

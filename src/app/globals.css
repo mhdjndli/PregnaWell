@@ -148,7 +148,7 @@ html[lang="ar"] {
 .prose-pregna img { border-radius: 1rem; margin: 1.5rem 0; }
 
 /* ============================================================
-   Admin: TipTap rich text editor — render content the same way
+   Admin: TipTap rich text editor, render content the same way
    the published page does, so "what you see is what gets shipped".
    ============================================================ */
 .tiptap {

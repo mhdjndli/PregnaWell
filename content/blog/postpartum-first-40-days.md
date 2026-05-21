@@ -1,6 +1,6 @@
 ---
 title: "The first 40 days postpartum: a gentle protocol"
-description: "Across cultures, postpartum traditions converge on the same 40-day window. Here's what the research — and the wisdom — says you actually need."
+description: "Across cultures, postpartum traditions converge on the same 40-day window. Here's what the research and the wisdom say you actually need."
 date: "2026-04-08"
 author: "Maha Hommos"
 category: "Postpartum"
@@ -36,7 +36,7 @@ and then asks you to feel guilty about it. Don't. The data on long-term maternal
 health are clear: the women who recover slowly recover better.
 
 If you'd like a structured plan, our **Green Placenta Program** is designed for
-exactly this window — eight weeks of warm meals, gentle movement, and mental
+exactly this window: eight weeks of warm meals, gentle movement, and mental
 health check-ins.
 
-— Maha
+Maha

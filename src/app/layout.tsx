@@ -26,11 +26,11 @@ const cairo = Cairo({
 
 export const metadata: Metadata = {
   title: {
-    default: "PregnaWell — Empowering Women on the Journey to Motherhood",
+    default: "PregnaWell: Empowering Women on the Journey to Motherhood",
     template: "%s | PregnaWell",
   },
   description:
-    "Compassionate, evidence-based programs and resources for fertility, pregnancy, and postpartum — guided by Maha Hommos and the PregnaWell team.",
+    "Compassionate, evidence-based programs and resources for fertility, pregnancy, and postpartum, guided by Maha Hommos and the PregnaWell team.",
   metadataBase: new URL("https://pregnawell.com"),
   openGraph: {
     title: "PregnaWell",

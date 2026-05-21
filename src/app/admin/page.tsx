@@ -30,7 +30,7 @@ export default async function AdminLoginPage() {
         </div>
 
         <p className="mt-6 text-center text-xs text-[var(--brand-muted)]">
-          PregnaWell Inc. — restricted area
+          PregnaWell Inc., restricted area
         </p>
       </div>
     </div>

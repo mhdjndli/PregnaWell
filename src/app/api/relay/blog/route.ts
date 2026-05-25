@@ -12,24 +12,23 @@ export const runtime = "nodejs";
 //
 // Authentication: Authorization: Bearer <RELAY_BEARER_TOKEN>
 //
-// JSON body (only `title` and `body_md` are required; everything else has a
-// sensible default):
+// JSON body. Posts created via this endpoint are saved as DRAFTS by default
+// so they can be reviewed in /admin before going live. Only `title` and
+// `content` (markdown) are required.
 //
-// {
-//   "title":            string,          // required
-//   "body_md":          string,          // required (markdown). Aliases: `body`, `content`, `body_markdown`.
-//   "description":      string,          // optional; auto-derived from body if missing.
-//   "slug":             string,          // optional; auto-slugified from title if missing.
-//   "language":         "en" | "ar",     // optional; auto-detected from title (Arabic chars → ar) else "en".
-//   "category":         "before"|"during"|"after",  // optional.
-//   "tags":             string[] | string,  // optional. Array OR comma-separated string.
-//   "author":           string,          // optional; defaults to "Maha Hommos".
-//   "cover_url":        string,          // optional. External URL for the cover image.
-//   "meta_title":       string,          // optional.
-//   "meta_description": string,          // optional.
-//   "publish":          boolean,         // optional; defaults to true (publish immediately).
-//   "publish_at":       ISO 8601 string  // optional; defaults to now if publish=true.
-// }
+// Field name from the Relay agent → what we do with it:
+//
+//   title          string    required.
+//   content        string    required (markdown). Aliases: body, body_md, body_markdown.
+//   external links string|array  optional. URLs to append as a "Sources" section
+//                            at the end of the body. Aliases: external_links, externalLinks.
+//   language       "en"|"ar"  optional. Auto-detected from the title/body
+//                            (Arabic characters → "ar") else "en".
+//
+// Other optional fields the route still accepts (all default to null/blank):
+//   description, slug, category ("before"|"during"|"after"),
+//   tags (array or comma-separated string), author (defaults to "Maha Hommos"),
+//   cover_url, meta_title, meta_description, publish (boolean), publish_at (ISO 8601).
 // ===========================================================================
 
 type RelayResult =
@@ -95,6 +94,25 @@ function deriveDescription(body: string, max = 200): string {
   const cut = plain.slice(0, max);
   const lastSpace = cut.lastIndexOf(" ");
   return (lastSpace > 40 ? cut.slice(0, lastSpace) : cut).trim() + "…";
+}
+
+function normalizeExternalLinks(input: unknown): string[] {
+  const items = Array.isArray(input)
+    ? input
+    : typeof input === "string"
+      ? input.split(/[\s,;\n]+/)
+      : [];
+  return items
+    .map((v) => (typeof v === "string" ? v.trim() : ""))
+    .filter((v) => /^https?:\/\//i.test(v))
+    .slice(0, 25);
+}
+
+function appendSourcesSection(body: string, links: string[], language: Locale): string {
+  if (links.length === 0) return body;
+  const heading = language === "ar" ? "المصادر" : "Sources";
+  const bullets = links.map((url) => `- [${url}](${url})`).join("\n");
+  return `${body.trimEnd()}\n\n## ${heading}\n\n${bullets}\n`;
 }
 
 function normalizeTags(input: unknown): string[] {
@@ -173,6 +191,14 @@ export async function POST(request: Request) {
     ? (rawLanguage as Locale)
     : detectLanguage(title, body_md);
 
+  // Append a "Sources" / "المصادر" section to the body if the Relay agent
+  // sent any external links (field name has a space in the Relay UI, so we
+  // also accept snake_case / camelCase aliases).
+  const externalLinks = normalizeExternalLinks(
+    payload["external links"] ?? payload.external_links ?? payload.externalLinks
+  );
+  const finalBody = appendSourcesSection(body_md, externalLinks, language);
+
   const rawSlug = pickString(payload.slug).trim();
   const slug = slugify(rawSlug || title);
   if (!slug) {
@@ -189,6 +215,27 @@ export async function POST(request: Request) {
   const description =
     pickString(payload.description).trim() || deriveDescription(body_md);
 
+  // ---- publish / draft logic ---------------------------------------------
+  // Posts created via Relay default to DRAFT so Maha can review them in
+  // /admin before publishing. They only go live if the agent explicitly
+  // sends publish=true, or schedules a future publish_at.
+  const publishExplicit =
+    typeof payload.publish === "boolean" ? payload.publish : undefined;
+  const publishAtParsed = parseDate(payload.publish_at);
+  const futureScheduled = !!publishAtParsed && publishAtParsed.getTime() > Date.now();
+  let effectivePublished: boolean;
+  let publish_at: Date | null;
+  if (futureScheduled) {
+    effectivePublished = true;
+    publish_at = publishAtParsed;
+  } else if (publishExplicit === true) {
+    effectivePublished = true;
+    publish_at = publishAtParsed ?? new Date();
+  } else {
+    effectivePublished = false;
+    publish_at = null;
+  }
+
   const rawCategory = typeof payload.category === "string" ? payload.category.trim() : "";
   const category: CategoryId | null = isCategoryId(rawCategory)
     ? (rawCategory as CategoryId)
@@ -199,21 +246,6 @@ export async function POST(request: Request) {
   const cover_url = pickString(payload.cover_url).trim() || null;
   const meta_title = pickString(payload.meta_title).trim() || null;
   const meta_description = pickString(payload.meta_description).trim() || null;
-
-  const publishExplicit =
-    typeof payload.publish === "boolean" ? payload.publish : undefined;
-  const publishAtParsed = parseDate(payload.publish_at);
-  const published = publishExplicit ?? true;
-  let publish_at: Date | null = null;
-  if (published) {
-    publish_at = publishAtParsed ?? new Date();
-  } else if (publishAtParsed) {
-    // Scheduled case: publish=false BUT publish_at is in the future. Treat as scheduled (published=true with future date).
-    if (publishAtParsed.getTime() > Date.now()) {
-      publish_at = publishAtParsed;
-    }
-  }
-  const effectivePublished = published || (publish_at !== null && publish_at.getTime() > Date.now());
 
   // ---- insert -------------------------------------------------------------
   await ensureInitialized();
@@ -233,7 +265,7 @@ export async function POST(request: Request) {
         slug,
         title,
         description,
-        body_md,
+        finalBody,
         cover_url,
         category,
         tags,
@@ -317,12 +349,14 @@ export async function GET(request: Request) {
   return NextResponse.json({
     ok: true,
     endpoint: "POST /api/relay/blog",
+    note: "Posts created via Relay default to DRAFT and need to be published from /admin.",
     accepts: {
-      required: ["title", "body_md"],
+      required: ["title", "content"],
       optional: [
+        "external links",
+        "language",
         "description",
         "slug",
-        "language",
         "category",
         "tags",
         "author",
@@ -332,6 +366,10 @@ export async function GET(request: Request) {
         "publish",
         "publish_at",
       ],
+      aliases: {
+        content: ["body", "body_md", "body_markdown"],
+        "external links": ["external_links", "externalLinks"],
+      },
     },
   });
 }

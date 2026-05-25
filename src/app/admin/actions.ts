@@ -117,10 +117,20 @@ export async function generateCoverImageAction(formData: FormData): Promise<{
       : "Render the title in Latin script exactly as given.";
 
   const prompt =
-    `Design a simple, modern blog cover image with the title "${title}" written in a clean, ` +
-    `modern sans-serif font, positioned in the middle of the design. ` +
-    `${scriptHint} Use a soft, elegant background with subtle shapes or gradients. ` +
-    `No additional text, watermarks, or logos.`;
+    `Design a simple, modern blog cover image for the PregnaWell women's health brand.\n\n` +
+    `TITLE TEXT (must appear, centered, exact wording, no typos): "${title}"\n` +
+    `${scriptHint}\n` +
+    `Typography: clean modern sans-serif, large, balanced, centered both horizontally and vertically.\n` +
+    `Title color: deep purple ink #2c1f52.\n\n` +
+    `STRICT COLOR PALETTE. Use ONLY these colors, nothing else:\n` +
+    `- Background: soft light pink blush #f7ecec as the dominant base color, ` +
+    `optionally blended with warm cream #fdfaf6 in a very subtle gradient.\n` +
+    `- Accents (use sparingly): dusty rose #d4a8b4, muted rose #a7677b, deep purple #2c1f52.\n\n` +
+    `Style: minimal, elegant, feminine, calm, editorial. Optional very subtle organic shapes, ` +
+    `soft blobs, or thin line accents in the accent colors, kept low-contrast and unobtrusive. ` +
+    `No teal, no orange, no yellow, no green, no blue. No bright or saturated colors. ` +
+    `No photos, no people, no illustrations of bodies, no medical icons. ` +
+    `No extra text, no watermarks, no logos, no captions, no UI elements. Only the title text.`;
 
   const model = "gemini-3.1-flash-image-preview";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;

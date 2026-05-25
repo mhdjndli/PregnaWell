@@ -84,7 +84,7 @@ export default async function StoryPage({
             <h3 className="mt-2 font-display text-2xl">{dict.story.ctas.startHere.title}</h3>
             <p className="mt-2 text-white/80 text-sm">{dict.story.ctas.startHere.body}</p>
             <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
-              {dict.cta.watchNow} →
+              {dict.cta.watchNow} <span aria-hidden className="arrow-end">→</span>
             </span>
           </Link>
           <Link
@@ -99,7 +99,7 @@ export default async function StoryPage({
             <h3 className="mt-2 font-display text-2xl">{dict.story.ctas.orAssess.title}</h3>
             <p className="mt-2 text-[var(--brand-purple)]/80 text-sm">{dict.story.ctas.orAssess.body}</p>
             <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
-              {dict.cta.fertilityScore} →
+              {dict.cta.fertilityScore} <span aria-hidden className="arrow-end">→</span>
             </span>
           </Link>
         </div>

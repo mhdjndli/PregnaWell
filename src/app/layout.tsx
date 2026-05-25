@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Inter, Fraunces, Cairo } from "next/font/google";
+import { Inter, Fraunces, Tajawal } from "next/font/google";
 import "./globals.css";
 import { dirOf, localeFromPathname } from "@/lib/i18n";
 
@@ -17,11 +17,14 @@ const fraunces = Fraunces({
   weight: ["400", "500", "600", "700"],
 });
 
-const cairo = Cairo({
-  variable: "--font-cairo",
+// Tajawal is a modern, geometric-humanist Arabic family with a wide weight
+// range. It pairs well with the Latin Fraunces/Inter stack and reads much
+// more contemporary than Cairo.
+const tajawal = Tajawal({
+  variable: "--font-arabic",
   subsets: ["arabic", "latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -55,7 +58,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={dir}
-      className={`${inter.variable} ${fraunces.variable} ${cairo.variable} h-full antialiased`}
+      className={`${inter.variable} ${fraunces.variable} ${tajawal.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--brand-cream)] text-[var(--brand-ink)]">
         {children}

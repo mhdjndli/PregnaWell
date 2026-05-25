@@ -60,7 +60,7 @@ export default async function BlogPostPage(
             href={`/${locale}/blog`}
             className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-purple)] hover:text-[var(--brand-rose)]"
           >
-            <span aria-hidden>←</span> {dict.blog.backAll}
+            <span aria-hidden className="arrow-end">←</span> {dict.blog.backAll}
           </Link>
           <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-[var(--brand-muted)]">
             {post.category && categoryLabel(post.category, locale) && (
@@ -127,7 +127,7 @@ export default async function BlogPostPage(
             rel="noopener noreferrer"
             className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[var(--brand-purple-deep)] hover:bg-[var(--brand-blush)] transition"
           >
-            {dict.cta.watchNow} ↗
+            {dict.cta.watchNow} <span aria-hidden className="arrow-up-end">↗</span>
           </Link>
         </div>
       </div>

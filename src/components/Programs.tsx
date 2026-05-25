@@ -118,7 +118,7 @@ function ProgramCard(p: CardProps) {
           className={`inline-flex items-center gap-2 text-sm font-semibold ${ctaColor}`}
         >
           {p.cta}{" "}
-          <span aria-hidden className="transition group-hover:translate-x-1">
+          <span aria-hidden className="arrow-end transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
             →
           </span>
         </Link>

@@ -80,7 +80,7 @@ export default function Header({ locale }: Props) {
               >
                 {item.label}
                 {item.external && (
-                  <span aria-hidden className="ms-1 text-xs opacity-70">↗</span>
+                  <span aria-hidden className="arrow-up-end ms-1 text-xs opacity-70">↗</span>
                 )}
                 {isActive && (
                   <span className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-[var(--brand-rose)]" />
@@ -146,7 +146,7 @@ export default function Header({ locale }: Props) {
                 className="px-2 py-3 text-base font-medium text-[var(--brand-ink)] hover:text-[var(--brand-purple)]"
               >
                 {item.label}
-                {item.external && <span className="ms-1 text-xs opacity-70">↗</span>}
+                {item.external && <span aria-hidden className="arrow-up-end ms-1 text-xs opacity-70">↗</span>}
               </Link>
             ))}
             <Link

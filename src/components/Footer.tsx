@@ -68,7 +68,7 @@ export default function Footer({ locale }: { locale: Locale }) {
                 rel="noopener noreferrer"
                 className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]"
               >
-                {dict.nav.pregnaScanApp} ↗
+                {dict.nav.pregnaScanApp} <span aria-hidden className="arrow-up-end">↗</span>
               </a>
             </li>
             <li>
@@ -78,7 +78,7 @@ export default function Footer({ locale }: { locale: Locale }) {
                 rel="noopener noreferrer"
                 className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]"
               >
-                {dict.cta.masterclass} ↗
+                {dict.cta.masterclass} <span aria-hidden className="arrow-up-end">↗</span>
               </a>
             </li>
           </ul>
@@ -97,7 +97,7 @@ export default function Footer({ locale }: { locale: Locale }) {
                   rel="noopener noreferrer"
                   className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]"
                 >
-                  {socialLabels[s.key][locale]} ↗
+                  {socialLabels[s.key][locale]} <span aria-hidden className="arrow-up-end">↗</span>
                 </a>
               </li>
             ))}

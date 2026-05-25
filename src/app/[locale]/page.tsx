@@ -50,7 +50,7 @@ export default async function HomePage({
                 className="btn-primary"
               >
                 {dict.cta.masterclass}
-                <span aria-hidden>→</span>
+                <span aria-hidden className="arrow-end">→</span>
               </Link>
               <Link
                 href={site.ctas.fertilityScore}

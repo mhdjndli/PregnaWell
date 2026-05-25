@@ -16,10 +16,14 @@ export function proxy(request: NextRequest) {
 
   // Pass the resolved pathname to the root layout so it can set <html lang/dir>
   // before the body renders. (No reliable way to read the request URL from a
-  // server component otherwise.)
-  const res = NextResponse.next();
-  res.headers.set("x-pathname", pathname);
-  return res;
+  // server component otherwise.) The header must be forwarded on the REQUEST
+  // (not the response) so that `headers()` inside server components can read
+  // it.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {

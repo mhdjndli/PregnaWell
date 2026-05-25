@@ -55,9 +55,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================
-   Arabic locale: use Cairo for everything (body + headings +
+   Arabic locale: use Tajawal for everything (body + headings +
    .font-display) so the whole site renders in one Arabic-aware
    typeface, not Latin-only Inter/Fraunces with system fallback.
+   Tajawal is a modern, geometric-humanist Arabic family that
+   reads far more contemporary than Cairo.
    ============================================================ */
 html[lang="ar"],
 html[lang="ar"] body,
@@ -71,13 +73,22 @@ html[lang="ar"] .font-display,
 html[lang="ar"] .prose-pregna h1,
 html[lang="ar"] .prose-pregna h2,
 html[lang="ar"] .prose-pregna h3 {
-  font-family: var(--font-cairo), "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
+  font-family: var(--font-arabic), "SF Arabic", "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif;
   letter-spacing: 0;
+  font-feature-settings: "kern", "liga", "calt";
 }
 
 html[lang="ar"] {
   /* Slightly larger line-height for Arabic readability. */
-  line-height: 1.65;
+  line-height: 1.7;
+}
+
+/* Tighten the display weight a touch in Arabic since Tajawal's heavy
+   weights feel chunkier than Fraunces at the same size. */
+html[lang="ar"] h1,
+html[lang="ar"] .font-display {
+  font-weight: 700;
+  letter-spacing: -0.005em;
 }
 
 .btn-primary {
@@ -183,6 +194,21 @@ html[lang="ar"] {
   margin: 1.25rem 0;
 }
 .tiptap a { color: var(--brand-rose); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ============================================================
+   Directional arrows. Glyphs like → / ← don't auto-mirror with
+   dir="rtl", so wrap them in <span class="arrow-end"> (forward,
+   inline) or <span class="arrow-up-end"> (outward, e.g. ↗) and
+   we flip them horizontally under RTL.
+   ============================================================ */
+.arrow-end,
+.arrow-up-end {
+  display: inline-block;
+}
+[dir="rtl"] .arrow-end,
+[dir="rtl"] .arrow-up-end {
+  transform: scaleX(-1);
+}
 
 /* ============================================================
    Marquee (LTR scrolls leftward; RTL scrolls rightward)

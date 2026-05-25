@@ -99,7 +99,7 @@ export default async function BlogIndex({
                     </p>
                     <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-purple)] group-hover:text-[var(--brand-rose)]">
                       {dict.cta.readArticle}{" "}
-                      <span aria-hidden className="transition group-hover:translate-x-1">→</span>
+                      <span aria-hidden className="arrow-end transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1">→</span>
                     </span>
                   </div>
                 </Link>

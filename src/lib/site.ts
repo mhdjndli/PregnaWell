@@ -4,7 +4,7 @@ export const site = {
   email: "hello@pregnawell.com",
   ctas: {
     masterclass: "https://pregnawell.clinic/vsl-fertility-evaluation-call-pregnawell",
-    fertilityScore: "https://pregnawell.com/fertility-score",
+    fertilityScore: "https://pregnawell.clinic/smart-fertility-score-app-104457",
     pregnaScan: "https://pregnascan.app",
     whatsapp: "https://wa.me/971502804502",
   },

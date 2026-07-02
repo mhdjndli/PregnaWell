@@ -6,7 +6,7 @@ export const site = {
     masterclass: "https://pregnawell.clinic/vsl-fertility-evaluation-call-pregnawell",
     fertilityScore: "https://pregnawell.com/fertility-score",
     pregnaScan: "https://pregnascan.app",
-    whatsapp: "https://wa.me/18197447819",
+    whatsapp: "https://wa.me/971502804502",
   },
   social: {
     instagram: "https://www.instagram.com/maha.hommos/",

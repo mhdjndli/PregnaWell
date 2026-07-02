@@ -63,16 +63,6 @@ export default function Footer({ locale }: { locale: Locale }) {
             </li>
             <li>
               <a
-                href={site.ctas.pregnaScan}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]"
-              >
-                {dict.nav.pregnaScanApp} <span aria-hidden className="arrow-up-end">↗</span>
-              </a>
-            </li>
-            <li>
-              <a
                 href={site.ctas.masterclass}
                 target="_blank"
                 rel="noopener noreferrer"

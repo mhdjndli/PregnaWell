@@ -30,12 +30,6 @@ export default function Header({ locale }: Props) {
     { href: `/${locale}`, label: dict.nav.home, key: "home" },
     { href: `/${locale}/story`, label: dict.nav.story, key: "story" },
     { href: `/${locale}/blog`, label: dict.nav.blog, key: "blog" },
-    {
-      href: site.ctas.pregnaScan,
-      label: dict.nav.pregnaScanApp,
-      external: true,
-      key: "scan",
-    },
   ];
 
   const other = otherLocale(locale);

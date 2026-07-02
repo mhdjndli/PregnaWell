@@ -26,7 +26,7 @@ export default function Header({ locale }: Props) {
     setOpen(false);
   }, [pathname]);
 
-  const nav = [
+  const nav: Array<{ href: string; label: string; key: string; external?: boolean }> = [
     { href: `/${locale}`, label: dict.nav.home, key: "home" },
     { href: `/${locale}/story`, label: dict.nav.story, key: "story" },
     { href: `/${locale}/blog`, label: dict.nav.blog, key: "blog" },

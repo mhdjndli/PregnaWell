@@ -95,6 +95,20 @@ export default function Footer({ locale }: { locale: Locale }) {
         </div>
       </div>
 
+      <div className="border-t border-[var(--brand-purple)]/10" dir="ltr">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-6 text-xs leading-relaxed text-[var(--brand-muted)]">
+          <p className="whitespace-pre-line">
+            {`PregnaWell is a brand of PregnaWell Health Advisory - FZCO
+Registered in Dubai Silicon Oasis, United Arab Emirates
+Trade License No. 77576 | Registration No. 75827
+Licensed by Dubai Integrated Economic Zones Authority (DIEZ)
+IFZA Properties, DSO-IFZA, Dubai Silicon Oasis, Dubai, UAE
+Contact: +971 50 312 4863`}
+          </p>
+          <p className="mt-3">© 2026 PregnaWell Health Advisory - FZCO. All rights reserved.</p>
+        </div>
+      </div>
+
       <div className="border-t border-[var(--brand-purple)]/10">
         <div className="mx-auto max-w-7xl px-6 lg:px-10 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-[var(--brand-muted)]">
           <p>© {new Date().getFullYear()} PregnaWell Inc. {dict.footer.rights}</p>

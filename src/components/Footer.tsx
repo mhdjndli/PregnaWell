@@ -111,7 +111,7 @@ Contact: +971 50 312 4863`}
 
       <div className="border-t border-[var(--brand-purple)]/10">
         <div className="mx-auto max-w-7xl px-6 lg:px-10 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-[var(--brand-muted)]">
-          <p>© {new Date().getFullYear()} PregnaWell Inc. {dict.footer.rights}</p>
+          <p>© {new Date().getFullYear()} Nutripedia Inc. (PregnaWell Inc.) {dict.footer.rights}</p>
           <p>{dict.footer.closing}</p>
         </div>
       </div>

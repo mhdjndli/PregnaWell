@@ -117,20 +117,31 @@ export async function generateCoverImageAction(formData: FormData): Promise<{
       : "Render the title in Latin script exactly as given.";
 
   const prompt =
-    `Design a simple, modern blog cover image for the PregnaWell women's health brand.\n\n` +
-    `TITLE TEXT (must appear, centered, exact wording, no typos): "${title}"\n` +
-    `${scriptHint}\n` +
-    `Typography: clean modern sans-serif, large, balanced, centered both horizontally and vertically.\n` +
-    `Title color: deep purple ink #2c1f52.\n\n` +
-    `STRICT COLOR PALETTE. Use ONLY these colors, nothing else:\n` +
-    `- Background: soft light pink blush #f7ecec as the dominant base color, ` +
-    `optionally blended with warm cream #fdfaf6 in a very subtle gradient.\n` +
-    `- Accents (use sparingly): dusty rose #d4a8b4, muted rose #a7677b, deep purple #2c1f52.\n\n` +
-    `Style: minimal, elegant, feminine, calm, editorial. Optional very subtle organic shapes, ` +
-    `soft blobs, or thin line accents in the accent colors, kept low-contrast and unobtrusive. ` +
-    `No teal, no orange, no yellow, no green, no blue. No bright or saturated colors. ` +
-    `No photos, no people, no illustrations of bodies, no medical icons. ` +
-    `No extra text, no watermarks, no logos, no captions, no UI elements. Only the title text.`;
+    `Generate a realistic image, 16:9 editorial blog cover illustration.\n\n` +
+    `SUBJECT: A real Arab woman (25-45) wearing (or not wearing) a soft, elegantly draped hijab, ` +
+    `positioned on the right (or left) third of the frame at a three-quarter angle. One hand rests ` +
+    `lightly near her chin in a thoughtful, contemplative pose. Her head is turned to her right (or left) ` +
+    `and her eyes are directed toward the large title text on the left (or right). Expression: calm, ` +
+    `curious, intelligent — warm and approachable, not stern.\n\n` +
+    `TITLE TEXT: The left two-thirds of the frame contains this exact headline (must appear verbatim, ` +
+    `no typos): "${title}". ${scriptHint}\n\n` +
+    `Typeface: TheMixArab, or a very close match — a humanist sans-serif with low stroke contrast, ` +
+    `open apertures, slightly rounded terminals, generous x-height, and a friendly modern feel ` +
+    `(similar in character to Lucas de Groot's TheSans / TheMixArab family). Not geometric, not ` +
+    `grotesque, not a slab or serif.\n\n` +
+    `Set the title in bold weight, deep purple #442F71, left-aligned, in two or three lines, large ` +
+    `and dominant in the composition. Generous margins on all sides. The text must be perfectly ` +
+    `legible and never overlap the woman.\n` +
+    `BACKGROUND: A flat warm cream #EDD8C1 base with a few large, soft abstract organic shapes in ` +
+    `teal green #4B7C73 and dusty rose #A96273, placed behind the subject only. Flat colour, no ` +
+    `gradients, no texture, no photographic elements.\n` +
+    `PALETTE: Use only these four colours — #A96273, #442F71, #4B7C73, #EDD8C1 — plus their soft ` +
+    `shading. No other hues.\n` +
+    `STYLE: Modern flat editorial vector illustration, soft minimal shading, clean confident linework, ` +
+    `generous negative space, professional wellness-brand aesthetic, even diffused lighting.\n` +
+    `DO NOT INCLUDE: logos, watermarks, signatures, page numbers, any extra text other than the ` +
+    `title, clutter.\n` +
+    `Aspect ratio: 16:9.`;
 
   const model = "gemini-3.1-flash-image-preview";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;

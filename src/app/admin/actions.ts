@@ -118,22 +118,16 @@ export async function generateCoverImageAction(formData: FormData): Promise<{
 
   const prompt =
     `Generate a photorealistic 16:9 editorial magazine photograph for a women's wellness blog cover.\n\n` +
-    `SUBJECT: A real Arab woman, 25 to 45, warm natural skin tone, either wearing a soft modern ` +
-    `draped hijab or with hair uncovered. Positioned on the right (or left) third of the frame at a ` +
-    `three-quarter angle. One hand rests lightly near her chin, cheek, or shoulder in a thoughtful, ` +
-    `contemplative pose. Expression: calm, curious, intelligent, warm and approachable — never stern ` +
-    `or somber. Real skin texture, natural features, believable human presence. This must look like ` +
-    `an actual editorial portrait photograph — not a cartoon, not an illustration, not a rendering, ` +
-    `not vector art, not stylised, not anime.\n\n` +
+    `SUBJECT: A real Arab woman, 25 to 45, warm natural skin tone, with hair uncovered. Positioned ` +
+    `on the right (or left) third of the frame at a three-quarter angle. Contemplative pose. ` +
+    `Expression: calm, curious, intelligent, warm and approachable — never stern or somber. Real ` +
+    `skin texture, natural features, believable human presence. This must look like an actual ` +
+    `editorial portrait photograph — not a cartoon, not an illustration, not a rendering, not ` +
+    `vector art, not stylised, not anime.\n\n` +
     `BACKGROUND: A realistic, softly out-of-focus natural setting appropriate to a wellness story — ` +
     `for example a serene home interior, warm morning kitchen, a sunlit plant-filled corner, a quiet ` +
     `park, a light-filled modern wellness studio, or a soft window-lit reading nook. True ` +
     `photographic bokeh and shallow depth of field.\n\n` +
-    `LIGHTING & COLOR GRADE: Soft diffused natural window light, gentle golden or morning tones, ` +
-    `cinematic editorial grading. The overall palette feels warm, calm, and cohesive — creams, ` +
-    `beiges, soft dusty rose, muted greens — leaving the empty side of the frame quiet enough for a ` +
-    `deep-purple title to read cleanly. No harsh direct flash, no heavy contrast, no oversaturated ` +
-    `hues.\n\n` +
     `TITLE TEXT: The opposite two-thirds of the frame (the side the subject is not on) contains this ` +
     `exact headline, verbatim, no typos: "${title}". ${scriptHint}\n` +
     `Set the title in bold weight, deep purple #442F71, aligned to the outer edge, in two or three ` +

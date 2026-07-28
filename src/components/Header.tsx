@@ -85,14 +85,14 @@ export default function Header({ locale }: Props) {
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
-          <Link
+          <a
             href={switchHref}
             aria-label={dict.language.switchLabel}
             className="inline-flex items-center gap-1 rounded-full border border-[var(--brand-purple)]/20 px-3 py-1.5 text-xs font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)]"
           >
             <span aria-hidden>🌐</span>
             {dict.language[other]}
-          </Link>
+          </a>
           <Link
             href={site.ctas.masterclass}
             target="_blank"
@@ -143,12 +143,12 @@ export default function Header({ locale }: Props) {
                 {item.external && <span aria-hidden className="arrow-up-end ms-1 text-xs opacity-70">↗</span>}
               </Link>
             ))}
-            <Link
+            <a
               href={switchHref}
               className="px-2 py-3 text-base font-semibold text-[var(--brand-purple)]"
             >
               🌐 {dict.language[other]}
-            </Link>
+            </a>
             <Link
               href={site.ctas.masterclass}
               target="_blank"

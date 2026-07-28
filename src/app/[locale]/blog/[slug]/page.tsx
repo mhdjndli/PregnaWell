@@ -19,12 +19,21 @@ export async function generateStaticParams() {
   return all;
 }
 
+async function loadPost(rawLocale: string, slug: string) {
+  const locale = isLocale(rawLocale) ? (rawLocale as Locale) : "en";
+  try {
+    return { locale, post: await getPublicPost(slug, locale) };
+  } catch (err) {
+    console.error(`[blog/${rawLocale}/${slug}] getPublicPost threw:`, err);
+    return { locale, post: null };
+  }
+}
+
 export async function generateMetadata(
   { params }: { params: Promise<Params> }
 ): Promise<Metadata> {
   const { locale: rawLocale, slug } = await params;
-  const locale = isLocale(rawLocale) ? (rawLocale as Locale) : "en";
-  const post = await getPublicPost(slug, locale);
+  const { post } = await loadPost(rawLocale, slug);
   if (!post) return { title: "Article not found" };
   return {
     title: post.metaTitle ?? post.title,
@@ -44,8 +53,7 @@ export default async function BlogPostPage(
 ) {
   const { locale: rawLocale, slug } = await params;
   if (!isLocale(rawLocale)) notFound();
-  const locale = rawLocale as Locale;
-  const post = await getPublicPost(slug, locale);
+  const { locale, post } = await loadPost(rawLocale, slug);
   if (!post) notFound();
   const dict = getDict(locale);
 
@@ -91,7 +99,7 @@ export default async function BlogPostPage(
               height={900}
               className="h-[420px] w-full object-cover"
               priority
-              unoptimized={post.cover.startsWith("/api/images/")}
+              unoptimized={!post.cover.startsWith("/")}
             />
           </div>
         </div>

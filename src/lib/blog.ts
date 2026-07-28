@@ -158,7 +158,12 @@ export async function getPostBySlugAdmin(
 }
 
 function rowToPost(row: BlogRow): BlogPost {
-  const html = marked.parse(row.body_md ?? "", { async: false }) as string;
+  let html = "";
+  try {
+    html = marked.parse(row.body_md ?? "", { async: false }) as string;
+  } catch (err) {
+    console.error(`[blog] marked.parse failed for slug=${row.slug} lang=${row.language}:`, err);
+  }
   return {
     ...toSummary(row),
     metaTitle: row.meta_title,

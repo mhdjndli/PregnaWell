@@ -62,6 +62,11 @@ export default function Footer({ locale }: { locale: Locale }) {
               </Link>
             </li>
             <li>
+              <Link href={`/${locale}/testimonials`} className="text-[var(--brand-ink)] hover:text-[var(--brand-rose)]">
+                {dict.nav.testimonials}
+              </Link>
+            </li>
+            <li>
               <a
                 href={site.ctas.masterclass}
                 target="_blank"

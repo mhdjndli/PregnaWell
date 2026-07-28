@@ -45,7 +45,7 @@ export function categoryLabel(id: string | null | undefined, locale: Locale): st
 // =============================================================================
 
 type Dict = {
-  nav: { home: string; story: string; blog: string; pregnaScanApp: string };
+  nav: { home: string; story: string; blog: string; testimonials: string; pregnaScanApp: string };
   cta: {
     masterclass: string;
     masterclassShort: string;
@@ -126,7 +126,7 @@ type Dict = {
 };
 
 const en: Dict = {
-  nav: { home: "Home", story: "Story", blog: "Blog", pregnaScanApp: "PregnaScan App" },
+  nav: { home: "Home", story: "Story", blog: "Articles", testimonials: "Testimonials", pregnaScanApp: "PregnaScan App" },
   cta: {
     masterclass: "Watch a Free Masterclass",
     masterclassShort: "Watch the Free Masterclass",
@@ -344,7 +344,7 @@ PregnaWell now spans a free masterclass, a fertility self-assessment, the Pregna
     },
   },
   blog: {
-    eyebrow: "The PregnaWell Blog",
+    eyebrow: "Articles",
     title: "Articles for women who want to understand their bodies.",
     subtitle: "Plain-language explainers, field notes from clinic, and tools you can use this week.",
     empty: {
@@ -365,11 +365,11 @@ PregnaWell now spans a free masterclass, a fertility self-assessment, the Pregna
 };
 
 const ar: Dict = {
-  nav: { home: "الرئيسية", story: "قصتنا", blog: "المدونة", pregnaScanApp: "تطبيق PregnaScan" },
+  nav: { home: "الرئيسية", story: "قصتنا", blog: "مقالات", testimonials: "شهادات", pregnaScanApp: "تطبيق PregnaScan" },
   cta: {
-    masterclass: "شاهدي الدرس المجاني",
-    masterclassShort: "شاهدي الدرس المجاني",
-    fertilityScore: "احسبي مؤشر الخصوبة لديك",
+    masterclass: "شاهدي ماستر كلاس محور ال HPO مجاناً",
+    masterclassShort: "شاهدي ماستر كلاس محور ال HPO مجاناً",
+    fertilityScore: "مقياس الخصوبة الذكي",
     watchNow: "شاهدي الآن",
     readArticle: "اقرأي المقال",
     inquireWhatsapp: "تواصلي عبر واتساب",
@@ -578,18 +578,18 @@ const ar: Dict = {
     ctas: {
       startHere: {
         eyebrow: "ابدئي من هنا",
-        title: "شاهدي الدرس المجاني",
+        title: "شاهدي ماستر كلاس محور ال HPO مجاناً",
         body: "٦٠ دقيقة عن محور HPO، بلا حشو ولا عرض ترويجي.",
       },
       orAssess: {
         eyebrow: "أو قيّمي نفسك",
-        title: "احسبي مؤشر الخصوبة لديك",
+        title: "مقياس الخصوبة الذكي",
         body: "تقييم ذاتي مدّته ٥ دقائق يكشف ما يُحدث الفرق فعلاً.",
       },
     },
   },
   blog: {
-    eyebrow: "مدونة PregnaWell",
+    eyebrow: "مقالات",
     title: "مقالات للنساء اللواتي يردن فهم أجسادهن.",
     subtitle:
       "شروحات بلغة بسيطة، وملاحظات من العيادة، وأدوات يمكنك استخدامها هذا الأسبوع.",
@@ -602,7 +602,7 @@ const ar: Dict = {
     by: "بقلم",
     keepGoing: {
       eyebrow: "تابعي",
-      title: "شاهدي الدرس المجاني عن محور HPO",
+      title: "شاهدي ماستر كلاس محور ال HPO مجاناً",
       body:
         "٦٠ دقيقة تُغيّر طريقة تفكيرك في الخصوبة, مبنية على نفس الإطار الذي نستخدمه في العيادة.",
     },

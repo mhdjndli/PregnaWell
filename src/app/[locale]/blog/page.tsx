@@ -93,13 +93,19 @@ export default async function BlogIndex({
                       )}
                     </div>
                     <h2
+                      dir="rtl"
+                      lang="ar"
                       className={`mt-3 font-display text-[var(--brand-purple-deep)] ${
                         idx === 0 ? "text-2xl md:text-3xl" : "text-xl"
                       }`}
                     >
                       {post.title}
                     </h2>
-                    <p className="mt-3 text-sm text-[var(--brand-muted)] leading-relaxed flex-1">
+                    <p
+                      dir="rtl"
+                      lang="ar"
+                      className="mt-3 text-sm text-[var(--brand-muted)] leading-relaxed flex-1"
+                    >
                       {post.description}
                     </p>
                     <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-purple)] group-hover:text-[var(--brand-rose)]">

@@ -92,31 +92,36 @@ async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   }
 }
 
-export async function getPublicPosts(language: Locale): Promise<BlogSummary[]> {
+// Public article surfaces always serve the Arabic articles, regardless of
+// the visitor's site locale. There is no English article content, so the
+// English site shows the same Arabic articles as the Arabic site.
+const PUBLIC_LANGUAGE: Locale = "ar";
+
+export async function getPublicPosts(_language: Locale): Promise<BlogSummary[]> {
   return safe(async () => {
     const { rows } = await getPool().query<BlogRow>(
       `SELECT * FROM posts WHERE language = $1 AND ${PUBLIC_FILTER} ORDER BY publish_at DESC NULLS LAST, created_at DESC`,
-      [language]
+      [PUBLIC_LANGUAGE]
     );
     return rows.map(toSummary);
   }, []);
 }
 
-export async function getPublicSlugs(language: Locale): Promise<string[]> {
+export async function getPublicSlugs(_language: Locale): Promise<string[]> {
   return safe(async () => {
     const { rows } = await getPool().query<{ slug: string }>(
       `SELECT slug FROM posts WHERE language = $1 AND ${PUBLIC_FILTER}`,
-      [language]
+      [PUBLIC_LANGUAGE]
     );
     return rows.map((r) => r.slug);
   }, []);
 }
 
-export async function getPublicPost(slug: string, language: Locale): Promise<BlogPost | null> {
+export async function getPublicPost(slug: string, _language: Locale): Promise<BlogPost | null> {
   return safe(async () => {
     const { rows } = await getPool().query<BlogRow>(
       `SELECT * FROM posts WHERE slug = $1 AND language = $2 AND ${PUBLIC_FILTER} LIMIT 1`,
-      [slug, language]
+      [slug, PUBLIC_LANGUAGE]
     );
     const row = rows[0];
     if (!row) return null;

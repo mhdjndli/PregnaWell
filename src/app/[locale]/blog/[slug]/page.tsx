@@ -80,12 +80,14 @@ export default async function BlogPostPage(
             <span>· {post.readingMinutes} {dict.blog.minRead}</span>
             {post.author && <span>· {dict.blog.by} {post.author}</span>}
           </div>
-          <h1 className="mt-4 font-display text-4xl md:text-5xl text-[var(--brand-purple-deep)] leading-[1.1]">
-            {post.title}
-          </h1>
-          <p className="mt-5 text-lg text-[var(--brand-muted)] leading-relaxed">
-            {post.description}
-          </p>
+          <div dir="rtl" lang="ar">
+            <h1 className="mt-4 font-display text-4xl md:text-5xl text-[var(--brand-purple-deep)] leading-[1.1]">
+              {post.title}
+            </h1>
+            <p className="mt-5 text-lg text-[var(--brand-muted)] leading-relaxed">
+              {post.description}
+            </p>
+          </div>
         </div>
       </header>
 
@@ -97,7 +99,7 @@ export default async function BlogPostPage(
               alt={post.title}
               width={1600}
               height={900}
-              className="h-[420px] w-full object-cover"
+              className="block w-full h-auto aspect-video object-cover"
               priority
               unoptimized={!post.cover.startsWith("/")}
             />
@@ -112,7 +114,7 @@ export default async function BlogPostPage(
         </div>
       )}
 
-      <div className="mx-auto max-w-3xl px-6 lg:px-10 mt-12">
+      <div className="mx-auto max-w-3xl px-6 lg:px-10 mt-12" dir="rtl" lang="ar">
         <div className="prose-pregna" dangerouslySetInnerHTML={{ __html: post.html }} />
       </div>
 

@@ -86,6 +86,11 @@ export default async function BlogIndex({
                       )}
                       <span>{formatDate(post.publishAt, locale)}</span>
                       <span>· {post.readingMinutes} {dict.blog.minRead}</span>
+                      {post.author && (
+                        <span className="font-medium text-[var(--brand-purple)]">
+                          · {dict.blog.by} {post.author}
+                        </span>
+                      )}
                     </div>
                     <h2
                       className={`mt-3 font-display text-[var(--brand-purple-deep)] ${

@@ -8,7 +8,7 @@ import { site } from "@/lib/site";
 
 type Params = { locale: string; slug: string };
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   const all: { locale: string; slug: string }[] = [];
@@ -91,7 +91,7 @@ export default async function BlogPostPage(
 
       {post.cover && (
         <div className="mx-auto max-w-5xl px-6 lg:px-10 mt-12">
-          <div className="overflow-hidden rounded-[2rem] ring-1 ring-[var(--brand-purple)]/10 shadow-[0_30px_80px_-30px_rgba(61,42,110,0.4)]">
+          <div className="relative overflow-hidden rounded-[2rem] ring-1 ring-[var(--brand-purple)]/10 shadow-[0_30px_80px_-30px_rgba(61,42,110,0.4)]">
             <Image
               src={post.cover}
               alt={post.title}
@@ -101,6 +101,13 @@ export default async function BlogPostPage(
               priority
               unoptimized={!post.cover.startsWith("/")}
             />
+            {post.author && (
+              <div className="absolute inset-x-0 bottom-0 p-4 lg:p-6 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur px-4 py-1.5 text-xs md:text-sm font-semibold text-[var(--brand-purple-deep)] ring-1 ring-black/5 shadow-sm">
+                  {dict.blog.by} {post.author}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       )}

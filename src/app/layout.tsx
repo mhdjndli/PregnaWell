@@ -35,6 +35,7 @@ export const metadata: Metadata = {
   description:
     "Compassionate, evidence-based programs and resources for fertility, pregnancy, and postpartum, guided by Maha Hommos and the PregnaWell team.",
   metadataBase: new URL("https://pregnawell.com"),
+  manifest: "/manifest.json",
   openGraph: {
     title: "PregnaWell",
     description:

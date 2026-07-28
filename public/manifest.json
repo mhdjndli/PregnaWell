@@ -1,0 +1,17 @@
+{
+  "name": "PregnaWell",
+  "short_name": "PregnaWell",
+  "description": "Empowering women on their journey to motherhood.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdfaf6",
+  "theme_color": "#3d2a6e",
+  "icons": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -99,15 +99,18 @@ export default function Header({ locale }: Props) {
           <a
             href={switchHref}
             aria-label={dict.language.switchLabel}
-            className="inline-flex items-center gap-1.5 rounded-full border border-[var(--brand-purple)]/20 px-3 py-1.5 text-xs font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)]"
+            className="inline-flex items-center gap-2 h-9 rounded-full border border-[var(--brand-purple)]/20 px-3 text-xs font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)]"
           >
-            <span aria-hidden className="text-base leading-none">{localeFlag[other]}</span>
-            {dict.language[other]}
+            <span aria-hidden className="inline-flex items-center text-base leading-none">
+              {localeFlag[other]}
+            </span>
+            <span className="leading-none">{dict.language[other]}</span>
           </a>
           <Link
             href={site.ctas.masterclass}
             target="_blank"
             rel="noopener noreferrer"
+            dir={locale === "ar" ? "rtl" : "ltr"}
             className="btn-primary text-sm"
           >
             {dict.cta.masterclassShort}
@@ -118,10 +121,12 @@ export default function Header({ locale }: Props) {
           <a
             href={switchHref}
             aria-label={dict.language.switchLabel}
-            className="inline-flex items-center gap-1.5 rounded-full border border-[var(--brand-purple)]/20 px-3 h-11 text-xs font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)]"
+            className="inline-flex items-center gap-2 h-11 rounded-full border border-[var(--brand-purple)]/20 px-3 text-xs font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)]"
           >
-            <span aria-hidden className="text-base leading-none">{localeFlag[other]}</span>
-            {dict.language[other]}
+            <span aria-hidden className="inline-flex items-center text-base leading-none">
+              {localeFlag[other]}
+            </span>
+            <span className="leading-none">{dict.language[other]}</span>
           </a>
           <button
             aria-label="Toggle menu"
@@ -171,6 +176,7 @@ export default function Header({ locale }: Props) {
               href={site.ctas.masterclass}
               target="_blank"
               rel="noopener noreferrer"
+              dir={locale === "ar" ? "rtl" : "ltr"}
               className="btn-primary mt-3 w-full text-center"
             >
               {dict.cta.masterclassShort}

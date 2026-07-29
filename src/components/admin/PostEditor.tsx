@@ -131,9 +131,14 @@ export default function PostEditor({ initial }: Props) {
     }
     setCoverGenerating(true);
     try {
+      const form = formRef.current;
+      const body = form
+        ? String(new FormData(form).get("body_md") ?? "").trim()
+        : "";
       const fd = new FormData();
       fd.set("title", trimmed);
       fd.set("language", language);
+      fd.set("body_md", body);
       const res = await generateCoverImageAction(fd);
       if (!res.ok || !res.url) {
         setCoverError(res.error ?? "Cover generation failed.");

@@ -57,23 +57,25 @@ export default async function BlogIndex({
             </div>
           ) : (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {posts.map((post, idx) => (
+              {posts.map((post, idx) => {
+                const featured = idx === 0 && !!post.cover;
+                return (
                 <Link
                   key={post.slug}
                   href={`/${locale}/blog/${post.slug}`}
                   className={`group rounded-3xl bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 hover:-translate-y-1 transition shadow-[0_15px_40px_-25px_rgba(61,42,110,0.35)] flex flex-col ${
-                    idx === 0 ? "md:col-span-2 lg:col-span-2" : ""
+                    featured ? "md:col-span-2 lg:col-span-2" : ""
                   }`}
                 >
                   {post.cover && (
-                    <div className={`relative w-full ${idx === 0 ? "h-72 md:h-96" : "h-52"}`}>
+                    <div className={`relative w-full ${featured ? "aspect-video md:h-96" : "aspect-video"}`}>
                       <Image
                         src={post.cover}
                         alt={post.title}
                         fill
                         className="object-cover transition group-hover:scale-[1.02]"
                         sizes="(max-width: 768px) 100vw, 50vw"
-                        unoptimized={post.cover.startsWith("/api/images/")}
+                        unoptimized={!post.cover.startsWith("/")}
                       />
                     </div>
                   )}
@@ -96,7 +98,7 @@ export default async function BlogIndex({
                       dir="rtl"
                       lang="ar"
                       className={`mt-3 font-display text-[var(--brand-purple-deep)] ${
-                        idx === 0 ? "text-2xl md:text-3xl" : "text-xl"
+                        featured ? "text-2xl md:text-3xl" : "text-xl"
                       }`}
                     >
                       {post.title}
@@ -114,7 +116,8 @@ export default async function BlogIndex({
                     </span>
                   </div>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

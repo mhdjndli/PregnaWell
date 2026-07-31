@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import fs from "node:fs";
-import path from "node:path";
 import type { Metadata } from "next";
 import { getDict, isLocale, type Locale } from "@/lib/i18n";
 import { site } from "@/lib/site";
@@ -22,14 +20,6 @@ export async function generateMetadata({
   const locale = isLocale(rawLocale) ? (rawLocale as Locale) : "en";
   const dict = getDict(locale);
   return { title: dict.nav.testimonials };
-}
-
-function videoFileExists(src: string): boolean {
-  try {
-    return fs.existsSync(path.join(process.cwd(), "public", src.replace(/^\//, "")));
-  } catch {
-    return false;
-  }
 }
 
 export default async function TestimonialsPage({
@@ -112,43 +102,34 @@ export default async function TestimonialsPage({
           </p>
         </div>
         <div className="mt-12 space-y-14">
-          {videoTestimonials.map((v) => {
-            const hasFile = videoFileExists(v.src);
-            return (
-              <article
-                key={v.slug}
-                className="rounded-[2rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_20px_60px_-30px_rgba(61,42,110,0.35)]"
-              >
-                <div className="relative w-full aspect-video bg-[var(--brand-purple-deep)]">
-                  {hasFile ? (
-                    <video
-                      controls
-                      preload="metadata"
-                      playsInline
-                      className="absolute inset-0 h-full w-full object-cover"
-                    >
-                      <source src={v.src} type="video/mp4" />
-                    </video>
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-center text-white/70 px-6">
-                      <span className="text-sm">الفيديو قريباً</span>
-                    </div>
-                  )}
-                </div>
-                <div className="p-8 lg:p-10">
-                  <h3 className="font-display text-2xl md:text-3xl text-[var(--brand-purple-deep)]">
-                    {v.headline}
-                  </h3>
-                  <p className="mt-4 text-lg leading-relaxed text-[var(--brand-purple)] font-semibold">
-                    {v.quote}
-                  </p>
-                  <p className="mt-3 text-base leading-relaxed text-[var(--brand-muted)]">
-                    {v.body}
-                  </p>
-                </div>
-              </article>
-            );
-          })}
+          {videoTestimonials.map((v) => (
+            <article
+              key={v.slug}
+              className="rounded-[2rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_20px_60px_-30px_rgba(61,42,110,0.35)]"
+            >
+              <div className="relative w-full aspect-video bg-[var(--brand-purple-deep)]">
+                <iframe
+                  src={`https://drive.google.com/file/d/${v.driveId}/preview`}
+                  title={v.headline}
+                  loading="lazy"
+                  allow="autoplay"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              </div>
+              <div className="p-8 lg:p-10">
+                <h3 className="font-display text-2xl md:text-3xl text-[var(--brand-purple-deep)]">
+                  {v.headline}
+                </h3>
+                <p className="mt-4 text-lg leading-relaxed text-[var(--brand-purple)] font-semibold">
+                  {v.quote}
+                </p>
+                <p className="mt-3 text-base leading-relaxed text-[var(--brand-muted)]">
+                  {v.body}
+                </p>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 

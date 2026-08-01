@@ -40,50 +40,50 @@ export default async function TestimonialsPage({
           <div className="absolute -top-32 -start-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-rose-soft)]/25 blur-3xl" />
           <div className="absolute -bottom-24 -end-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-blush)]/60 blur-3xl" />
         </div>
-        <div className="mx-auto max-w-6xl px-6 lg:px-10 pt-8 pb-14 md:pt-14 md:pb-20">
-          <div className="grid md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] items-center gap-8 md:gap-10 lg:gap-14">
-            {/* Text side */}
-            <div>
+        <div className="mx-auto max-w-6xl px-6 lg:px-10 pt-6 pb-10 md:pt-14 md:pb-20">
+          <div className="grid md:grid-cols-3 items-center gap-6 md:gap-10 lg:gap-14">
+            {/* Text side — spans 2 of 3 cols on desktop for a 66/33 split */}
+            <div className="text-center md:text-start md:col-span-2">
               <p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-rose)] font-semibold">
                 {dict.nav.testimonials}
               </p>
-              <h1 className="mt-3 font-display text-[28px] leading-[1.2] sm:text-3xl md:text-4xl lg:text-5xl text-[var(--brand-purple-deep)]">
+              <h1 className="mt-3 font-display text-[26px] leading-[1.25] sm:text-3xl md:text-4xl lg:text-5xl text-[var(--brand-purple-deep)]">
                 قصص نجاح حقيقية من نساء بدأن مثلكِ تمامًا
               </h1>
-              <p className="mt-5 text-base md:text-lg leading-relaxed text-[var(--brand-muted)]">
+              <p className="mt-4 md:mt-5 text-base md:text-lg leading-relaxed text-[var(--brand-muted)]">
                 كل امرأة هنا كانت مترددة… لكن بعد انضمامها إلى PregnaWell، تغيّر كل شيء.
               </p>
               <p className="mt-3 text-base md:text-lg leading-relaxed text-[var(--brand-muted)]">
                 هذه قصصهنّ من القلق إلى الأمل، ومن الحلم إلى النتيجة.
               </p>
-              <p className="mt-5 font-semibold text-[var(--brand-purple)] text-base md:text-lg leading-relaxed">
+              <p className="mt-4 md:mt-5 font-semibold text-[var(--brand-purple)] text-base md:text-lg leading-relaxed">
                 شاهدي بنفسكِ كيف يمكن لرحلة واحدة أن تغيّر الحياة.
               </p>
             </div>
 
-            {/* Featured Sarah story */}
-            <div className="rounded-[2rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_30px_80px_-30px_rgba(61,42,110,0.35)]">
-              <div className="relative w-full aspect-[4/5] bg-[var(--brand-cream)]">
+            {/* Featured Sarah story — spans 1 of 3 cols on desktop, capped in width on mobile */}
+            <div className="mx-auto md:mx-0 w-full max-w-sm md:max-w-none rounded-[1.75rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_25px_60px_-30px_rgba(61,42,110,0.35)] md:col-span-1">
+              <div className="relative w-full aspect-[3/4] bg-[var(--brand-cream)]">
                 <Image
                   src={featuredStory.image}
                   alt={featuredStory.headline}
                   fill
                   priority
-                  sizes="(max-width: 768px) 100vw, 45vw"
-                  className="object-cover"
+                  sizes="(max-width: 768px) 90vw, 30vw"
+                  className="object-contain"
                 />
-                <span className="absolute top-4 end-4 rounded-full bg-white/95 backdrop-blur px-3 py-1 text-xs font-semibold text-[var(--brand-rose)] shadow-sm">
+                <span className="absolute top-3 end-3 rounded-full bg-white/95 backdrop-blur px-3 py-1 text-[11px] font-semibold text-[var(--brand-rose)] shadow-sm">
                   القصة الأولى
                 </span>
               </div>
-              <div className="p-5 lg:p-6">
-                <h2 className="font-display text-xl md:text-2xl text-[var(--brand-purple-deep)] leading-snug">
+              <div className="p-4 lg:p-5">
+                <h2 className="font-display text-lg md:text-xl text-[var(--brand-purple-deep)] leading-snug">
                   {featuredStory.headline}
                 </h2>
-                <p className="mt-3 text-base leading-relaxed text-[var(--brand-purple)] font-semibold">
+                <p className="mt-2 text-sm md:text-base leading-relaxed text-[var(--brand-purple)] font-semibold">
                   {featuredStory.intro}
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--brand-muted)]">
+                <p className="mt-2 text-xs md:text-sm leading-relaxed text-[var(--brand-muted)]">
                   {featuredStory.body}
                 </p>
               </div>

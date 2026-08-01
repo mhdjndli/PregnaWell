@@ -83,18 +83,21 @@ export default function StoriesGrid() {
             </div>
             {story.images.length > 0 && (
               <div
-                className={`grid gap-1 ${
+                className={`grid gap-1 bg-[var(--brand-cream)] ${
                   story.images.length > 1 ? "grid-cols-2" : "grid-cols-1"
                 }`}
               >
                 {story.images.map((src) => (
-                  <div key={src} className="relative w-full aspect-[4/5] bg-[var(--brand-cream)]">
+                  <div
+                    key={src}
+                    className="relative w-full aspect-[3/4] flex items-center justify-center p-2"
+                  >
                     <Image
                       src={src}
                       alt={story.headline}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </div>
                 ))}

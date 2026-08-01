@@ -34,56 +34,60 @@ export default async function TestimonialsPage({
 
   return (
     <div>
-      {/* HERO */}
+      {/* HERO — text + featured Sarah story image, side by side on desktop, stacked on mobile */}
       <section dir="rtl" lang="ar" className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute -top-32 -start-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-rose-soft)]/25 blur-3xl" />
           <div className="absolute -bottom-24 -end-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-blush)]/60 blur-3xl" />
         </div>
-        <div className="mx-auto max-w-4xl px-6 lg:px-10 pt-16 pb-14 lg:pt-24 lg:pb-20 text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-rose)] font-semibold">
-            {dict.nav.testimonials}
-          </p>
-          <h1 className="mt-4 font-display text-4xl md:text-6xl text-[var(--brand-purple-deep)] leading-[1.1]">
-            قصص نجاح حقيقية من نساء بدأن مثلكِ تمامًا
-          </h1>
-          <div className="mt-8 space-y-3 text-lg text-[var(--brand-muted)] leading-relaxed">
-            <p>كل امرأة هنا كانت مترددة في البداية. خافت أن تبدأ، وتساءلت إن كان هذا البرنامج مختلفًا حقًا.</p>
-            <p>لكن بعد انضمامها إلى PregnaWell، تغيّر كل شيء.</p>
-            <p>هذه قصصهنّ… من القلق إلى الأمل، ومن الحلم إلى النتيجة.</p>
-            <p className="font-semibold text-[var(--brand-purple)]">
-              شاهدي بنفسكِ كيف يمكن لرحلة واحدة أن تغيّر الحياة.
-            </p>
-          </div>
-        </div>
-      </section>
+        <div className="mx-auto max-w-6xl px-6 lg:px-10 pt-8 pb-14 md:pt-14 md:pb-20">
+          <div className="grid md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] items-center gap-8 md:gap-10 lg:gap-14">
+            {/* Text side */}
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-rose)] font-semibold">
+                {dict.nav.testimonials}
+              </p>
+              <h1 className="mt-3 font-display text-[28px] leading-[1.2] sm:text-3xl md:text-4xl lg:text-5xl text-[var(--brand-purple-deep)]">
+                قصص نجاح حقيقية من نساء بدأن مثلكِ تمامًا
+              </h1>
+              <p className="mt-5 text-base md:text-lg leading-relaxed text-[var(--brand-muted)]">
+                كل امرأة هنا كانت مترددة… لكن بعد انضمامها إلى PregnaWell، تغيّر كل شيء.
+              </p>
+              <p className="mt-3 text-base md:text-lg leading-relaxed text-[var(--brand-muted)]">
+                هذه قصصهنّ من القلق إلى الأمل، ومن الحلم إلى النتيجة.
+              </p>
+              <p className="mt-5 font-semibold text-[var(--brand-purple)] text-base md:text-lg leading-relaxed">
+                شاهدي بنفسكِ كيف يمكن لرحلة واحدة أن تغيّر الحياة.
+              </p>
+            </div>
 
-      {/* FEATURED SARAH STORY */}
-      <section dir="rtl" lang="ar" className="mx-auto max-w-6xl px-6 lg:px-10">
-        <div className="rounded-[2rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_30px_80px_-30px_rgba(61,42,110,0.35)] grid md:grid-cols-2">
-          <div className="relative w-full min-h-[320px] md:min-h-[440px] bg-[var(--brand-cream)]">
-            <Image
-              src={featuredStory.image}
-              alt={featuredStory.headline}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
-          <div className="p-8 lg:p-12 flex flex-col justify-center">
-            <span className="self-start rounded-full bg-[var(--brand-blush)] px-3 py-1 text-xs font-semibold text-[var(--brand-rose)]">
-              القصة الأولى
-            </span>
-            <h2 className="mt-4 font-display text-3xl md:text-4xl text-[var(--brand-purple-deep)] leading-[1.15]">
-              {featuredStory.headline}
-            </h2>
-            <p className="mt-5 text-xl leading-relaxed text-[var(--brand-purple)] font-semibold">
-              {featuredStory.intro}
-            </p>
-            <p className="mt-4 text-base leading-relaxed text-[var(--brand-muted)]">
-              {featuredStory.body}
-            </p>
+            {/* Featured Sarah story */}
+            <div className="rounded-[2rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_30px_80px_-30px_rgba(61,42,110,0.35)]">
+              <div className="relative w-full aspect-[4/5] bg-[var(--brand-cream)]">
+                <Image
+                  src={featuredStory.image}
+                  alt={featuredStory.headline}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 45vw"
+                  className="object-cover"
+                />
+                <span className="absolute top-4 end-4 rounded-full bg-white/95 backdrop-blur px-3 py-1 text-xs font-semibold text-[var(--brand-rose)] shadow-sm">
+                  القصة الأولى
+                </span>
+              </div>
+              <div className="p-5 lg:p-6">
+                <h2 className="font-display text-xl md:text-2xl text-[var(--brand-purple-deep)] leading-snug">
+                  {featuredStory.headline}
+                </h2>
+                <p className="mt-3 text-base leading-relaxed text-[var(--brand-purple)] font-semibold">
+                  {featuredStory.intro}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--brand-muted)]">
+                  {featuredStory.body}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

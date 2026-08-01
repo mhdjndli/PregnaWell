@@ -31,7 +31,7 @@ export const videoTestimonials = [
     quote: '"كان عندي يقين مطلق إني حأكون أم."',
     body:
       "بعد فشل أول عملية حقن مجهري، لم يكلّمها أحد عن غذائها. بدأت تولاي قبل شهرين فقط من المحاولة الثانية… من ١٩ مكمّلاً وعشبة إلى أربعة، وتحاليل تحسّنت. نجحت العملية وهي في الـ٣٧، وبنتها اليوم عمرها سنة. لما بتكوني جاهزة، ما في شي بوقف.",
-    driveId: "1WlZ0aS5LTeY6fA33yQLRyFtB6Ekmpzxt",
+    youtubeId: "qoS8usZhf-8",
   },
   {
     slug: "raghad",
@@ -39,7 +39,7 @@ export const videoTestimonials = [
     quote: '"تغيّرت نظرتي للأكل وللوزن وللصحة بشكل جذري."',
     body:
       "من تكيّس المبايض ومشكلة وزن رافقتها من الطفولة… إلى خبر الحمل. تقول رغد إن ما تغيّر لم يكن الرقم. واليوم صارت هي المرجع الغذائي لعائلتها.",
-    driveId: "1SwgGa_EX-2DFuwHqye-gdCi9CsH9kSij",
+    youtubeId: "ETMiyJqC1g8",
   },
   {
     slug: "abeer",
@@ -47,7 +47,7 @@ export const videoTestimonials = [
     quote: '"في عمر فوق الـ٣٥ بصير كل شيء أصعب… كنت ضايعة بصراحة."',
     body:
       "لم تحتج عبير إلى نظام أقسى، بل إلى نظام يناسبها. تعلّمت كيف تنظّم أكلها وتغيّر عاداتها، ونزل الوزن الذي عجزت عن تحريكه سنوات… واليوم صارت هي من تنصح غيرها.",
-    driveId: "1qFz1aXO62AUv-pdWzLfhQ8Eq-kxYcQwT",
+    youtubeId: "gK_gylLOmsI",
   },
   {
     slug: "rola",
@@ -55,7 +55,7 @@ export const videoTestimonials = [
     quote: '"سبع سنين من أول ما تزوّجت… وكل دكتور يقول: الأمور تمام، بس ادعوا."',
     body:
       "ما نقص رولا لم يكن خطّة، بل فهمًا. \"بناءً على شو أعطيتوني النظام الغذائي؟\" - سؤال لم تجد له جوابًا من قبل. اليوم تقرأ مكوّنات كل ما تشتريه، وتشرحه لأهلها.",
-    driveId: "1pYEaYnHojSbXmYLShtT25UskhIzP-Opr",
+    youtubeId: "gb1ZTAmlEVE",
   },
   {
     slug: "nadine",
@@ -63,7 +63,7 @@ export const videoTestimonials = [
     quote: '"صار جسمي بالنسبة لي شيء مقدّس."',
     body:
       "\"كنت عم بمرّ بفشل - لا حمل طبيعي ولا حتى مع الـIVF.\" نادين إنسانة منظّمة، وما أقنعها أنها فهمت السبب خلف كل خطوة بدل أن تتبعها على العماية. بعد أربعة أشهر نزلت أكثر من ٨ كيلو، وتحسّنت تحاليلها.",
-    driveId: "1l00sMcxdx-Xvu2JMqy-FeBIBft5WVFAl",
+    youtubeId: "CZpXsY8WlXE",
   },
   {
     slug: "fathia",
@@ -71,7 +71,7 @@ export const videoTestimonials = [
     quote: '"حتى لو ما كُتب لي، أنا ربحت صحتي… ومكسب عظيم."',
     body:
       "بعد إجهاضات متكرّرة وتحاليل سليمة، بدأت فتحية من الأساس. نزلت ١٠ كيلو دون الجهد الذي أنهكها في كل ما جرّبته قبلها، وصارت تعرف ماذا تأكل وماذا تتجنّب.",
-    driveId: "1U7vOUzoPrZ1Hi0DTlPOThiJrz5XSQk3e",
+    youtubeId: "-Fi4QdQEZnw",
   },
 ] as const;
 

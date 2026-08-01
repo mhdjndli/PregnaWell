@@ -109,10 +109,10 @@ export default async function TestimonialsPage({
             >
               <div className="relative w-full aspect-video bg-[var(--brand-purple-deep)]">
                 <iframe
-                  src={`https://drive.google.com/file/d/${v.driveId}/preview`}
+                  src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?rel=0`}
                   title={v.headline}
                   loading="lazy"
-                  allow="autoplay"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   className="absolute inset-0 h-full w-full"
                 />

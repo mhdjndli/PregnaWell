@@ -109,7 +109,7 @@ export default async function TestimonialsPage({
             >
               <div className="relative w-full aspect-video bg-[var(--brand-purple-deep)]">
                 <iframe
-                  src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?rel=0`}
+                  src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`}
                   title={v.headline}
                   loading="lazy"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

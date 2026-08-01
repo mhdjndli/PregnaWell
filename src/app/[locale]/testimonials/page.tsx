@@ -89,7 +89,7 @@ export default async function TestimonialsPage({
       </section>
 
       {/* VIDEOS */}
-      <section dir="rtl" lang="ar" className="mx-auto max-w-4xl px-6 lg:px-10 mt-24">
+      <section dir="rtl" lang="ar" className="mx-auto max-w-7xl px-6 lg:px-10 mt-24">
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-rose)] font-semibold">
             الفيديوهات
@@ -101,11 +101,11 @@ export default async function TestimonialsPage({
             حفاظًا على خصوصية المشتركات، تم تغيير الأصوات وإخفاء أسماء العائلة في جميع المقاطع. القصص كما روتها كل واحدة منهنّ.
           </p>
         </div>
-        <div className="mt-12 space-y-14">
+        <div className="mt-12 grid gap-10 md:grid-cols-2">
           {videoTestimonials.map((v) => (
             <article
               key={v.slug}
-              className="rounded-[2rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_20px_60px_-30px_rgba(61,42,110,0.35)]"
+              className="flex flex-col rounded-[2rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_20px_60px_-30px_rgba(61,42,110,0.35)]"
             >
               <div className="relative w-full aspect-video bg-[var(--brand-purple-deep)]">
                 <iframe
@@ -117,10 +117,16 @@ export default async function TestimonialsPage({
                   className="absolute inset-0 h-full w-full"
                 />
               </div>
-              <div className="p-8 lg:p-10">
-                <h3 className="font-display text-2xl md:text-3xl text-[var(--brand-purple-deep)]">
-                  {v.headline}
-                </h3>
+              <div className="p-7 lg:p-8 flex-1 flex flex-col">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="font-display text-2xl text-[var(--brand-purple-deep)]">
+                    {v.headline}
+                  </h3>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--brand-blush)] px-3 py-1 text-xs font-semibold text-[var(--brand-rose)]">
+                    <span aria-hidden className="text-sm leading-none">{v.flag}</span>
+                    {v.country}
+                  </span>
+                </div>
                 <p className="mt-4 text-lg leading-relaxed text-[var(--brand-purple)] font-semibold">
                   {v.quote}
                 </p>

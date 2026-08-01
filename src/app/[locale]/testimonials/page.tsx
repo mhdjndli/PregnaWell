@@ -40,8 +40,8 @@ export default async function TestimonialsPage({
           <div className="absolute -top-32 -start-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-rose-soft)]/25 blur-3xl" />
           <div className="absolute -bottom-24 -end-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-blush)]/60 blur-3xl" />
         </div>
-        <div className="mx-auto max-w-6xl px-6 lg:px-10 pt-6 pb-10 md:pt-14 md:pb-20">
-          <div className="grid md:grid-cols-3 items-center gap-6 md:gap-10 lg:gap-14">
+        <div className="mx-auto max-w-6xl px-6 lg:px-10 pt-6 pb-8 md:pt-12 md:pb-10">
+          <div className="grid md:grid-cols-3 items-start gap-6 md:gap-10 lg:gap-14">
             {/* Text side — spans 2 of 3 cols on desktop for a 66/33 split */}
             <div className="text-center md:text-start md:col-span-2">
               <p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-rose)] font-semibold">
@@ -93,12 +93,9 @@ export default async function TestimonialsPage({
       </section>
 
       {/* VIDEOS */}
-      <section dir="rtl" lang="ar" className="mx-auto max-w-7xl px-6 lg:px-10 mt-24">
+      <section dir="rtl" lang="ar" className="mx-auto max-w-7xl px-6 lg:px-10 mt-14 md:mt-16">
         <div className="text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-rose)] font-semibold">
-            الفيديوهات
-          </p>
-          <h2 className="mt-3 font-display text-3xl md:text-5xl text-[var(--brand-purple-deep)]">
+          <h2 className="font-display text-3xl md:text-5xl text-[var(--brand-purple-deep)]">
             اسمعيها منهنّ مباشرة
           </h2>
           <p className="mt-5 text-base text-[var(--brand-muted)] leading-relaxed max-w-2xl mx-auto">
@@ -144,12 +141,17 @@ export default async function TestimonialsPage({
       </section>
 
       {/* GRID + FILTERS */}
-      <section className="mx-auto max-w-7xl px-6 lg:px-10 mt-24">
+      <section dir="rtl" lang="ar" className="mx-auto max-w-7xl px-6 lg:px-10 mt-14 md:mt-16">
+        <div className="text-center">
+          <h2 className="font-display text-3xl md:text-5xl text-[var(--brand-purple-deep)]">
+            اقرأيها منهنّ مباشرة
+          </h2>
+        </div>
         <StoriesGrid />
       </section>
 
       {/* CLOSING CTA */}
-      <section dir="rtl" lang="ar" className="mx-auto max-w-4xl px-6 lg:px-10 mt-24">
+      <section dir="rtl" lang="ar" className="mx-auto max-w-4xl px-6 lg:px-10 mt-14 md:mt-20">
         <div className="rounded-[2rem] bg-[var(--brand-purple-deep)] text-white p-10 lg:p-14 text-center">
           <div className="space-y-3 text-lg leading-relaxed text-white/90">
             <p>كل امرأة في هذه الصفحة كانت مترددة يومًا ما…</p>

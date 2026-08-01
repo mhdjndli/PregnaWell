@@ -36,7 +36,7 @@ export default function StoriesGrid() {
   }, []);
 
   return (
-    <div dir="rtl" lang="ar" className="mt-14">
+    <div dir="rtl" lang="ar" className="mt-8 md:mt-10">
       <div className="flex flex-wrap gap-2 justify-center">
         {chips.map((chip) => {
           const active = chip.id === filter;

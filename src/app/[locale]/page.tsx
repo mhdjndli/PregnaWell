@@ -6,6 +6,7 @@ import { getDict, isLocale, type Locale } from "@/lib/i18n";
 import PressMarquee from "@/components/PressMarquee";
 import Programs from "@/components/Programs";
 import Testimonials from "@/components/Testimonials";
+import VideoTestimonialsSlider from "@/components/VideoTestimonialsSlider";
 import Faq from "@/components/Faq";
 
 export default async function HomePage({
@@ -113,6 +114,8 @@ export default async function HomePage({
       <Programs locale={locale} />
 
       <Testimonials locale={locale} />
+
+      <VideoTestimonialsSlider locale={locale} />
 
       <Faq locale={locale} />
 

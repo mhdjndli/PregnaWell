@@ -24,68 +24,110 @@ export const featuredStory = {
   image: "/testimonials/hero/sarah-pregnancy-test.jpg",
 };
 
-export const videoTestimonials = [
+type LocalizedString = { en: string; ar: string };
+
+export type VideoTestimonial = {
+  slug: string;
+  youtubeId: string;
+  flag: string;
+  headline: LocalizedString;
+  country: LocalizedString;
+  quote: LocalizedString;
+  body: LocalizedString;
+};
+
+export const videoTestimonials: readonly VideoTestimonial[] = [
   {
     slug: "fathia",
-    headline: "قصة فتحية",
-    country: "السعودية",
-    flag: "🇸🇦",
-    quote: '"حتى لو ما كُتب لي، أنا ربحت صحتي… ومكسب عظيم."',
-    body:
-      "بعد إجهاضات متكرّرة وتحاليل سليمة، بدأت فتحية من الأساس. نزلت ١٠ كيلو دون الجهد الذي أنهكها في كل ما جرّبته قبلها، وصارت تعرف ماذا تأكل وماذا تتجنّب.",
     youtubeId: "-Fi4QdQEZnw",
+    flag: "🇸🇦",
+    headline: { en: "Fathiya's Story", ar: "قصة فتحية" },
+    country: { en: "Saudi Arabia", ar: "السعودية" },
+    quote: {
+      en: "“Even if it wasn't meant to be, I still won my health back… and that's a huge win.”",
+      ar: '"حتى لو ما كُتب لي، أنا ربحت صحتي… ومكسب عظيم."',
+    },
+    body: {
+      en: "After repeated miscarriages and normal test results, Fathiya started from the ground up. She lost 10 kg without the exhausting effort everything else had cost her, and now knows exactly what to eat and what to avoid.",
+      ar: "بعد إجهاضات متكرّرة وتحاليل سليمة، بدأت فتحية من الأساس. نزلت ١٠ كيلو دون الجهد الذي أنهكها في كل ما جرّبته قبلها، وصارت تعرف ماذا تأكل وماذا تتجنّب.",
+    },
   },
   {
     slug: "raghad",
-    headline: "قصة رغد",
-    country: "قطر",
-    flag: "🇶🇦",
-    quote: '"تغيّرت نظرتي للأكل وللوزن وللصحة بشكل جذري."',
-    body:
-      "من تكيّس المبايض ومشكلة وزن رافقتها من الطفولة… إلى خبر الحمل. تقول رغد إن ما تغيّر لم يكن الرقم. واليوم صارت هي المرجع الغذائي لعائلتها.",
     youtubeId: "ETMiyJqC1g8",
+    flag: "🇶🇦",
+    headline: { en: "Raghad's Story", ar: "قصة رغد" },
+    country: { en: "Qatar", ar: "قطر" },
+    quote: {
+      en: "“How I see food, weight, and health changed completely.”",
+      ar: '"تغيّرت نظرتي للأكل وللوزن وللصحة بشكل جذري."',
+    },
+    body: {
+      en: "From PCOS and a weight struggle that followed her since childhood… to a positive pregnancy test. Raghad says what changed wasn't the number on the scale. Today she's become her own family's go-to on nutrition.",
+      ar: "من تكيّس المبايض ومشكلة وزن رافقتها من الطفولة… إلى خبر الحمل. تقول رغد إن ما تغيّر لم يكن الرقم. واليوم صارت هي المرجع الغذائي لعائلتها.",
+    },
   },
   {
     slug: "toulay",
-    headline: "قصة تولاي",
-    country: "أمريكا",
-    flag: "🇺🇸",
-    quote: '"كان عندي يقين مطلق إني حأكون أم."',
-    body:
-      "بعد فشل أول عملية حقن مجهري، لم يكلّمها أحد عن غذائها. بدأت تولاي قبل شهرين فقط من المحاولة الثانية… من ١٩ مكمّلاً وعشبة إلى أربعة، وتحاليل تحسّنت. نجحت العملية وهي في الـ٣٧، وبنتها اليوم عمرها سنة. لما بتكوني جاهزة، ما في شي بوقف.",
     youtubeId: "qoS8usZhf-8",
+    flag: "🇺🇸",
+    headline: { en: "Tulay's Story", ar: "قصة تولاي" },
+    country: { en: "United States", ar: "أمريكا" },
+    quote: {
+      en: "“I had absolute certainty I was going to be a mother.”",
+      ar: '"كان عندي يقين مطلق إني حأكون أم."',
+    },
+    body: {
+      en: "After her first IVF cycle failed, no one had ever talked to her about nutrition. Tulay started just two months before her second attempt — going from 19 supplements and herbs down to four, with her labs improving. The procedure succeeded when she was 37; her daughter is now a year old. When you're ready, nothing can stop you.",
+      ar: "بعد فشل أول عملية حقن مجهري، لم يكلّمها أحد عن غذائها. بدأت تولاي قبل شهرين فقط من المحاولة الثانية… من ١٩ مكمّلاً وعشبة إلى أربعة، وتحاليل تحسّنت. نجحت العملية وهي في الـ٣٧، وبنتها اليوم عمرها سنة. لما بتكوني جاهزة، ما في شي بوقف.",
+    },
   },
   {
     slug: "nadine",
-    headline: "قصة نادين",
-    country: "الإمارات",
-    flag: "🇦🇪",
-    quote: '"صار جسمي بالنسبة لي شيء مقدّس."',
-    body:
-      "\"كنت عم بمرّ بفشل - لا حمل طبيعي ولا حتى مع الـIVF.\" نادين إنسانة منظّمة، وما أقنعها أنها فهمت السبب خلف كل خطوة بدل أن تتبعها على العماية. بعد أربعة أشهر نزلت أكثر من ٨ كيلو، وتحسّنت تحاليلها.",
     youtubeId: "CZpXsY8WlXE",
+    flag: "🇦🇪",
+    headline: { en: "Nadine's Story", ar: "قصة نادين" },
+    country: { en: "UAE", ar: "الإمارات" },
+    quote: {
+      en: "“My body became something sacred to me.”",
+      ar: '"صار جسمي بالنسبة لي شيء مقدّس."',
+    },
+    body: {
+      en: "“I was going through failure — no natural pregnancy, not even with IVF.” Nadine is a structured person, and what convinced her was understanding the reason behind every step instead of just following it blindly. After four months she lost over 8 kg and her labs improved.",
+      ar: "\"كنت عم بمرّ بفشل - لا حمل طبيعي ولا حتى مع الـIVF.\" نادين إنسانة منظّمة، وما أقنعها أنها فهمت السبب خلف كل خطوة بدل أن تتبعها على العماية. بعد أربعة أشهر نزلت أكثر من ٨ كيلو، وتحسّنت تحاليلها.",
+    },
   },
   {
     slug: "abeer",
-    headline: "قصة عبير",
-    country: "الإمارات",
-    flag: "🇦🇪",
-    quote: '"في عمر فوق الـ٣٥ بصير كل شيء أصعب… كنت ضايعة بصراحة."',
-    body:
-      "لم تحتج عبير إلى نظام أقسى، بل إلى نظام يناسبها. تعلّمت كيف تنظّم أكلها وتغيّر عاداتها، ونزل الوزن الذي عجزت عن تحريكه سنوات… واليوم صارت هي من تنصح غيرها.",
     youtubeId: "gK_gylLOmsI",
+    flag: "🇦🇪",
+    headline: { en: "Abeer's Story", ar: "قصة عبير" },
+    country: { en: "UAE", ar: "الإمارات" },
+    quote: {
+      en: "“Past 35, everything gets harder… I was honestly lost.”",
+      ar: '"في عمر فوق الـ٣٥ بصير كل شيء أصعب… كنت ضايعة بصراحة."',
+    },
+    body: {
+      en: "Abeer didn't need a stricter system, she needed one that actually fit her. She learned how to structure her eating and change her habits, and the weight she couldn't shift for years finally moved. Today she's the one giving others advice.",
+      ar: "لم تحتج عبير إلى نظام أقسى، بل إلى نظام يناسبها. تعلّمت كيف تنظّم أكلها وتغيّر عاداتها، ونزل الوزن الذي عجزت عن تحريكه سنوات… واليوم صارت هي من تنصح غيرها.",
+    },
   },
   {
     slug: "rola",
-    headline: "قصة رولا",
-    country: "السعودية",
-    flag: "🇸🇦",
-    quote: '"سبع سنين من أول ما تزوّجت… وكل دكتور يقول: الأمور تمام، بس ادعوا."',
-    body:
-      "ما نقص رولا لم يكن خطّة، بل فهمًا. \"بناءً على شو أعطيتوني النظام الغذائي؟\" - سؤال لم تجد له جوابًا من قبل. اليوم تقرأ مكوّنات كل ما تشتريه، وتشرحه لأهلها.",
     youtubeId: "gb1ZTAmlEVE",
+    flag: "🇸🇦",
+    headline: { en: "Rola's Story", ar: "قصة رولا" },
+    country: { en: "Saudi Arabia", ar: "السعودية" },
+    quote: {
+      en: "“Seven years since I got married… and every doctor kept saying: everything's fine, just pray.”",
+      ar: '"سبع سنين من أول ما تزوّجت… وكل دكتور يقول: الأمور تمام، بس ادعوا."',
+    },
+    body: {
+      en: "What Rola was missing wasn't a plan, it was understanding. “What was this diet actually based on?” — a question she'd never gotten an answer to before. Today she reads the ingredients in everything she buys and explains them to her family.",
+      ar: "ما نقص رولا لم يكن خطّة، بل فهمًا. \"بناءً على شو أعطيتوني النظام الغذائي؟\" - سؤال لم تجد له جوابًا من قبل. اليوم تقرأ مكوّنات كل ما تشتريه، وتشرحه لأهلها.",
+    },
   },
-] as const;
+];
 
 export const storyTestimonials: StoryTestimonial[] = [
   {

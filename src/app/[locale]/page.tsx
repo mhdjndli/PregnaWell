@@ -5,7 +5,10 @@ import { site } from "@/lib/site";
 import { getDict, isLocale, type Locale } from "@/lib/i18n";
 import PressMarquee from "@/components/PressMarquee";
 import Programs from "@/components/Programs";
-import Testimonials from "@/components/Testimonials";
+// Text testimonials ("ماذا تقول الأمهات") are intentionally hidden while the
+// video slider stands in for social proof; component + dict entries remain
+// so we can restore it by re-importing and re-rendering below.
+// import Testimonials from "@/components/Testimonials";
 import VideoTestimonialsSlider from "@/components/VideoTestimonialsSlider";
 import Faq from "@/components/Faq";
 
@@ -113,7 +116,7 @@ export default async function HomePage({
 
       <Programs locale={locale} />
 
-      <Testimonials locale={locale} />
+      {/* <Testimonials locale={locale} /> — hidden; see import above */}
 
       <VideoTestimonialsSlider locale={locale} />
 

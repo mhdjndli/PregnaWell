@@ -120,7 +120,9 @@ type Dict = {
     minRead: string;
     backAll: string;
     by: string;
+    filters: { all: string };
     keepGoing: { eyebrow: string; title: string; body: string };
+    assess: { eyebrow: string; title: string; body: string };
   };
   language: { en: string; ar: string; switchLabel: string };
 };
@@ -354,11 +356,18 @@ PregnaWell now spans a free masterclass, a fertility self-assessment, the Pregna
     minRead: "min read",
     backAll: "All articles",
     by: "by",
+    filters: { all: "All" },
     keepGoing: {
       eyebrow: "Keep going",
       title: "Watch the free masterclass on the HPO axis",
       body:
         "60 minutes that change how you think about fertility, built on the same framework we use in clinic.",
+    },
+    assess: {
+      eyebrow: "Assess yourself",
+      title: "Check your fertility score",
+      body:
+        "A quick 5-minute self-assessment that surfaces what's actually moving the needle in your fertility journey.",
     },
   },
   language: { en: "English", ar: "العربية", switchLabel: "Language" },
@@ -600,11 +609,18 @@ const ar: Dict = {
     minRead: "دقيقة قراءة",
     backAll: "كل المقالات",
     by: "بقلم",
+    filters: { all: "الكل" },
     keepGoing: {
       eyebrow: "تابعي",
       title: "شاهدي ماستر كلاس محور ال HPO مجاناً",
       body:
         "٦٠ دقيقة تُغيّر طريقة تفكيرك في الخصوبة, مبنية على نفس الإطار الذي نستخدمه في العيادة.",
+    },
+    assess: {
+      eyebrow: "قيّمي نفسك",
+      title: "مقياس الخصوبة الذكي",
+      body:
+        "تقييم ذاتي سريع مدّته ٥ دقائق يكشف لكِ ما يُحدث الفرق فعلاً في رحلة الخصوبة.",
     },
   },
   language: { en: "English", ar: "العربية", switchLabel: "اللغة" },

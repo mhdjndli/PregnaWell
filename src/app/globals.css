@@ -211,6 +211,18 @@ html[lang="ar"] .font-display {
 }
 
 /* ============================================================
+   Hide scrollbars on horizontal snap-scroll containers while
+   keeping them scrollable (used for filter chips + video slider).
+   ============================================================ */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ============================================================
    Marquee (LTR scrolls leftward; RTL scrolls rightward)
    ============================================================ */
 @keyframes marquee {

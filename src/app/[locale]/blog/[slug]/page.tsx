@@ -131,23 +131,43 @@ export default async function BlogPostPage(
         </div>
       )}
 
-      <div className="mx-auto max-w-3xl px-6 lg:px-10 mt-16">
-        <div className="rounded-3xl bg-[var(--brand-purple-deep)] text-white p-8 lg:p-10">
-          <p className="text-xs uppercase tracking-[0.25em] text-[var(--brand-rose-soft)] font-semibold">
-            {dict.blog.keepGoing.eyebrow}
-          </p>
-          <h3 className="mt-2 font-display text-2xl">{dict.blog.keepGoing.title}</h3>
-          <p className="mt-3 text-white/85">{dict.blog.keepGoing.body}</p>
-          <Link
-            href={site.ctas.masterclass}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[var(--brand-purple-deep)] hover:bg-[var(--brand-blush)] transition"
-          >
-            {dict.cta.watchNow} <span aria-hidden className="arrow-up-end">↗</span>
-          </Link>
-        </div>
-      </div>
+      {(() => {
+        const preFertility = post.category === "before";
+        const cta = preFertility
+          ? {
+              href: site.ctas.fertilityScore,
+              label: dict.cta.fertilityScore,
+              eyebrow: dict.blog.assess.eyebrow,
+              title: dict.blog.assess.title,
+              body: dict.blog.assess.body,
+            }
+          : {
+              href: site.ctas.masterclass,
+              label: dict.cta.watchNow,
+              eyebrow: dict.blog.keepGoing.eyebrow,
+              title: dict.blog.keepGoing.title,
+              body: dict.blog.keepGoing.body,
+            };
+        return (
+          <div className="mx-auto max-w-3xl px-6 lg:px-10 mt-16">
+            <div className="rounded-3xl bg-[var(--brand-purple-deep)] text-white p-8 lg:p-10">
+              <p className="text-xs uppercase tracking-[0.25em] text-[var(--brand-rose-soft)] font-semibold">
+                {cta.eyebrow}
+              </p>
+              <h3 className="mt-2 font-display text-2xl">{cta.title}</h3>
+              <p className="mt-3 text-white/85">{cta.body}</p>
+              <Link
+                href={cta.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[var(--brand-purple-deep)] hover:bg-[var(--brand-blush)] transition"
+              >
+                {cta.label} <span aria-hidden className="arrow-up-end">↗</span>
+              </Link>
+            </div>
+          </div>
+        );
+      })()}
     </article>
   );
 }

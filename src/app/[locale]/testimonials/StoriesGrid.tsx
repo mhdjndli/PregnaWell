@@ -45,10 +45,10 @@ export default function StoriesGrid() {
               key={chip.id}
               type="button"
               onClick={() => setFilter(chip.id)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
                 active
-                  ? "bg-[var(--brand-purple)] text-white shadow-[0_10px_25px_-15px_rgba(61,42,110,0.6)]"
-                  : "bg-white text-[var(--brand-purple)] ring-1 ring-[var(--brand-purple)]/15 hover:bg-[var(--brand-blush)]"
+                  ? "border-[var(--brand-purple)] bg-[var(--brand-purple)] text-white shadow-[0_10px_25px_-15px_rgba(61,42,110,0.6)]"
+                  : "border-[var(--brand-purple)]/25 bg-white text-[var(--brand-purple)] hover:border-[var(--brand-purple)]/45 hover:bg-[var(--brand-blush)]"
               }`}
             >
               {chip.label}

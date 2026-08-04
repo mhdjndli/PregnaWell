@@ -101,7 +101,7 @@ export default function Header({ locale }: Props) {
             aria-label={dict.language.switchLabel}
             className="inline-flex items-center gap-2 h-9 rounded-full border border-[var(--brand-purple)]/20 px-3 text-xs font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)]"
           >
-            <span aria-hidden className="inline-flex items-center text-base leading-none">
+            <span aria-hidden className="inline-flex items-center text-base leading-none translate-y-[1px]">
               {localeFlag[other]}
             </span>
             <span className="leading-none">{dict.language[other]}</span>
@@ -123,7 +123,7 @@ export default function Header({ locale }: Props) {
             aria-label={dict.language.switchLabel}
             className="inline-flex items-center gap-2 h-11 rounded-full border border-[var(--brand-purple)]/20 px-3 text-xs font-semibold text-[var(--brand-purple)] hover:bg-[var(--brand-blush)]"
           >
-            <span aria-hidden className="inline-flex items-center text-base leading-none">
+            <span aria-hidden className="inline-flex items-center text-base leading-none translate-y-[1px]">
               {localeFlag[other]}
             </span>
             <span className="leading-none">{dict.language[other]}</span>

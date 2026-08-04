@@ -34,63 +34,57 @@ export default async function TestimonialsPage({
 
   return (
     <div>
-      {/* HERO — centered intro */}
+      {/* HERO — tight intro + featured Sarah story in one visual block */}
       <section dir="rtl" lang="ar" className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute -top-32 -start-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-rose-soft)]/25 blur-3xl" />
           <div className="absolute -bottom-24 -end-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-blush)]/60 blur-3xl" />
         </div>
-        <div className="mx-auto max-w-3xl px-6 lg:px-10 pt-12 md:pt-20 pb-10 text-center">
+        <div className="mx-auto max-w-5xl px-6 lg:px-10 pt-8 md:pt-12 pb-6 md:pb-8 text-center">
           <p className="text-xs uppercase tracking-[0.3em] text-[var(--brand-rose)] font-semibold">
             {dict.nav.testimonials}
           </p>
-          <h1 className="mt-4 font-display text-[28px] leading-[1.25] sm:text-3xl md:text-4xl lg:text-5xl text-[var(--brand-purple-deep)]">
+          <h1 className="mt-3 font-display text-[26px] leading-[1.25] sm:text-3xl md:text-4xl text-[var(--brand-purple-deep)]">
             قصص نجاح حقيقية من نساء بدأن مثلكِ تمامًا
           </h1>
-          <p className="mt-5 text-base md:text-lg leading-relaxed text-[var(--brand-muted)]">
-            كل امرأة هنا كانت مترددة… لكن بعد انضمامها إلى PregnaWell، تغيّر كل شيء.
-          </p>
-          <p className="mt-3 text-base md:text-lg leading-relaxed text-[var(--brand-muted)]">
-            هذه قصصهنّ من القلق إلى الأمل، ومن الحلم إلى النتيجة.
-          </p>
-          <p className="mt-5 font-semibold text-[var(--brand-purple)] text-base md:text-lg leading-relaxed">
-            شاهدي بنفسكِ كيف يمكن لرحلة واحدة أن تغيّر الحياة.
+          <p className="mt-4 text-base md:text-lg leading-relaxed text-[var(--brand-muted)] max-w-2xl mx-auto">
+            هذه قصصهنّ من القلق إلى الأمل — شاهدي كيف يمكن لرحلة واحدة أن تغيّر الحياة.
           </p>
         </div>
-      </section>
 
-      {/* FEATURED SARAH STORY — horizontal card, own row so image and copy each get proper room */}
-      <section dir="rtl" lang="ar" className="mx-auto max-w-5xl px-6 lg:px-10 pb-4">
-        <div className="rounded-[2rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_30px_80px_-30px_rgba(61,42,110,0.35)] grid md:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
-          <div className="relative w-full aspect-[4/5] md:aspect-auto md:min-h-[380px] bg-[var(--brand-cream)]">
-            <Image
-              src={featuredStory.image}
-              alt={featuredStory.headline}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 320px"
-              className="object-contain md:object-cover"
-            />
-            <span className="absolute top-3 end-3 rounded-full bg-white/95 backdrop-blur px-3 py-1 text-[11px] font-semibold text-[var(--brand-rose)] shadow-sm">
-              القصة الأولى
-            </span>
-          </div>
-          <div className="p-6 md:p-10 flex flex-col justify-center">
-            <h2 className="font-display text-2xl md:text-3xl text-[var(--brand-purple-deep)] leading-snug">
-              {featuredStory.headline}
-            </h2>
-            <p className="mt-4 text-lg md:text-xl leading-relaxed text-[var(--brand-purple)] font-semibold">
-              {featuredStory.intro}
-            </p>
-            <p className="mt-3 text-base leading-relaxed text-[var(--brand-muted)]">
-              {featuredStory.body}
-            </p>
+        {/* Featured Sarah story — sits directly under the intro, no wasted gap */}
+        <div className="mx-auto max-w-5xl px-6 lg:px-10 pb-2">
+          <div className="rounded-[2rem] bg-white overflow-hidden ring-1 ring-[var(--brand-purple)]/10 shadow-[0_30px_80px_-30px_rgba(61,42,110,0.35)] grid md:grid-cols-[minmax(0,280px)_minmax(0,1fr)]">
+            <div className="relative w-full aspect-[4/5] md:aspect-auto md:min-h-[320px] bg-[var(--brand-cream)]">
+              <Image
+                src={featuredStory.image}
+                alt={featuredStory.headline}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 280px"
+                className="object-contain md:object-cover"
+              />
+              <span className="absolute top-3 end-3 rounded-full bg-white/95 backdrop-blur px-3 py-1 text-[11px] font-semibold text-[var(--brand-rose)] shadow-sm">
+                القصة الأولى
+              </span>
+            </div>
+            <div className="p-5 md:p-8 flex flex-col justify-center">
+              <h2 className="font-display text-xl md:text-2xl text-[var(--brand-purple-deep)] leading-snug">
+                {featuredStory.headline}
+              </h2>
+              <p className="mt-3 text-base md:text-lg leading-relaxed text-[var(--brand-purple)] font-semibold">
+                {featuredStory.intro}
+              </p>
+              <p className="mt-2 text-sm md:text-base leading-relaxed text-[var(--brand-muted)]">
+                {featuredStory.body}
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* VIDEOS */}
-      <section dir="rtl" lang="ar" className="mx-auto max-w-7xl px-6 lg:px-10 mt-14 md:mt-16">
+      <section dir="rtl" lang="ar" className="mx-auto max-w-7xl px-6 lg:px-10 mt-8 md:mt-12">
         <div className="text-center">
           <h2 className="font-display text-3xl md:text-5xl text-[var(--brand-purple-deep)]">
             اسمعيها منهنّ مباشرة

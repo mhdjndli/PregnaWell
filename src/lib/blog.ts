@@ -36,6 +36,7 @@ export type BlogSummary = {
   author: string | null;
   language: Locale;
   publishAt: string | null;
+  updatedAt: string;
   status: BlogStatus;
   readingMinutes: number;
 };
@@ -75,6 +76,7 @@ function toSummary(row: BlogRow): BlogSummary {
     author: row.author,
     language: row.language ?? "en",
     publishAt: row.publish_at,
+    updatedAt: row.updated_at,
     status: statusOf(row),
     readingMinutes: readingTime(row.body_md),
   };

@@ -29,7 +29,6 @@ We're going to use this blog to share three kinds of writing:
 - The **[free masterclass](https://pregnawell.clinic/vsl-fertility-evaluation-call-pregnawell)**
   is the best place to start if you want a foundation in fertility.
 - The **Fertility Score Tool** (launching soon) is a 5-minute self-assessment.
-- The **PregnaScan App** turns your scans and labs into clear, weekly understanding.
 
 If something resonates, reply on Instagram or LinkedIn. I read everything.
 

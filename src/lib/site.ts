@@ -6,7 +6,6 @@ export const site = {
     masterclass: "https://pregnawell.clinic/vsl-fertility-evaluation-call-pregnawell",
     call: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH",
     fertilityScore: "https://pregnawell.clinic/smart-fertility-score-app-104457",
-    pregnaScan: "https://pregnascan.app",
     whatsapp: "https://wa.me/971502804502",
     podcast: "https://www.youtube.com/playlist?list=PLJXlPuPcMonONr1lsv7HGYInWHPmpH4dn",
     youtube: "https://www.youtube.com/@maha.hommos",
@@ -35,5 +34,4 @@ export const nav = [
   { href: "/", label: "Home" },
   { href: "/story", label: "Story" },
   { href: "/blog", label: "Blog" },
-  { href: site.ctas.pregnaScan, label: "PregnaScan App", external: true },
 ];

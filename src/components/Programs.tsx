@@ -61,6 +61,7 @@ export default function Programs({ locale }: { locale: Locale }) {
               <PaidProgramCard
                 key={key}
                 badge={item.badge}
+                subtitle={item.subtitle}
                 title={item.title}
                 description={item.description}
                 features={item.features}
@@ -109,6 +110,7 @@ export default function Programs({ locale }: { locale: Locale }) {
 
 type PaidCardProps = {
   badge: string;
+  subtitle?: string;
   title: string;
   description: string;
   features: readonly string[];
@@ -132,6 +134,7 @@ function PaidProgramCard(p: PaidCardProps) {
   const badgeColor = isPurple
     ? "bg-white/15 text-white"
     : "bg-white text-[var(--brand-rose)] ring-1 ring-[var(--brand-rose-soft)]/40";
+  const subtitleColor = isPurple ? "text-[var(--brand-rose-soft)]" : "text-[var(--brand-rose)]";
   const bulletColor = isPurple ? "text-[var(--brand-rose-soft)]" : "text-[var(--brand-rose)]";
   const ctaColor = isPurple ? "text-white" : "text-[var(--brand-purple)]";
 
@@ -139,11 +142,21 @@ function PaidProgramCard(p: PaidCardProps) {
     <article
       className={`group relative flex flex-col rounded-3xl p-7 ring-1 transition shadow-[0_15px_40px_-25px_rgba(61,42,110,0.35)] hover:-translate-y-1 ${toneClasses}`}
     >
-      <span
-        className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${badgeColor}`}
-      >
-        {p.badge}
-      </span>
+      <div className="flex flex-wrap items-center gap-2">
+        <span
+          className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${badgeColor}`}
+        >
+          {p.badge}
+        </span>
+        {p.subtitle && (
+          <span
+            dir="auto"
+            className={`text-xs font-semibold ${subtitleColor}`}
+          >
+            {p.subtitle}
+          </span>
+        )}
+      </div>
       <h3 dir="auto" className={`mt-4 font-display text-xl ${titleColor}`}>
         {p.title}
       </h3>

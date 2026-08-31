@@ -45,7 +45,7 @@ export function categoryLabel(id: string | null | undefined, locale: Locale): st
 // =============================================================================
 
 type Dict = {
-  nav: { home: string; story: string; blog: string; testimonials: string; pregnaScanApp: string };
+  nav: { home: string; story: string; blog: string; testimonials: string };
   cta: {
     masterclass: string;
     masterclassShort: string;
@@ -80,7 +80,7 @@ type Dict = {
     freeTitle: string;
     paid: Record<
       "fertilityDetox" | "greenPlacenta" | "soukkara",
-      { badge: string; title: string; description: string; features: string[]; cta: string }
+      { badge: string; subtitle?: string; title: string; description: string; features: string[]; cta: string }
     >;
     free: Record<
       "podcast" | "youtube" | "masterclass" | "articles",
@@ -134,7 +134,7 @@ type Dict = {
 };
 
 const en: Dict = {
-  nav: { home: "Home", story: "Story", blog: "Articles", testimonials: "Testimonials", pregnaScanApp: "PregnaScan App" },
+  nav: { home: "Home", story: "Story", blog: "Articles", testimonials: "Testimonials" },
   cta: {
     masterclass: "Watch a Free Masterclass",
     masterclassShort: "Watch the Free Masterclass",
@@ -180,7 +180,8 @@ const en: Dict = {
     freeTitle: "Start learning before you spend anything.",
     paid: {
       fertilityDetox: {
-        badge: "3-Month Program",
+        badge: "Pregnancy Prep Program",
+        subtitle: "3 months",
         title: "Fertility Detox",
         description:
           "Our flagship program for women preparing to conceive. Three structured months of work on your fertility, guided by specialists and doctors, with support every single day.",
@@ -347,10 +348,6 @@ const en: Dict = {
         a: "It's a five-minute self-assessment that surfaces what your hormones, cycle, and lifestyle are saying about your fertility, and what's most worth your attention next. It's a clarity tool, not a diagnostic one. Most women take it, then bring their result to a free evaluation call and we go through it together.",
         link: { text: "Take your result to a free call →", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
       },
-      {
-        q: "How is PregnaScan different from the website?",
-        a: "PregnaScan is a separate app for expecting parents. It turns your medical scans and labs into clear, week-by-week understanding. You can find it at pregnascan.app. It's independent of the programs here, though many of our members use both.",
-      },
     ],
   },
   founder: {
@@ -392,7 +389,7 @@ Her work has been featured by Qatar Foundation, MBC Group, Rotana, Al Sharq, UAE
 
 ## What's next
 
-PregnaWell now spans a free masterclass, a fertility self-assessment, the PregnaScan App for expecting parents, and an ongoing library of articles and programs. Wherever you are on the journey, there's a door for you.`,
+PregnaWell now spans a free masterclass, a fertility self-assessment, and an ongoing library of articles and programs. Wherever you are on the journey, there's a door for you.`,
     ctas: {
       startHere: {
         eyebrow: "Start here",
@@ -435,7 +432,7 @@ PregnaWell now spans a free masterclass, a fertility self-assessment, the Pregna
 };
 
 const ar: Dict = {
-  nav: { home: "الرئيسية", story: "قصتنا", blog: "مقالات", testimonials: "شهادات", pregnaScanApp: "تطبيق PregnaScan" },
+  nav: { home: "الرئيسية", story: "قصتنا", blog: "مقالات", testimonials: "شهادات" },
   cta: {
     masterclass: "شاهدي ماستر كلاس محور ال HPO مجاناً",
     masterclassShort: "شاهدي ماستر كلاس محور ال HPO مجاناً",
@@ -478,10 +475,11 @@ const ar: Dict = {
     subtitle:
       "سواء كنتِ تستعدين للحمل، أو حاملاً بالفعل، أو تتعاملين مع سكري الحمل، هناك برنامج مصمَّم لمرحلتك تحديداً.",
     freeEyebrow: "ابدئي مجاناً",
-    freeTitle: "تعلّمي قبل أن تدفعي شيئاً.",
+    freeTitle: "ابدأي من هنا",
     paid: {
       fertilityDetox: {
-        badge: "برنامج ٣ أشهر",
+        badge: "برنامج التحضير للحمل",
+        subtitle: "٣ أشهر",
         title: "ديتوكس الخصوبة",
         description:
           "برنامجنا الأساسي للنساء المستعدات للحمل. ثلاثة أشهر من العمل المنظَّم على خصوبتك بإشراف أخصائيين وأطباء، مع دعم يومي لا ينقطع.",
@@ -649,10 +647,6 @@ const ar: Dict = {
         a: "تقييم ذاتي مدّته خمس دقائق يكشف ما تقوله هرموناتك ودورتك ونمط حياتك عن خصوبتك، وما الأَوْلى بالاهتمام تالياً. هي أداة وضوح لا أداة تشخيص. معظم النساء يجرينه، ثم يناقشن النتيجة معنا في جلسة تقييم مجانية.",
         link: { text: "ناقشي نتيجتك في جلسة مجانية ←", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
       },
-      {
-        q: "كيف يختلف PregnaScan عن الموقع؟",
-        a: "PregnaScan تطبيق منفصل مخصّص للأبوين المنتظَرَين، يُحوّل الفحوصات والتحاليل إلى فهم واضح أسبوعاً بأسبوع. تجدينه على pregnascan.app. وهو مستقل عن البرامج هنا، رغم أن كثيراً من مشتركاتنا يستخدمن الاثنين.",
-      },
     ],
   },
   founder: {
@@ -695,7 +689,7 @@ const ar: Dict = {
 
 ## ما القادم
 
-تشمل PregnaWell الآن درساً مجانياً، وأداة تقييم ذاتي للخصوبة، وتطبيق PregnaScan للأبوين المنتظَرَين، ومكتبة مستمرة من المقالات والبرامج. أينما كنتِ في الرحلة، هناك باب لك.`,
+تشمل PregnaWell الآن درساً مجانياً، وأداة تقييم ذاتي للخصوبة، ومكتبة مستمرة من المقالات والبرامج. أينما كنتِ في الرحلة، هناك باب لك.`,
     ctas: {
       startHere: {
         eyebrow: "ابدئي من هنا",

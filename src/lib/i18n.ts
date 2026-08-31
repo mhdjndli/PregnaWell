@@ -346,7 +346,7 @@ const en: Dict = {
       {
         q: "What does the Fertility Score tool measure?",
         a: "It's a five-minute self-assessment that surfaces what your hormones, cycle, and lifestyle are saying about your fertility, and what's most worth your attention next. It's a clarity tool, not a diagnostic one. Most women take it, then bring their result to a free evaluation call and we go through it together.",
-        link: { text: "Take your result to a free call →", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
+        link: { text: "Check your fertility score →", href: "https://pregnawell.clinic/smart-fertility-score-app-104457" },
       },
     ],
   },
@@ -645,7 +645,7 @@ const ar: Dict = {
       {
         q: "ماذا يقيس مقياس الخصوبة الذكي؟",
         a: "تقييم ذاتي مدّته خمس دقائق يكشف ما تقوله هرموناتك ودورتك ونمط حياتك عن خصوبتك، وما الأَوْلى بالاهتمام تالياً. هي أداة وضوح لا أداة تشخيص. معظم النساء يجرينه، ثم يناقشن النتيجة معنا في جلسة تقييم مجانية.",
-        link: { text: "ناقشي نتيجتك في جلسة مجانية ←", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
+        link: { text: "احسبي مقياس الخصوبة الذكي ←", href: "https://pregnawell.clinic/smart-fertility-score-app-104457" },
       },
     ],
   },

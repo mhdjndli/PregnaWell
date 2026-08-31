@@ -35,8 +35,7 @@ The "bounce back" narrative compresses an 8-month recovery into a 6-week window
 and then asks you to feel guilty about it. Don't. The data on long-term maternal
 health are clear: the women who recover slowly recover better.
 
-If you'd like a structured plan, our **Green Placenta Program** is designed for
-exactly this window: eight weeks of warm meals, gentle movement, and mental
-health check-ins.
+If you'd like structured support for postpartum nutrition and recovery, book a
+free evaluation call and we'll map out what makes sense for your situation.
 
 Maha

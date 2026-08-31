@@ -4,9 +4,12 @@ export const site = {
   email: "hello@pregnawell.com",
   ctas: {
     masterclass: "https://pregnawell.clinic/vsl-fertility-evaluation-call-pregnawell",
+    call: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH",
     fertilityScore: "https://pregnawell.clinic/smart-fertility-score-app-104457",
     pregnaScan: "https://pregnascan.app",
     whatsapp: "https://wa.me/971502804502",
+    podcast: "https://www.youtube.com/playlist?list=PLJXlPuPcMonONr1lsv7HGYInWHPmpH4dn",
+    youtube: "https://www.youtube.com/@maha.hommos",
   },
   social: {
     instagram: "https://www.instagram.com/maha.hommos/",

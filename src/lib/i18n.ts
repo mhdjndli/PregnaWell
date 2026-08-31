@@ -76,9 +76,15 @@ type Dict = {
     eyebrow: string;
     title: string;
     subtitle: string;
-    items: Record<
-      "nawat" | "greenPlacenta" | "soukkara" | "crash" | "masterclasses" | "freeResources",
-      { badge: string; title: string; subtitle?: string; description: string; features: string[] }
+    freeEyebrow: string;
+    freeTitle: string;
+    paid: Record<
+      "fertilityDetox" | "greenPlacenta" | "soukkara",
+      { badge: string; title: string; description: string; features: string[]; cta: string }
+    >;
+    free: Record<
+      "podcast" | "youtube" | "masterclass" | "articles",
+      { badge: string; title: string; description: string; features: string[]; cta: string }
     >;
   };
   testimonials: { eyebrow: string; title: string; items: { quote: string; name: string; role: string }[] };
@@ -87,7 +93,7 @@ type Dict = {
     title: string;
     helper: string;
     contact: string;
-    items: { q: string; a: string }[];
+    items: { q: string; a: string; link?: { text: string; href: string } }[];
   };
   founder: {
     eyebrow: string;
@@ -167,68 +173,103 @@ const en: Dict = {
   },
   programs: {
     eyebrow: "Programs & Services",
-    title: "Expert-led programs for every stage of motherhood.",
+    title: "Expert-led programs for every stage of your journey.",
     subtitle:
-      "From fertility preparation to postpartum recovery, pick the path that meets you where you are.",
-    items: {
-      nawat: {
-        badge: "Nawat",
-        title: "Pregnancy Preparation Program",
+      "Whether you're preparing to conceive, already expecting, or managing gestational diabetes, there's a program built for exactly where you are.",
+    freeEyebrow: "Free to start",
+    freeTitle: "Start learning before you spend anything.",
+    paid: {
+      fertilityDetox: {
+        badge: "3-Month Program",
+        title: "Fertility Detox",
         description:
-          "A complete wellness program to prepare your body for pregnancy with expert-guided nutrition and holistic care.",
+          "Our flagship program for women preparing to conceive. Three structured months of work on your fertility, guided by specialists and doctors, with support every single day.",
         features: [
-          "Assessments & recommendations",
-          "Tailored fertility-boosting meal plans",
-          "Mind-body exercises",
+          "Complete fertility course taught by specialists and doctors",
+          "Daily live calls, plus one-on-one consultations",
+          "Personalized fertility nutrition plan",
+          "Vitamin and supplement guide",
+          "Tracker app and partner access",
         ],
+        cta: "Inquire on WhatsApp →",
       },
       greenPlacenta: {
-        badge: "Green Placenta",
-        title: "Postpartum Recovery Program",
+        badge: "Full Pregnancy",
+        title: "Green Placenta",
         description:
-          "A post-pregnancy recovery program with customized diet plans and health tips to restore energy and vitality.",
-        features: ["Customized meal plans", "Expert one-on-one advice", "Community access"],
+          "The same close daily guidance as Fertility Detox, built for women who are already pregnant. Nutrition and support from your first trimester through delivery, without the course component.",
+        features: [
+          "Personalized nutrition plan for every trimester",
+          "Daily live calls, plus one-on-one consultations",
+          "Vitamin and supplement guide for pregnancy",
+          "Tracker app and partner access",
+          "Daily support from first trimester to delivery",
+        ],
+        cta: "Inquire on WhatsApp →",
       },
       soukkara: {
-        badge: "Soukkara",
-        title: "Gestational Diabetes Program",
+        badge: "Full Pregnancy",
+        title: "Soukkara",
         description:
-          "A focused program to help manage gestational diabetes with personalized meal plans, expert tips, and emotional support.",
+          "For pregnant women managing gestational diabetes. A dedicated course on the condition, plus everything in our pregnancy program: daily calls, one-on-one consultations, and a nutrition plan built around your own glucose readings.",
         features: [
-          "Personalized meal plans",
-          "Weekly glucose tracking",
-          "Expert tips and exercises",
+          "Dedicated gestational diabetes course",
+          "Nutrition plan built around your glucose readings",
+          "Daily live calls, plus one-on-one consultations",
+          "Vitamin and supplement guide",
+          "Tracker app and partner access",
         ],
+        cta: "Inquire on WhatsApp →",
       },
-      crash: {
-        badge: "Self-paced",
-        title: "Crash Courses",
+    },
+    free: {
+      podcast: {
+        badge: "Podcast",
+        title: "Hamel Talk Podcast",
         description:
-          "Affordable, focused sessions on labor prep, postpartum care, and nutrition, with lifetime access.",
+          "Maha's long-form conversations with doctors and specialists, covering the pregnancy journey from the medical side to the emotional one. Real stories, told properly.",
         features: [
-          "Affordable, focused sessions",
-          "Downloadable resources",
-          "Flexible, self-paced learning",
+          "Full episodes, free on YouTube",
+          "A guest expert in every episode",
+          "Fertility, pregnancy, and everything around them",
         ],
+        cta: "Listen to the podcast →",
       },
-      masterclasses: {
-        badge: "Free",
-        title: "Masterclasses",
-        subtitle: "Start with the HPO Axis masterclass",
+      youtube: {
+        badge: "YouTube",
+        title: "Long-Form Fertility Videos",
         description:
-          "Free, expert-led sessions providing actionable insights into fertility, pregnancy, and postpartum care.",
+          "Full-length episodes where Maha takes one fertility topic and works through it properly, at a depth no short-form video can reach.",
         features: [
-          "Live Q&A sessions",
-          "Downloadable Pregnancy Wellness Checklist",
-          "Lifetime access to the recording",
+          "In-depth videos on fertility, hormones, and nutrition",
+          "Free, no signup, watch any time",
+          "Full library on the channel",
         ],
+        cta: "Watch on YouTube ↗",
       },
-      freeResources: {
-        badge: "Library",
-        title: "Free Resources",
+      masterclass: {
+        badge: "Free Masterclass",
+        title: "The HPO Axis Masterclass",
         description:
-          "A collection of free eBooks, checklists, and video tutorials to support moms during pregnancy and postpartum.",
-        features: ["Free eBooks and guides", "Printable checklists", "Relaxation video tutorials"],
+          "A free 60-minute class on the hormone axis that governs your cycle and your fertility. The best place to start if you want to understand what your body is actually doing.",
+        features: [
+          "60 minutes, on demand",
+          "No credit card required",
+          "Book a free evaluation call at the end",
+        ],
+        cta: "Watch now →",
+      },
+      articles: {
+        badge: "Articles",
+        title: "The Article Library",
+        description:
+          "Written guides on fertility, hormones, pregnancy nutrition, and gestational diabetes. Evidence-based, and written to be read by someone who isn't a clinician.",
+        features: [
+          "Fertility and hormone health",
+          "Pregnancy and gestational diabetes nutrition",
+          "Free to read, no signup",
+        ],
+        cta: "Read the articles →",
       },
     },
   },
@@ -267,28 +308,48 @@ const en: Dict = {
     contact: "Message us on WhatsApp →",
     items: [
       {
-        q: "What is PregnaWell, and how can it help me?",
-        a: "PregnaWell is a virtual health clinic specializing in fertility, pregnancy, and postpartum support. We provide expert-led programs, masterclasses, and resources to empower women throughout their motherhood journey, grounded in current evidence and delivered with warmth.",
+        q: "Which program is right for me?",
+        a: "If you're preparing to conceive, Fertility Detox. If you're already pregnant, Green Placenta. If you're pregnant and managing gestational diabetes, Soukkara. If your situation is more complicated than that, book a free evaluation call and we'll work it out with you in about fifteen minutes.",
+        link: { text: "Book a free evaluation call →", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
       },
       {
-        q: "Are your services available internationally?",
-        a: "Yes. Every program and resource is delivered virtually, so you can join from anywhere in the world. Our community already includes women across the GCC, North America, Europe, and beyond.",
+        q: "How much do the programs cost?",
+        a: "Pricing depends on which program fits and how long you need support. Rather than quote a number that may not apply to you, we go through it on a free evaluation call, along with what's included and what results are realistic for your situation.",
+        link: { text: "Get pricing on a free call →", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
       },
       {
-        q: "Can I access support during the programs?",
-        a: "Absolutely. Each program includes direct access to our team for your questions, regular check-ins, and a private community of women going through the same season, so you're never doing this alone.",
+        q: "What kind of support do I actually get during a program?",
+        a: "Daily live calls with our team, one-on-one consultations, a personalized nutrition plan, a vitamin and supplement guide, tracker app access, and access for your partner. Plus a private community of women in the same season. You're never doing this alone.",
+        link: { text: "Ask us what's included →", href: "https://wa.me/971502804502" },
       },
       {
         q: "Is the masterclass really free?",
-        a: "Yes, the HPO Axis masterclass is free, on-demand, and requires no credit card. It's the best place to start if you want a foundation in fertility before committing to anything else.",
+        a: "Yes. The HPO Axis masterclass is free, on demand, and needs no credit card. It's 60 minutes on the hormone axis behind your cycle, and at the end you can book a free evaluation call with our team if you want to go further.",
+        link: { text: "Watch it now →", href: "https://pregnawell.clinic/vsl-fertility-evaluation-call-pregnawell" },
       },
       {
-        q: "What does the Fertility Score tool actually measure?",
-        a: "The Fertility Score is a 5-minute self-assessment that surfaces what your hormones, cycle, and lifestyle are telling you about your fertility, and what's most worth your attention next. It's not a diagnostic tool; it's a clarity tool.",
+        q: "What is PregnaWell, and how can it help me?",
+        a: "PregnaWell is a virtual clinic specializing in fertility, pregnancy, and postpartum nutrition. We run expert-led programs with daily live calls, one-on-one consultations, and personalized nutrition plans, grounded in current evidence and delivered with warmth. If you're not sure where you fit, start with the free masterclass.",
+        link: { text: "Start with the free masterclass →", href: "https://pregnawell.clinic/vsl-fertility-evaluation-call-pregnawell" },
+      },
+      {
+        q: "Are your services available internationally?",
+        a: "Yes. Every program runs virtually, so you can join from anywhere. Our members are across the GCC, North America, Europe, and beyond, and the daily calls are scheduled with those time zones in mind. To check the fit for your country and schedule, book a free call and we'll confirm it with you.",
+        link: { text: "Book a free call →", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
+      },
+      {
+        q: "Do you offer postpartum support?",
+        a: "Yes. Postpartum nutrition and recovery support is available, arranged case by case rather than as a fixed program, since what a mother needs after birth varies enormously. Book a free call, tell us your situation, and we'll map out what makes sense.",
+        link: { text: "Tell us your situation on a free call →", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
+      },
+      {
+        q: "What does the Fertility Score tool measure?",
+        a: "It's a five-minute self-assessment that surfaces what your hormones, cycle, and lifestyle are saying about your fertility, and what's most worth your attention next. It's a clarity tool, not a diagnostic one. Most women take it, then bring their result to a free evaluation call and we go through it together.",
+        link: { text: "Take your result to a free call →", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
       },
       {
         q: "How is PregnaScan different from the website?",
-        a: "PregnaScan is a separate app built for expecting parents, it turns your medical scans and labs into clear, week-by-week understanding. You can find it at pregnascan.app.",
+        a: "PregnaScan is a separate app for expecting parents. It turns your medical scans and labs into clear, week-by-week understanding. You can find it at pregnascan.app. It's independent of the programs here, though many of our members use both.",
       },
     ],
   },
@@ -413,72 +474,103 @@ const ar: Dict = {
   },
   programs: {
     eyebrow: "البرامج والخدمات",
-    title: "برامج بإشراف الخبراء لكل مرحلة من مراحل الأمومة.",
+    title: "برامج بإشراف الخبراء لكل مرحلة من رحلتك.",
     subtitle:
-      "من الاستعداد للحمل إلى التعافي بعد الولادة, اختاري المسار الذي يُلائم مرحلتك.",
-    items: {
-      nawat: {
-        badge: "نواة",
-        title: "برنامج الاستعداد للحمل",
+      "سواء كنتِ تستعدين للحمل، أو حاملاً بالفعل، أو تتعاملين مع سكري الحمل، هناك برنامج مصمَّم لمرحلتك تحديداً.",
+    freeEyebrow: "ابدئي مجاناً",
+    freeTitle: "تعلّمي قبل أن تدفعي شيئاً.",
+    paid: {
+      fertilityDetox: {
+        badge: "برنامج ٣ أشهر",
+        title: "ديتوكس الخصوبة",
         description:
-          "برنامج عافية متكامل لتهيئة جسدك للحمل بتغذية موجَّهة من خبراء ورعاية شاملة.",
+          "برنامجنا الأساسي للنساء المستعدات للحمل. ثلاثة أشهر من العمل المنظَّم على خصوبتك بإشراف أخصائيين وأطباء، مع دعم يومي لا ينقطع.",
         features: [
-          "تقييمات وتوصيات",
-          "خطط وجبات مُصمَّمة لتعزيز الخصوبة",
-          "تمارين للجسم والعقل",
+          "دورة خصوبة كاملة يقدّمها أخصائيون وأطباء",
+          "جلسات مباشرة يومية، إضافةً إلى استشارات فردية",
+          "خطة غذائية مخصّصة لتعزيز الخصوبة",
+          "دليل الفيتامينات والمكمّلات",
+          "تطبيق متابعة ووصول للشريك",
         ],
+        cta: "تواصلي عبر واتساب ←",
       },
       greenPlacenta: {
-        badge: "المشيمة الخضراء",
-        title: "برنامج التعافي بعد الولادة",
+        badge: "طوال فترة الحمل",
+        title: "المشيمة الخضراء",
         description:
-          "برنامج للتعافي بعد الحمل بخطط غذائية مخصّصة ونصائح صحية لاستعادة الطاقة والحيوية.",
-        features: ["خطط وجبات مخصّصة", "استشارة فردية مع الخبراء", "وصول إلى المجتمع"],
+          "نفس المتابعة اليومية القريبة في برنامج ديتوكس الخصوبة، لكن مصمّمة للحامل. تغذية ودعم من الشهر الأول حتى الولادة، من دون الدورة التدريبية.",
+        features: [
+          "خطة غذائية مخصّصة لكل مرحلة من مراحل الحمل",
+          "جلسات مباشرة يومية، إضافةً إلى استشارات فردية",
+          "دليل الفيتامينات والمكمّلات للحامل",
+          "تطبيق متابعة ووصول للشريك",
+          "دعم يومي من الشهر الأول حتى الولادة",
+        ],
+        cta: "تواصلي عبر واتساب ←",
       },
       soukkara: {
-        badge: "سُكّرة",
-        title: "برنامج سكري الحمل",
+        badge: "طوال فترة الحمل",
+        title: "سُكّرة",
         description:
-          "برنامج مُركَّز لإدارة سكري الحمل بخطط وجبات شخصية ونصائح من الخبراء ودعم نفسي.",
+          "للحوامل اللواتي يتعاملن مع سكري الحمل. دورة مخصّصة لسكري الحمل، إضافةً إلى كل ما في برنامج الحمل: جلسات يومية، واستشارات فردية، وخطة غذائية مبنية على قراءات السكر لديكِ.",
         features: [
-          "خطط وجبات شخصية",
-          "متابعة أسبوعية لمستوى السكر",
-          "نصائح وتمارين من الخبراء",
+          "دورة مخصّصة لسكري الحمل",
+          "خطة غذائية مبنية على قراءات السكر لديكِ",
+          "جلسات مباشرة يومية، إضافةً إلى استشارات فردية",
+          "دليل الفيتامينات والمكمّلات",
+          "تطبيق متابعة ووصول للشريك",
         ],
+        cta: "تواصلي عبر واتساب ←",
       },
-      crash: {
-        badge: "تعلُّم ذاتي",
-        title: "دورات مكثَّفة",
+    },
+    free: {
+      podcast: {
+        badge: "بودكاست",
+        title: "Talk حامل",
         description:
-          "جلسات مُركَّزة وميسورة عن الاستعداد للولادة، الرعاية بعد الولادة، والتغذية, مع وصول مدى الحياة.",
+          "حوارات مطوّلة تجمع الأخصائية مها حمص بأطباء ومختصين، تتناول رحلة الحمل من نواحيها الطبية والنفسية معاً. قصص حقيقية، بحقّها.",
         features: [
-          "جلسات مُركَّزة وميسورة",
-          "موارد قابلة للتنزيل",
-          "تعلُّم ذاتي ومرن",
+          "حلقات كاملة مجاناً على يوتيوب",
+          "ضيف مختص في كل حلقة",
+          "الخصوبة والحمل وكل ما يحيط بهما",
         ],
+        cta: "استمعي للبودكاست ←",
       },
-      masterclasses: {
-        badge: "مجاني",
-        title: "الدروس المتقدّمة",
-        subtitle: "ابدئي بدرس محور HPO",
+      youtube: {
+        badge: "يوتيوب",
+        title: "فيديوهات الخصوبة الطويلة",
         description:
-          "جلسات مجانية بإشراف الخبراء تُقدّم رؤى عملية في الخصوبة والحمل وما بعد الولادة.",
+          "حلقات كاملة تأخذ فيها الأخصائية مها موضوعاً واحداً في الخصوبة وتشرحه بعمق لا يتيحه أي فيديو قصير.",
         features: [
-          "أسئلة وأجوبة مباشرة",
-          "قائمة عافية الحمل قابلة للتنزيل",
-          "وصول مدى الحياة إلى التسجيل",
+          "فيديوهات معمّقة عن الخصوبة والهرمونات والتغذية",
+          "مجاناً، بلا تسجيل، في أي وقت",
+          "المكتبة الكاملة على القناة",
         ],
+        cta: "شاهدي على يوتيوب ↗",
       },
-      freeResources: {
-        badge: "مكتبة",
-        title: "موارد مجانية",
+      masterclass: {
+        badge: "ماستر كلاس مجاني",
+        title: "ماستر كلاس محور الـHPO",
         description:
-          "مجموعة من الكتب الإلكترونية المجانية، وقوائم التحقّق، ودروس الفيديو لدعم الأمهات أثناء الحمل وبعده.",
+          "درس مجاني مدّته ٦٠ دقيقة عن المحور الهرموني الذي يتحكّم بدورتك وخصوبتك. أفضل نقطة بداية إذا أردتِ أن تفهمي ما يحدث في جسدك فعلاً.",
         features: [
-          "كتب إلكترونية وأدلة مجانية",
-          "قوائم تحقّق قابلة للطباعة",
-          "دروس فيديو للاسترخاء",
+          "٦٠ دقيقة، متاح عند الطلب",
+          "بدون بطاقة ائتمان",
+          "إمكانية حجز جلسة تقييم مجانية في نهايته",
         ],
+        cta: "شاهدي الآن ←",
+      },
+      articles: {
+        badge: "مقالات",
+        title: "مكتبة المقالات",
+        description:
+          "أدلة مكتوبة عن الخصوبة والهرمونات وتغذية الحمل وسكري الحمل. مبنية على الأدلة، ومكتوبة لتقرأها امرأة ليست طبيبة.",
+        features: [
+          "الخصوبة وصحة الهرمونات",
+          "تغذية الحمل وسكري الحمل",
+          "مجانية وبلا تسجيل",
+        ],
+        cta: "اقرأي المقالات ←",
       },
     },
   },
@@ -518,28 +610,48 @@ const ar: Dict = {
     contact: "راسلينا على واتساب ←",
     items: [
       {
+        q: "أي برنامج يناسبني؟",
+        a: "إذا كنتِ تستعدين للحمل، فبرنامج ديتوكس الخصوبة. إذا كنتِ حاملاً، فالمشيمة الخضراء. إذا كنتِ حاملاً وتتعاملين مع سكري الحمل، فسُكّرة. وإذا كان وضعك أكثر تعقيداً، فاحجزي جلسة تقييم مجانية ونحدّد الأنسب لكِ خلال خمس عشرة دقيقة تقريباً.",
+        link: { text: "احجزي جلسة تقييم مجانية ←", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
+      },
+      {
+        q: "كم تكلفة البرامج؟",
+        a: "السعر يعتمد على البرنامج المناسب لكِ وعلى المدة التي تحتاجينها من الدعم. بدل أن نذكر رقماً قد لا ينطبق على حالتك، نناقشه في جلسة تقييم مجانية، مع ما يتضمّنه البرنامج والنتائج الواقعية لوضعك.",
+        link: { text: "اعرفي الأسعار في جلسة مجانية ←", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
+      },
+      {
+        q: "ما نوع الدعم الذي أحصل عليه خلال البرنامج؟",
+        a: "جلسات مباشرة يومية مع فريقنا، واستشارات فردية، وخطة غذائية مخصّصة، ودليل الفيتامينات والمكمّلات، ووصول إلى تطبيق المتابعة، ووصول لشريكك. إضافةً إلى مجتمع خاص من النساء اللواتي يمررن بنفس المرحلة. لن تكوني وحدك أبداً.",
+        link: { text: "اسألينا عمّا يتضمّنه البرنامج ←", href: "https://wa.me/971502804502" },
+      },
+      {
+        q: "هل الماستر كلاس مجاني فعلاً؟",
+        a: "نعم. ماستر كلاس محور الـHPO مجاني، متاح عند الطلب، ولا يحتاج بطاقة ائتمان. ستون دقيقة عن المحور الهرموني خلف دورتك، وفي نهايته يمكنك حجز جلسة تقييم مجانية مع فريقنا إذا أردتِ المتابعة.",
+        link: { text: "شاهديه الآن ←", href: "https://pregnawell.clinic/vsl-fertility-evaluation-call-pregnawell" },
+      },
+      {
         q: "ما هي PregnaWell، وكيف يمكن أن تساعدني؟",
-        a: "PregnaWell عيادة صحية افتراضية متخصّصة في الخصوبة والحمل ودعم ما بعد الولادة. نُقدّم برامج بإشراف الخبراء، ودروساً، وموارد لتمكين النساء طوال رحلة الأمومة, مبنية على الأدلة الحديثة ومُقدَّمة بالدفء.",
+        a: "PregnaWell عيادة افتراضية متخصّصة في تغذية الخصوبة والحمل وما بعد الولادة. نُقدّم برامج بإشراف الخبراء تتضمّن جلسات مباشرة يومية، واستشارات فردية، وخطط غذائية مخصّصة، مبنية على الأدلة الحديثة ومُقدَّمة بالدفء. إذا لم تكوني متأكدة أين تقعين، ابدئي بالماستر كلاس المجاني.",
+        link: { text: "ابدئي بالماستر كلاس المجاني ←", href: "https://pregnawell.clinic/vsl-fertility-evaluation-call-pregnawell" },
       },
       {
         q: "هل خدماتكم متاحة دولياً؟",
-        a: "نعم. كل برنامج ومورد يُقدَّم افتراضياً، فيمكنك الانضمام من أي مكان في العالم. مجتمعنا يضم بالفعل نساء من دول الخليج وأمريكا الشمالية وأوروبا وما وراءها.",
+        a: "نعم. كل برامجنا تُقدَّم افتراضياً، فيمكنك الانضمام من أي مكان. مشتركاتنا من دول الخليج وأمريكا الشمالية وأوروبا وغيرها، والجلسات اليومية مجدولة بما يراعي هذه الفوارق الزمنية. للتأكد من ملاءمة البرنامج لبلدك وجدولك، احجزي جلسة مجانية ونؤكّد لكِ ذلك.",
+        link: { text: "احجزي جلسة مجانية ←", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
       },
       {
-        q: "هل يمكنني الحصول على دعم خلال البرامج؟",
-        a: "بالتأكيد. كل برنامج يتضمّن وصولاً مباشراً إلى فريقنا للأسئلة، ومتابعات منتظمة، ومجتمع خاص من النساء اللواتي يمررن بنفس المرحلة, لن تكوني وحدك أبداً.",
+        q: "هل تقدّمون دعماً لما بعد الولادة؟",
+        a: "نعم. دعم التغذية والتعافي بعد الولادة متاح، ويُرتَّب لكل حالة على حدة بدل أن يكون برنامجاً ثابتاً، لأن ما تحتاجه الأم بعد الولادة يختلف كثيراً من واحدة لأخرى. احجزي جلسة مجانية وأخبرينا بوضعك، ونرسم معكِ ما يناسبك.",
+        link: { text: "أخبرينا بوضعك في جلسة مجانية ←", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
       },
       {
-        q: "هل الدرس المتقدّم مجاني فعلاً؟",
-        a: "نعم, درس محور HPO مجاني، عند الطلب، ولا يحتاج إلى بطاقة ائتمان. هو أفضل نقطة بداية إذا أردت أساساً متيناً في الخصوبة قبل الالتزام بأي شيء آخر.",
-      },
-      {
-        q: "ماذا تقيس أداة مؤشر الخصوبة فعلاً؟",
-        a: "مؤشر الخصوبة تقييم ذاتي مدّته ٥ دقائق يكشف ما تقوله هرموناتك ودورتك ونمط حياتك عن خصوبتك, وما الأَوْلى بالاهتمام تالياً. ليست أداة تشخيصية، بل أداة وضوح.",
+        q: "ماذا يقيس مقياس الخصوبة الذكي؟",
+        a: "تقييم ذاتي مدّته خمس دقائق يكشف ما تقوله هرموناتك ودورتك ونمط حياتك عن خصوبتك، وما الأَوْلى بالاهتمام تالياً. هي أداة وضوح لا أداة تشخيص. معظم النساء يجرينه، ثم يناقشن النتيجة معنا في جلسة تقييم مجانية.",
+        link: { text: "ناقشي نتيجتك في جلسة مجانية ←", href: "https://link.pregnawell.clinic/widget/booking/9wlfPmQlw1qq7btA5cQH" },
       },
       {
         q: "كيف يختلف PregnaScan عن الموقع؟",
-        a: "PregnaScan تطبيق منفصل مخصّص للأبوين المنتظَرَين, يُحوّل الفحوصات والتحاليل إلى فهم واضح أسبوعاً بأسبوع. تجدينه على pregnascan.app.",
+        a: "PregnaScan تطبيق منفصل مخصّص للأبوين المنتظَرَين، يُحوّل الفحوصات والتحاليل إلى فهم واضح أسبوعاً بأسبوع. تجدينه على pregnascan.app. وهو مستقل عن البرامج هنا، رغم أن كثيراً من مشتركاتنا يستخدمن الاثنين.",
       },
     ],
   },

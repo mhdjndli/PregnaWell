@@ -68,7 +68,19 @@ export default function Faq({ locale }: { locale: Locale }) {
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="px-6 pb-6 text-sm leading-relaxed text-[var(--brand-muted)]">{item.a}</p>
+                    <div className="px-6 pb-6">
+                      <p className="text-sm leading-relaxed text-[var(--brand-muted)]">{item.a}</p>
+                      {item.link && (
+                        <Link
+                          href={item.link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand-purple)] hover:text-[var(--brand-rose)]"
+                        >
+                          {item.link.text}
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

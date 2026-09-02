@@ -46,7 +46,6 @@ export default function Header({ locale }: Props) {
   const switchHref = isArticlePage
     ? `/${other}/blog`
     : withLocale(other, pathname || `/${locale}`);
-  const langButtonLabel = `${localeFlag[other]} ${dict.language[other]}`;
 
   return (
     <header

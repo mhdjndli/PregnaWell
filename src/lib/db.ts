@@ -101,6 +101,18 @@ CREATE UNIQUE INDEX IF NOT EXISTS posts_slug_language_uniq ON posts (slug, langu
 CREATE INDEX IF NOT EXISTS posts_publish_at_idx ON posts (publish_at);
 CREATE INDEX IF NOT EXISTS posts_published_idx ON posts (published);
 CREATE INDEX IF NOT EXISTS posts_language_idx ON posts (language);
+
+-- Cached Google Search Console URL-inspection results for the admin panel.
+CREATE TABLE IF NOT EXISTS gsc_inspections (
+  url TEXT PRIMARY KEY,
+  verdict TEXT NOT NULL DEFAULT '',
+  coverage_state TEXT NOT NULL DEFAULT '',
+  robots_txt_state TEXT NOT NULL DEFAULT '',
+  indexing_state TEXT NOT NULL DEFAULT '',
+  last_crawl_time TIMESTAMPTZ,
+  google_canonical TEXT,
+  inspected_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 `;
 
 export async function ensureInitialized(): Promise<void> {

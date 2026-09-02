@@ -27,6 +27,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               Posts
             </Link>
             <Link
+              href="/admin/search-console"
+              className="text-[var(--brand-ink)] hover:text-[var(--brand-purple)]"
+            >
+              Search Console
+            </Link>
+            <Link
               href="/admin/posts/new"
               className="rounded-full bg-[var(--brand-purple)] text-white px-4 py-2 hover:bg-[var(--brand-purple-deep)] transition"
             >

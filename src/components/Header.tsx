@@ -39,7 +39,13 @@ export default function Header({ locale }: Props) {
   ];
 
   const other = otherLocale(locale);
-  const switchHref = withLocale(other, pathname || `/${locale}`);
+  // Articles exist in one language only; switching locale on an article
+  // page goes to the other language's blog index instead of a redirect
+  // bouncing straight back.
+  const isArticlePage = /^\/(en|ar)\/blog\/.+/.test(pathname || "");
+  const switchHref = isArticlePage
+    ? `/${other}/blog`
+    : withLocale(other, pathname || `/${locale}`);
   const langButtonLabel = `${localeFlag[other]} ${dict.language[other]}`;
 
   return (

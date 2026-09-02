@@ -26,11 +26,12 @@ const STATIC_PATHS: StaticPath[] = [
   { path: "/testimonials", changeFrequency: "monthly", priority: 0.8 },
 ];
 
-function alternatesFor(pathSuffix: string): Record<Locale, string> {
-  const map = {} as Record<Locale, string>;
+function alternatesFor(pathSuffix: string): Record<string, string> {
+  const map: Record<string, string> = {};
   for (const l of locales) {
     map[l] = `${BASE}/${l}${pathSuffix}`;
   }
+  map["x-default"] = `${BASE}/en${pathSuffix}`;
   return map;
 }
 
@@ -62,13 +63,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static routes for both locales with hreflang alternates. Next serializes
   // alternates.languages as xhtml:link rel="alternate" hreflang tags and
   // declares the xmlns:xhtml namespace on <urlset> automatically.
+  // Static pages get NO lastmod unless we have a real one (the blog list's
+  // newest-article date): a lastmod that changes on every request teaches
+  // crawlers to distrust lastmod sitewide.
   const staticEntries: MetadataRoute.Sitemap = [];
   for (const { path, changeFrequency, priority, useLatestArticleDate } of STATIC_PATHS) {
-    const lastMod = useLatestArticleDate ? blogListLastMod : now;
     for (const locale of locales) {
       staticEntries.push({
         url: `${BASE}/${locale}${path}`,
-        lastModified: lastMod,
+        ...(useLatestArticleDate ? { lastModified: blogListLastMod } : {}),
         changeFrequency,
         priority,
         alternates: { languages: alternatesFor(path) },

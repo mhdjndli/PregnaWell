@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getPublicPosts } from "@/lib/blog";
 import { getDict, isLocale, type Locale } from "@/lib/i18n";
 import BlogGrid from "./BlogGrid";
+import { pageMetadata } from "@/lib/seo";
 
 export const revalidate = 60;
 
@@ -14,7 +15,12 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params;
   const locale = isLocale(rawLocale) ? (rawLocale as Locale) : "en";
   const dict = getDict(locale);
-  return { title: dict.nav.blog, description: dict.blog.subtitle };
+  return pageMetadata({
+    locale,
+    path: "/blog",
+    title: dict.nav.blog,
+    description: dict.blog.subtitle,
+  });
 }
 
 export default async function BlogIndex({

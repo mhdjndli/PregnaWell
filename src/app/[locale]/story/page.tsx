@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { marked } from "marked";
 import { site } from "@/lib/site";
 import { getDict, isLocale, type Locale } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -14,7 +15,12 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params;
   const locale = isLocale(rawLocale) ? (rawLocale as Locale) : "en";
   const dict = getDict(locale);
-  return { title: dict.nav.story, description: dict.story.intro };
+  return pageMetadata({
+    locale,
+    path: "/story",
+    title: dict.nav.story,
+    description: dict.story.intro,
+  });
 }
 
 export default async function StoryPage({

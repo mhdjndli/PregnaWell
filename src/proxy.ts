@@ -11,7 +11,7 @@ export function proxy(request: NextRequest) {
   if (pathname === "/") {
     const url = request.nextUrl.clone();
     url.pathname = `/${DEFAULT_LOCALE}`;
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(url, 308);
   }
 
   // Pass the resolved pathname to the root layout so it can set <html lang/dir>

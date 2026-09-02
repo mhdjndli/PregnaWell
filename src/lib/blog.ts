@@ -59,6 +59,15 @@ function statusOf(row: BlogRow): BlogStatus {
   return "published";
 }
 
+// pg returns TIMESTAMPTZ columns as JS Date objects even though our row
+// types say string. Normalize to ISO strings once, here, so downstream
+// consumers (meta tags, JSON-LD, sitemap) never stringify a Date by accident.
+function isoOrNull(value: string | Date | null | undefined): string | null {
+  if (!value) return null;
+  const d = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
 function coverFor(row: Pick<BlogRow, "cover_image_id" | "cover_url">): string | null {
   if (row.cover_image_id) return `/api/images/${row.cover_image_id}`;
   return row.cover_url ?? null;
@@ -75,8 +84,8 @@ function toSummary(row: BlogRow): BlogSummary {
     tags: row.tags ?? [],
     author: row.author,
     language: row.language ?? "en",
-    publishAt: row.publish_at,
-    updatedAt: row.updated_at,
+    publishAt: isoOrNull(row.publish_at),
+    updatedAt: isoOrNull(row.updated_at) ?? new Date().toISOString(),
     status: statusOf(row),
     readingMinutes: readingTime(row.body_md),
   };

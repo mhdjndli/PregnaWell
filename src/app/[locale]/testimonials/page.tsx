@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getDict, isLocale, type Locale } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 import {
   featuredStory,
@@ -19,7 +20,12 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params;
   const locale = isLocale(rawLocale) ? (rawLocale as Locale) : "en";
   const dict = getDict(locale);
-  return { title: dict.nav.testimonials };
+  return pageMetadata({
+    locale,
+    path: "/testimonials",
+    title: dict.nav.testimonials,
+    description: dict.testimonials.title,
+  });
 }
 
 export default async function TestimonialsPage({

@@ -11,6 +11,37 @@ import Programs from "@/components/Programs";
 // import Testimonials from "@/components/Testimonials";
 import VideoTestimonialsSlider from "@/components/VideoTestimonialsSlider";
 import Faq from "@/components/Faq";
+import { JsonLd, organizationJsonLd, pageMetadata, webSiteJsonLd } from "@/lib/seo";
+import type { Metadata } from "next";
+
+const HOME_META: Record<Locale, { title: string; description: string }> = {
+  en: {
+    title: "PregnaWell: Empowering Women on the Journey to Motherhood",
+    description:
+      "Compassionate, evidence-based programs and resources for fertility, pregnancy, and postpartum, guided by Maha Hommos and the PregnaWell team.",
+  },
+  ar: {
+    title: "PregnaWell | نُمكّن المرأة في رحلتها نحو الأمومة",
+    description:
+      "من الخصوبة إلى ما بعد الولادة، برامج وموارد مبنية على الأدلة بإشراف مها حُمُّص وفريق PregnaWell ترافقك بالعلم والحنان في كل خطوة.",
+  },
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: rawLocale } = await params;
+  const locale = isLocale(rawLocale) ? (rawLocale as Locale) : "en";
+  const meta = HOME_META[locale];
+  return pageMetadata({
+    locale,
+    path: "",
+    title: { absolute: meta.title },
+    description: meta.description,
+  });
+}
 
 export default async function HomePage({
   params,
@@ -24,6 +55,7 @@ export default async function HomePage({
 
   return (
     <>
+      <JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">

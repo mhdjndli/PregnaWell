@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { formatDate, getPublicSlugs, getPublicPost } from "@/lib/blog";
 import { categoryLabel, getDict, isLocale, locales, type Locale } from "@/lib/i18n";
 import { site } from "@/lib/site";
+import { JsonLd, pageMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
 
 type Params = { locale: string; slug: string };
 
@@ -33,19 +34,23 @@ export async function generateMetadata(
   { params }: { params: Promise<Params> }
 ): Promise<Metadata> {
   const { locale: rawLocale, slug } = await params;
-  const { post } = await loadPost(rawLocale, decodeURIComponent(slug));
-  if (!post) return { title: "Article not found" };
-  return {
+  const decoded = decodeURIComponent(slug);
+  const { locale, post } = await loadPost(rawLocale, decoded);
+  if (!post) return { title: "Article not found", robots: { index: false } };
+  return pageMetadata({
+    locale,
+    path: `/blog/${encodeURIComponent(decoded)}`,
     title: post.metaTitle ?? post.title,
     description: post.metaDescription ?? post.description,
-    openGraph: {
-      title: post.metaTitle ?? post.title,
-      description: post.metaDescription ?? post.description,
-      images: post.cover ? [post.cover] : undefined,
-      type: "article",
+    // An article exists in one language only - no hreflang alternates.
+    localized: false,
+    image: post.cover,
+    article: {
       publishedTime: post.publishAt ?? undefined,
+      modifiedTime: post.updatedAt,
+      authors: post.author ? [post.author] : undefined,
     },
-  };
+  });
 }
 
 export default async function BlogPostPage(
@@ -70,9 +75,46 @@ export default async function BlogPostPage(
   }
   const dict = getDict(locale);
   const dir = post.language === "ar" ? "rtl" : "ltr";
+  const canonicalUrl = `${SITE_URL}/${locale}/blog/${encodeURIComponent(slug)}`;
+  const coverAbsolute = post.cover
+    ? post.cover.startsWith("/")
+      ? `${SITE_URL}${post.cover}`
+      : post.cover
+    : undefined;
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    image: coverAbsolute,
+    datePublished: post.publishAt ?? undefined,
+    dateModified: post.updatedAt,
+    inLanguage: post.language,
+    mainEntityOfPage: canonicalUrl,
+    author: {
+      "@type": "Person",
+      name: post.author ?? "Maha Hommos",
+      url: `${SITE_URL}/${locale}/story`,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/logo-mark.png` },
+    },
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: SITE_NAME, item: `${SITE_URL}/${locale}` },
+      { "@type": "ListItem", position: 2, name: dict.nav.blog, item: `${SITE_URL}/${locale}/blog` },
+      { "@type": "ListItem", position: 3, name: post.title, item: canonicalUrl },
+    ],
+  };
 
   return (
     <article className="pb-24">
+      <JsonLd data={[articleLd, breadcrumbLd]} />
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute -top-32 -end-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-rose-soft)]/25 blur-3xl" />
@@ -116,6 +158,7 @@ export default async function BlogPostPage(
                     width={1600}
                     height={900}
                     className="block w-full h-auto aspect-video object-cover"
+                    sizes="(max-width: 896px) 100vw, 768px"
                     priority
                     unoptimized={!post.cover.startsWith("/")}
                   />

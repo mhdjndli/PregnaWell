@@ -2,11 +2,18 @@ import { redirect } from "next/navigation";
 import { isAuthed } from "@/lib/auth";
 import AdminShell from "@/components/admin/AdminShell";
 import PostEditor from "@/components/admin/PostEditor";
+import { isLocale, type Locale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
-export default async function NewPostPage() {
+export default async function NewPostPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>;
+}) {
   if (!(await isAuthed())) redirect("/admin");
+  const params = await searchParams;
+  const lang: Locale = isLocale(params.lang ?? "") ? (params.lang as Locale) : "ar";
   return (
     <AdminShell>
       <div className="mb-8">
@@ -15,7 +22,7 @@ export default async function NewPostPage() {
           Write the post, set publish options, and save.
         </p>
       </div>
-      <PostEditor />
+      <PostEditor defaultLanguage={lang} />
     </AdminShell>
   );
 }

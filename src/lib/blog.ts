@@ -94,36 +94,33 @@ async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   }
 }
 
-// Public article surfaces always serve the Arabic articles, regardless of
-// the visitor's site locale. There is no English article content, so the
-// English site shows the same Arabic articles as the Arabic site.
-const PUBLIC_LANGUAGE: Locale = "ar";
-
-export async function getPublicPosts(_language: Locale): Promise<BlogSummary[]> {
+// Each locale serves its own library: /en/blog only lists English posts and
+// /ar/blog only Arabic ones.
+export async function getPublicPosts(language: Locale): Promise<BlogSummary[]> {
   return safe(async () => {
     const { rows } = await getPool().query<BlogRow>(
       `SELECT * FROM posts WHERE language = $1 AND ${PUBLIC_FILTER} ORDER BY publish_at DESC NULLS LAST, created_at DESC`,
-      [PUBLIC_LANGUAGE]
+      [language]
     );
     return rows.map(toSummary);
   }, []);
 }
 
-export async function getPublicSlugs(_language: Locale): Promise<string[]> {
+export async function getPublicSlugs(language: Locale): Promise<string[]> {
   return safe(async () => {
     const { rows } = await getPool().query<{ slug: string }>(
       `SELECT slug FROM posts WHERE language = $1 AND ${PUBLIC_FILTER}`,
-      [PUBLIC_LANGUAGE]
+      [language]
     );
     return rows.map((r) => r.slug);
   }, []);
 }
 
-export async function getPublicPost(slug: string, _language: Locale): Promise<BlogPost | null> {
+export async function getPublicPost(slug: string, language: Locale): Promise<BlogPost | null> {
   return safe(async () => {
     const { rows } = await getPool().query<BlogRow>(
       `SELECT * FROM posts WHERE slug = $1 AND language = $2 AND ${PUBLIC_FILTER} LIMIT 1`,
-      [slug, PUBLIC_LANGUAGE]
+      [slug, language]
     );
     const row = rows[0];
     if (!row) return null;
@@ -131,11 +128,16 @@ export async function getPublicPost(slug: string, _language: Locale): Promise<Bl
   }, null);
 }
 
-export async function getAllPostsAdmin(): Promise<BlogSummary[]> {
+export async function getAllPostsAdmin(language?: Locale): Promise<BlogSummary[]> {
   await ensureInitialized();
-  const { rows } = await getPool().query<BlogRow>(
-    `SELECT * FROM posts ORDER BY COALESCE(publish_at, created_at) DESC`
-  );
+  const { rows } = language
+    ? await getPool().query<BlogRow>(
+        `SELECT * FROM posts WHERE language = $1 ORDER BY COALESCE(publish_at, created_at) DESC`,
+        [language]
+      )
+    : await getPool().query<BlogRow>(
+        `SELECT * FROM posts ORDER BY COALESCE(publish_at, created_at) DESC`
+      );
   return rows.map(toSummary);
 }
 
@@ -182,12 +184,17 @@ function rowToPost(row: BlogRow): BlogPost {
 
 export { formatDate } from "./format";
 
+// Unicode-aware: Arabic titles keep their Arabic letters instead of being
+// reduced to an empty/transliterated English slug. Diacritics and tatweel are
+// stripped so the slug stays stable however the title was typed.
 export function slugify(input: string): string {
   return input
     .toLowerCase()
     .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
+    .normalize("NFC")
+    .replace(/['"\u2018\u2019\u201C\u201D]/g, "")
+    .replace(/[\u0640\u064B-\u065F\u0670]/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
 }

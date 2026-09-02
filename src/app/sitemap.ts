@@ -43,13 +43,17 @@ function pickDate(iso: string | null | undefined, fallback: Date): Date {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
-  // Public articles are served identically on either locale; fetch once.
+  // Each locale has its own article library; fetch both.
   // getPublicPosts already filters drafts and future-scheduled posts.
-  const posts = await getPublicPosts("ar");
+  const postsByLocale = new Map<Locale, Awaited<ReturnType<typeof getPublicPosts>>>();
+  for (const locale of locales) {
+    postsByLocale.set(locale, await getPublicPosts(locale));
+  }
+  const allPosts = [...postsByLocale.values()].flat();
 
   // Newest content date across all articles - used as the blog list's
   // lastmod so the sitemap reflects when new content actually appeared.
-  const latestArticleDate = posts.reduce<Date>((max, p) => {
+  const latestArticleDate = allPosts.reduce<Date>((max, p) => {
     const candidate = pickDate(p.updatedAt || p.publishAt, new Date(0));
     return candidate > max ? candidate : max;
   }, new Date(0));
@@ -72,19 +76,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Individual article URLs for both locales - lastmod pulled from each
-  // post's updated_at (falling back to publish_at) so every article shows
-  // its actual last-modified date rather than a shared build timestamp.
+  // Individual article URLs - each article lives only under its own
+  // language's locale (no cross-language alternates: the libraries are
+  // separate). lastmod pulled from each post's updated_at (falling back
+  // to publish_at) so every article shows its actual last-modified date.
   const articleEntries: MetadataRoute.Sitemap = [];
-  for (const p of posts) {
-    const lastMod = pickDate(p.updatedAt || p.publishAt, now);
-    for (const locale of locales) {
+  for (const locale of locales) {
+    for (const p of postsByLocale.get(locale) ?? []) {
       articleEntries.push({
-        url: `${BASE}/${locale}/blog/${p.slug}`,
-        lastModified: lastMod,
+        url: `${BASE}/${locale}/blog/${encodeURIComponent(p.slug)}`,
+        lastModified: pickDate(p.updatedAt || p.publishAt, now),
         changeFrequency: "monthly",
         priority: 0.7,
-        alternates: { languages: alternatesFor(`/blog/${p.slug}`) },
       });
     }
   }

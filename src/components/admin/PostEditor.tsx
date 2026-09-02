@@ -16,6 +16,7 @@ import { categories, isCategoryId, type CategoryId, type Locale } from "@/lib/i1
 
 type Props = {
   initial?: BlogPost | null;
+  defaultLanguage?: Locale;
 };
 
 function toLocalInput(iso: string | null | undefined): string {
@@ -26,24 +27,28 @@ function toLocalInput(iso: string | null | undefined): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+// Keep in sync with slugify in src/lib/blog.ts: unicode-aware so Arabic
+// titles produce Arabic slugs.
 function slugify(s: string) {
   return s
     .toLowerCase()
     .trim()
-    .replace(/['"]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
+    .normalize("NFC")
+    .replace(/['"\u2018\u2019\u201C\u201D]/g, "")
+    .replace(/[\u0640\u064B-\u065F\u0670]/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
 }
 
-export default function PostEditor({ initial }: Props) {
+export default function PostEditor({ initial, defaultLanguage }: Props) {
   const isEdit = !!initial;
   const [title, setTitle] = useState(initial?.title ?? "");
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(!!initial);
   const [description, setDescription] = useState(initial?.description ?? "");
   const [author, setAuthor] = useState(initial?.author ?? "Maha Hommos");
-  const [language, setLanguage] = useState<Locale>(initial?.language ?? "en");
+  const [language, setLanguage] = useState<Locale>(initial?.language ?? defaultLanguage ?? "en");
   const [category, setCategory] = useState<CategoryId | "">(
     isCategoryId(initial?.category) ? (initial!.category as CategoryId) : ""
   );
@@ -333,7 +338,7 @@ export default function PostEditor({ initial }: Props) {
 
         <Card>
           <h3 className="font-display text-lg text-[var(--brand-purple-deep)]">Slug</h3>
-          <Field label="URL" error={errors.slug} hint={`pregnawell.com/blog/${slug || "your-slug"}`}>
+          <Field label="URL" error={errors.slug} hint={`pregnawell.com/${language}/blog/${slug || "your-slug"}`}>
             <input
               name="slug"
               value={slug}

@@ -2,20 +2,34 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAuthed } from "@/lib/auth";
 import { formatDate, getAllPostsAdmin } from "@/lib/blog";
-import { categoryLabel } from "@/lib/i18n";
+import { categoryLabel, isLocale, type Locale } from "@/lib/i18n";
 import AdminShell from "@/components/admin/AdminShell";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>;
+}) {
   if (!(await isAuthed())) redirect("/admin");
-  let posts: Awaited<ReturnType<typeof getAllPostsAdmin>> = [];
+
+  const params = await searchParams;
+  const lang: Locale = isLocale(params.lang ?? "") ? (params.lang as Locale) : "ar";
+
+  let allPosts: Awaited<ReturnType<typeof getAllPostsAdmin>> = [];
   let error: string | null = null;
   try {
-    posts = await getAllPostsAdmin();
+    allPosts = await getAllPostsAdmin();
   } catch (err) {
     error = (err as Error).message;
   }
+
+  const libraries: { id: Locale; label: string; count: number }[] = [
+    { id: "ar", label: "Arabic library", count: allPosts.filter((p) => p.language === "ar").length },
+    { id: "en", label: "English library", count: allPosts.filter((p) => p.language === "en").length },
+  ];
+  const posts = allPosts.filter((p) => p.language === lang);
 
   const counts = {
     total: posts.length,
@@ -28,15 +42,38 @@ export default async function DashboardPage() {
     <AdminShell>
       <div className="flex items-end justify-between gap-6 flex-wrap">
         <div>
-          <h1 className="font-display text-3xl text-[var(--brand-purple-deep)]">Posts</h1>
+          <h1 className="font-display text-3xl text-[var(--brand-purple-deep)]">Blog</h1>
           <p className="mt-1 text-sm text-[var(--brand-muted)]">
-            Manage every blog post. Drafts and scheduled posts are private until they
-            go live.
+            Each language is its own library — posts only appear on the blog matching
+            their language. Drafts and scheduled posts are private until they go live.
           </p>
         </div>
-        <Link href="/admin/posts/new" className="btn-primary">
+        <Link href={`/admin/posts/new?lang=${lang}`} className="btn-primary">
           + New post
         </Link>
+      </div>
+
+      <div className="mt-6 flex items-center gap-1 rounded-full bg-white p-1 ring-1 ring-[var(--brand-purple)]/10 w-fit">
+        {libraries.map((lib) => (
+          <Link
+            key={lib.id}
+            href={`/admin/dashboard?lang=${lib.id}`}
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+              lib.id === lang
+                ? "bg-[var(--brand-purple)] text-white"
+                : "text-[var(--brand-muted)] hover:text-[var(--brand-purple)]"
+            }`}
+          >
+            {lib.label}
+            <span
+              className={`ms-2 inline-flex items-center justify-center rounded-full px-1.5 text-xs ${
+                lib.id === lang ? "bg-white/20" : "bg-[var(--brand-blush)]"
+              }`}
+            >
+              {lib.count}
+            </span>
+          </Link>
+        ))}
       </div>
 
       {error && (
@@ -51,7 +88,7 @@ export default async function DashboardPage() {
       )}
 
       {!error && (
-        <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Stat label="Total" value={counts.total} />
           <Stat label="Published" value={counts.published} tone="purple" />
           <Stat label="Scheduled" value={counts.scheduled} tone="rose" />
@@ -62,9 +99,11 @@ export default async function DashboardPage() {
       <div className="mt-8 rounded-3xl bg-white ring-1 ring-[var(--brand-purple)]/10 overflow-hidden shadow-[0_15px_40px_-30px_rgba(61,42,110,0.35)]">
         {posts.length === 0 && !error ? (
           <div className="p-12 text-center">
-            <p className="font-display text-xl text-[var(--brand-purple-deep)]">No posts yet.</p>
+            <p className="font-display text-xl text-[var(--brand-purple-deep)]">
+              No posts in the {lang === "ar" ? "Arabic" : "English"} library yet.
+            </p>
             <p className="mt-2 text-sm text-[var(--brand-muted)]">
-              Click &ldquo;+ New post&rdquo; to publish your first article.
+              Click &ldquo;+ New post&rdquo; to publish the first article.
             </p>
           </div>
         ) : (
@@ -73,7 +112,6 @@ export default async function DashboardPage() {
               <tr className="text-left text-xs uppercase tracking-wider text-[var(--brand-muted)] border-b border-[var(--brand-purple)]/10">
                 <th className="px-6 py-4 font-semibold">Title</th>
                 <th className="px-4 py-4 font-semibold">Status</th>
-                <th className="px-4 py-4 font-semibold">Lang</th>
                 <th className="px-4 py-4 font-semibold">Publish date</th>
                 <th className="px-4 py-4 font-semibold">Category</th>
                 <th className="px-4 py-4 font-semibold w-1"></th>
@@ -82,24 +120,39 @@ export default async function DashboardPage() {
             <tbody>
               {posts.map((p) => (
                 <tr key={p.id} className="border-b border-[var(--brand-purple)]/5 last:border-0 hover:bg-[var(--brand-blush)]/30">
-                  <td className="px-6 py-4">
-                    <Link
-                      href={`/admin/posts/${p.id}/edit`}
-                      className="font-semibold text-[var(--brand-purple-deep)] hover:text-[var(--brand-rose)]"
-                    >
-                      {p.title}
-                    </Link>
-                    <div className="mt-0.5 text-xs text-[var(--brand-muted)] font-mono">/{p.slug}</div>
+                  <td className="px-6 py-3">
+                    <div className="flex items-center gap-4">
+                      {p.cover ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={p.cover}
+                          alt=""
+                          className="h-12 w-20 shrink-0 rounded-lg object-cover ring-1 ring-[var(--brand-purple)]/10"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-12 w-20 shrink-0 items-center justify-center rounded-lg bg-[var(--brand-blush)]/60 text-xs text-[var(--brand-muted)] ring-1 ring-[var(--brand-purple)]/10">
+                          No cover
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <Link
+                          href={`/admin/posts/${p.id}/edit`}
+                          className="font-semibold text-[var(--brand-purple-deep)] hover:text-[var(--brand-rose)]"
+                          dir="auto"
+                        >
+                          {p.title}
+                        </Link>
+                        <div className="mt-0.5 truncate text-xs text-[var(--brand-muted)] font-mono" dir="ltr">
+                          /{p.slug}
+                        </div>
+                      </div>
+                    </div>
                   </td>
-                  <td className="px-4 py-4"><StatusPill status={p.status} /></td>
-                  <td className="px-4 py-4">
-                    <span className="inline-flex items-center rounded-full bg-[var(--brand-blush)] px-2 py-0.5 text-xs font-mono font-semibold text-[var(--brand-rose)] uppercase">
-                      {p.language}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 text-[var(--brand-muted)]">{formatDate(p.publishAt, p.language) || "-"}</td>
-                  <td className="px-4 py-4 text-[var(--brand-muted)]">{categoryLabel(p.category, p.language) ?? "-"}</td>
-                  <td className="px-4 py-4 whitespace-nowrap">
+                  <td className="px-4 py-3"><StatusPill status={p.status} /></td>
+                  <td className="px-4 py-3 text-[var(--brand-muted)] whitespace-nowrap">{formatDate(p.publishAt, p.language) || "-"}</td>
+                  <td className="px-4 py-3 text-[var(--brand-muted)] whitespace-nowrap">{categoryLabel(p.category, p.language) ?? "-"}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
                     <Link
                       href={`/admin/posts/${p.id}/edit`}
                       className="text-sm font-semibold text-[var(--brand-purple)] hover:text-[var(--brand-rose)]"

@@ -14,14 +14,15 @@ export async function getAllSiteUrls(): Promise<string[]> {
   for (const path of STATIC_PATHS) {
     for (const locale of locales) urls.push(`${BASE}/${locale}${path}`);
   }
-  let posts: Awaited<ReturnType<typeof getPublicPosts>> = [];
-  try {
-    posts = await getPublicPosts("ar");
-  } catch {
-    // DB unreachable: still return the static pages.
-  }
-  for (const post of posts) {
-    for (const locale of locales) urls.push(`${BASE}/${locale}/blog/${post.slug}`);
+  for (const locale of locales) {
+    try {
+      const posts = await getPublicPosts(locale);
+      for (const post of posts) {
+        urls.push(`${BASE}/${locale}/blog/${encodeURIComponent(post.slug)}`);
+      }
+    } catch {
+      // DB unreachable: still return the static pages.
+    }
   }
   return urls;
 }

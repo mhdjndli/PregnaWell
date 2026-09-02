@@ -435,7 +435,8 @@ function validate(input: PostInput): Record<string, string> | null {
   const errors: Record<string, string> = {};
   if (!input.title) errors.title = "Title is required.";
   if (!input.slug) errors.slug = "Slug is required.";
-  if (!/^[a-z0-9-]+$/.test(input.slug)) errors.slug = "Slug may only contain lowercase letters, digits, and hyphens.";
+  if (!/^[\p{L}\p{N}-]+$/u.test(input.slug) || /[A-Z]/.test(input.slug))
+    errors.slug = "Slug may only contain lowercase letters (any language), digits, and hyphens.";
   return Object.keys(errors).length ? errors : null;
 }
 

@@ -119,8 +119,8 @@ export default function BlogGrid({
                     )}
                   </div>
                   <h2
-                    dir="rtl"
-                    lang="ar"
+                    dir={locale === "ar" ? "rtl" : "ltr"}
+                    lang={locale}
                     className={`mt-3 font-display text-[var(--brand-purple-deep)] ${
                       featured ? "text-2xl md:text-3xl" : "text-xl"
                     }`}
@@ -128,8 +128,8 @@ export default function BlogGrid({
                     {post.title}
                   </h2>
                   <p
-                    dir="rtl"
-                    lang="ar"
+                    dir={locale === "ar" ? "rtl" : "ltr"}
+                    lang={locale}
                     className="mt-3 text-sm text-[var(--brand-muted)] leading-relaxed flex-1"
                   >
                     {post.description}

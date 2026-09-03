@@ -22,26 +22,30 @@ export default function IndexingPanel({ urls, initial }: Props) {
   );
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | "indexed" | "not-indexed" | "unchecked">("all");
+  const [filter, setFilter] = useState<"all" | "indexed" | "www" | "not-indexed" | "unchecked">("all");
   const [isPending, startTransition] = useTransition();
 
   const counts = useMemo(() => {
     let indexed = 0;
+    let onWww = 0;
     let notIndexed = 0;
     let unchecked = 0;
     for (const url of urls) {
       const r = records.get(url);
       if (!r) unchecked++;
       else if (r.verdict === "PASS") indexed++;
+      else if (r.wwwVerdict === "PASS") onWww++;
       else notIndexed++;
     }
-    return { indexed, notIndexed, unchecked };
+    return { indexed, onWww, notIndexed, unchecked };
   }, [urls, records]);
 
   const visible = urls.filter((url) => {
     const r = records.get(url);
     if (filter === "indexed") return r?.verdict === "PASS";
-    if (filter === "not-indexed") return !!r && r.verdict !== "PASS";
+    if (filter === "www") return !!r && r.verdict !== "PASS" && r.wwwVerdict === "PASS";
+    if (filter === "not-indexed")
+      return !!r && r.verdict !== "PASS" && r.wwwVerdict !== "PASS";
     if (filter === "unchecked") return !r;
     return true;
   });
@@ -78,8 +82,9 @@ export default function IndexingPanel({ urls, initial }: Props) {
             Indexing status
           </h2>
           <p className="mt-0.5 text-xs text-[var(--brand-muted)]">
-            {urls.length} pages · {counts.indexed} indexed · {counts.notIndexed} not indexed ·{" "}
-            {counts.unchecked} unchecked
+            {urls.length} pages · {counts.indexed} indexed
+            {counts.onWww > 0 && <> · {counts.onWww} on www (migrating)</>} ·{" "}
+            {counts.notIndexed} not indexed · {counts.unchecked} unchecked
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -116,6 +121,7 @@ export default function IndexingPanel({ urls, initial }: Props) {
           [
             ["all", "All"],
             ["indexed", "Indexed"],
+            ["www", "On www"],
             ["not-indexed", "Not indexed"],
             ["unchecked", "Unchecked"],
           ] as const
@@ -173,10 +179,12 @@ export default function IndexingPanel({ urls, initial }: Props) {
                     </a>
                   </td>
                   <td className="px-4 py-3">
-                    <VerdictPill verdict={r?.verdict} />
+                    <VerdictPill verdict={r?.verdict} wwwVerdict={r?.wwwVerdict} />
                   </td>
                   <td className="px-4 py-3 text-xs text-[var(--brand-muted)]">
-                    {r?.coverageState || "—"}
+                    {r && r.verdict !== "PASS" && r.wwwVerdict === "PASS"
+                      ? `www: ${r.wwwCoverageState ?? "Indexed"} — apex: ${r.coverageState || "unknown"}`
+                      : r?.coverageState || "—"}
                   </td>
                   <td className="px-4 py-3 text-xs text-[var(--brand-muted)] whitespace-nowrap">
                     {r?.lastCrawlTime
@@ -207,7 +215,20 @@ export default function IndexingPanel({ urls, initial }: Props) {
   );
 }
 
-function VerdictPill({ verdict }: { verdict?: string }) {
+function VerdictPill({
+  verdict,
+  wwwVerdict,
+}: {
+  verdict?: string;
+  wwwVerdict?: string | null;
+}) {
+  if (verdict && verdict !== "PASS" && wwwVerdict === "PASS") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-100 px-2.5 py-1 text-xs font-semibold text-sky-800 whitespace-nowrap">
+        <span aria-hidden>⇄</span> Indexed under www (migrating)
+      </span>
+    );
+  }
   if (!verdict) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-600">

@@ -133,7 +133,7 @@ export default async function SearchConsolePage({
     await ensureInitialized();
     const res = await getPool().query(
       `SELECT url, verdict, coverage_state, robots_txt_state, indexing_state,
-              last_crawl_time, google_canonical, inspected_at
+              last_crawl_time, google_canonical, www_verdict, www_coverage_state, inspected_at
          FROM gsc_inspections`
     );
     cachedInspections = res.rows.map((r) => ({
@@ -144,6 +144,8 @@ export default async function SearchConsolePage({
       indexingState: r.indexing_state,
       lastCrawlTime: r.last_crawl_time ? new Date(r.last_crawl_time).toISOString() : null,
       googleCanonical: r.google_canonical,
+      wwwVerdict: r.www_verdict ?? null,
+      wwwCoverageState: r.www_coverage_state ?? null,
       inspectedAt: new Date(r.inspected_at).toISOString(),
     }));
   } catch {

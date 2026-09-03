@@ -111,8 +111,15 @@ CREATE TABLE IF NOT EXISTS gsc_inspections (
   indexing_state TEXT NOT NULL DEFAULT '',
   last_crawl_time TIMESTAMPTZ,
   google_canonical TEXT,
+  www_verdict TEXT,
+  www_coverage_state TEXT,
   inspected_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Idempotent upgrade for deployments that created the table before the
+-- www-twin columns existed.
+ALTER TABLE gsc_inspections ADD COLUMN IF NOT EXISTS www_verdict TEXT;
+ALTER TABLE gsc_inspections ADD COLUMN IF NOT EXISTS www_coverage_state TEXT;
 `;
 
 export async function ensureInitialized(): Promise<void> {

@@ -19,6 +19,11 @@ export type InspectionRecord = {
   indexingState: string;
   lastCrawlTime: string | null;
   googleCanonical: string | null;
+  // Google indexed the site under www before the host redirect shipped.
+  // When the apex URL is not indexed we also inspect the www twin so the
+  // panel can show "indexed under www (migrating)" during the handover.
+  wwwVerdict: string | null;
+  wwwCoverageState: string | null;
   inspectedAt: string;
 };
 
@@ -47,6 +52,19 @@ export async function inspectPagesAction(urls: string[]): Promise<{
     const results = await Promise.all(
       batch.map(async (url): Promise<InspectionRecord> => {
         const r = await inspectUrl(url);
+        let wwwVerdict: string | null = null;
+        let wwwCoverageState: string | null = null;
+        if (r.verdict !== "PASS") {
+          try {
+            const www = await inspectUrl(
+              url.replace("https://pregnawell.com/", "https://www.pregnawell.com/")
+            );
+            wwwVerdict = www.verdict;
+            wwwCoverageState = www.coverageState;
+          } catch {
+            // URL-prefix properties don't cover the www host; skip quietly.
+          }
+        }
         return {
           url,
           verdict: r.verdict,
@@ -55,6 +73,8 @@ export async function inspectPagesAction(urls: string[]): Promise<{
           indexingState: r.indexingState,
           lastCrawlTime: r.lastCrawlTime,
           googleCanonical: r.googleCanonical,
+          wwwVerdict,
+          wwwCoverageState,
           inspectedAt: new Date().toISOString(),
         };
       })
@@ -65,8 +85,8 @@ export async function inspectPagesAction(urls: string[]): Promise<{
     for (const r of results) {
       await pool.query(
         `INSERT INTO gsc_inspections
-           (url, verdict, coverage_state, robots_txt_state, indexing_state, last_crawl_time, google_canonical, inspected_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+           (url, verdict, coverage_state, robots_txt_state, indexing_state, last_crawl_time, google_canonical, www_verdict, www_coverage_state, inspected_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
          ON CONFLICT (url) DO UPDATE SET
            verdict = EXCLUDED.verdict,
            coverage_state = EXCLUDED.coverage_state,
@@ -74,6 +94,8 @@ export async function inspectPagesAction(urls: string[]): Promise<{
            indexing_state = EXCLUDED.indexing_state,
            last_crawl_time = EXCLUDED.last_crawl_time,
            google_canonical = EXCLUDED.google_canonical,
+           www_verdict = EXCLUDED.www_verdict,
+           www_coverage_state = EXCLUDED.www_coverage_state,
            inspected_at = NOW()`,
         [
           r.url,
@@ -83,6 +105,8 @@ export async function inspectPagesAction(urls: string[]): Promise<{
           r.indexingState,
           r.lastCrawlTime,
           r.googleCanonical,
+          r.wwwVerdict,
+          r.wwwCoverageState,
         ]
       );
     }

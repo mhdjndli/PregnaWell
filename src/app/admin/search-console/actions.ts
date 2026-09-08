@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { isAuthed } from "@/lib/auth";
 import { ensureInitialized, getPool } from "@/lib/db";
 import { inspectUrl } from "@/lib/searchConsole";
+import type { InspectionRecord } from "@/lib/gscSummary";
 
 async function requireAuth() {
   if (!(await isAuthed())) {
@@ -11,21 +12,7 @@ async function requireAuth() {
   }
 }
 
-export type InspectionRecord = {
-  url: string;
-  verdict: string;
-  coverageState: string;
-  robotsTxtState: string;
-  indexingState: string;
-  lastCrawlTime: string | null;
-  googleCanonical: string | null;
-  // Google indexed the site under www before the host redirect shipped.
-  // When the apex URL is not indexed we also inspect the www twin so the
-  // panel can show "indexed under www (migrating)" during the handover.
-  wwwVerdict: string | null;
-  wwwCoverageState: string | null;
-  inspectedAt: string;
-};
+export type { InspectionRecord } from "@/lib/gscSummary";
 
 const MAX_BATCH = 8;
 

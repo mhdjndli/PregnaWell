@@ -1,20 +1,19 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAuthed } from "@/lib/auth";
-import { ensureInitialized, getPool } from "@/lib/db";
+import { getSiteUrl, isGscConfigured } from "@/lib/searchConsole";
 import {
-  getSiteUrl,
-  isGscConfigured,
-  listSitemaps,
-  querySearchAnalytics,
-  type SearchAnalyticsRow,
-  type SitemapInfo,
-} from "@/lib/searchConsole";
+  RANGES,
+  getCachedInspections,
+  getPerformanceSummary,
+  parseRangeDays,
+  totalsOf,
+  type GscPerformanceSummary,
+} from "@/lib/gscSummary";
 import { getAllSiteUrls } from "@/lib/siteUrls";
 import AdminShell from "@/components/admin/AdminShell";
 import TrendChart from "@/components/admin/gsc/TrendChart";
 import IndexingPanel from "@/components/admin/gsc/IndexingPanel";
-import type { InspectionRecord } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -22,48 +21,6 @@ export const dynamic = "force-dynamic";
 // clicks = brand purple soft, impressions = chart rose.
 const CLICKS_COLOR = "#6b4ea3";
 const IMPRESSIONS_COLOR = "#b05577";
-
-const RANGES = [7, 28, 90, 180] as const;
-type RangeDays = (typeof RANGES)[number];
-
-function isoDay(d: Date): string {
-  return d.toISOString().slice(0, 10);
-}
-
-function rangeDates(days: RangeDays): {
-  start: string;
-  end: string;
-  prevStart: string;
-  prevEnd: string;
-} {
-  // Search data lags ~2 days behind; end the window there so the last
-  // datapoints aren't misleading zeroes.
-  const end = new Date();
-  end.setUTCDate(end.getUTCDate() - 2);
-  const start = new Date(end);
-  start.setUTCDate(start.getUTCDate() - (days - 1));
-  const prevEnd = new Date(start);
-  prevEnd.setUTCDate(prevEnd.getUTCDate() - 1);
-  const prevStart = new Date(prevEnd);
-  prevStart.setUTCDate(prevStart.getUTCDate() - (days - 1));
-  return {
-    start: isoDay(start),
-    end: isoDay(end),
-    prevStart: isoDay(prevStart),
-    prevEnd: isoDay(prevEnd),
-  };
-}
-
-function totalsOf(rows: SearchAnalyticsRow[]) {
-  const clicks = rows.reduce((s, r) => s + r.clicks, 0);
-  const impressions = rows.reduce((s, r) => s + r.impressions, 0);
-  const ctr = impressions > 0 ? clicks / impressions : 0;
-  const position =
-    impressions > 0
-      ? rows.reduce((s, r) => s + r.position * r.impressions, 0) / impressions
-      : 0;
-  return { clicks, impressions, ctr, position };
-}
 
 export default async function SearchConsolePage({
   searchParams,
@@ -73,10 +30,7 @@ export default async function SearchConsolePage({
   if (!(await isAuthed())) redirect("/admin");
 
   const params = await searchParams;
-  const parsed = Number(params.days);
-  const days: RangeDays = (RANGES as readonly number[]).includes(parsed)
-    ? (parsed as RangeDays)
-    : 28;
+  const days = parseRangeDays(params.days);
 
   if (!isGscConfigured()) {
     return (
@@ -87,70 +41,24 @@ export default async function SearchConsolePage({
     );
   }
 
-  const { start, end, prevStart, prevEnd } = rangeDates(days);
-
+  // Data assembly is shared with GET /api/gsc/summary (see lib/gscSummary) so
+  // partner dashboards render exactly what this page renders.
   let apiError: string | null = null;
-  let daily: SearchAnalyticsRow[] = [];
-  let current = totalsOf([]);
-  let previous = totalsOf([]);
-  let topQueries: SearchAnalyticsRow[] = [];
-  let topPages: SearchAnalyticsRow[] = [];
-  let sitemaps: SitemapInfo[] = [];
+  let summary: GscPerformanceSummary | null = null;
   try {
-    const [dailyRows, currentRows, previousRows, queryRows, pageRows, sitemapList] =
-      await Promise.all([
-        querySearchAnalytics({ startDate: start, endDate: end, dimensions: ["date"] }),
-        querySearchAnalytics({ startDate: start, endDate: end }),
-        querySearchAnalytics({ startDate: prevStart, endDate: prevEnd }),
-        querySearchAnalytics({ startDate: start, endDate: end, dimensions: ["query"], rowLimit: 10 }),
-        querySearchAnalytics({ startDate: start, endDate: end, dimensions: ["page"], rowLimit: 10 }),
-        listSitemaps(),
-      ]);
-    daily = dailyRows.sort((a, b) => (a.keys?.[0] ?? "").localeCompare(b.keys?.[0] ?? ""));
-    current = totalsOf(currentRows);
-    previous = totalsOf(previousRows);
-    topQueries = queryRows;
-    topPages = pageRows;
-    sitemaps = sitemapList;
+    summary = await getPerformanceSummary(days);
   } catch (err) {
     apiError = (err as Error).message;
   }
-
-  // Fill missing days with zeroes so the x-axis is continuous.
-  const byDate = new Map(daily.map((r) => [r.keys?.[0] ?? "", r]));
-  const series: { date: string; clicks: number; impressions: number }[] = [];
-  for (let i = 0; i < days; i++) {
-    const d = new Date(`${start}T00:00:00Z`);
-    d.setUTCDate(d.getUTCDate() + i);
-    const key = isoDay(d);
-    const row = byDate.get(key);
-    series.push({ date: key, clicks: row?.clicks ?? 0, impressions: row?.impressions ?? 0 });
-  }
+  const current = summary?.totals.current ?? totalsOf([]);
+  const previous = summary?.totals.previous ?? totalsOf([]);
+  const series = summary?.series ?? [];
+  const topQueries = summary?.topQueries ?? [];
+  const topPages = summary?.topPages ?? [];
+  const sitemaps = summary?.sitemaps ?? [];
 
   const urls = await getAllSiteUrls();
-  let cachedInspections: InspectionRecord[] = [];
-  try {
-    await ensureInitialized();
-    const res = await getPool().query(
-      `SELECT url, verdict, coverage_state, robots_txt_state, indexing_state,
-              last_crawl_time, google_canonical, www_verdict, www_coverage_state, inspected_at
-         FROM gsc_inspections`
-    );
-    cachedInspections = res.rows.map((r) => ({
-      url: r.url,
-      verdict: r.verdict,
-      coverageState: r.coverage_state,
-      robotsTxtState: r.robots_txt_state,
-      indexingState: r.indexing_state,
-      lastCrawlTime: r.last_crawl_time ? new Date(r.last_crawl_time).toISOString() : null,
-      googleCanonical: r.google_canonical,
-      wwwVerdict: r.www_verdict ?? null,
-      wwwCoverageState: r.www_coverage_state ?? null,
-      inspectedAt: new Date(r.inspected_at).toISOString(),
-    }));
-  } catch {
-    // DB unreachable: the panel still works, just without cached results.
-  }
+  const cachedInspections = await getCachedInspections();
 
   return (
     <AdminShell>

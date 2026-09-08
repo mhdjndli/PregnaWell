@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 import { ensureInitialized, getPool } from "@/lib/db";
 import { slugify } from "@/lib/blog";
+import { generateCoverImage } from "@/lib/coverImage";
 import { isCategoryId, isLocale, type CategoryId, type Locale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,9 @@ type RelayResult =
       language: Locale;
       status: "draft" | "scheduled" | "published";
       url: string;
+      cover: "provided" | "generated" | "failed";
+      cover_url?: string;
+      cover_error?: string;
     }
   | { ok: false; error: string; fieldErrors?: Record<string, string> };
 
@@ -297,6 +301,33 @@ export async function POST(request: Request) {
     );
   }
 
+  // ---- auto thumbnail -----------------------------------------------------
+  // If the sender didn't provide a cover, generate one with Gemini from the
+  // title + body. The text rendered on the thumbnail follows the title's
+  // script (Arabic title -> Arabic text, otherwise English). Non-fatal: if
+  // generation fails the post still lands as a draft without a cover, and one
+  // can be generated later from /admin.
+  let cover: "provided" | "generated" | "failed" = "provided";
+  let coverUrl: string | undefined = cover_url ?? undefined;
+  let coverError: string | undefined;
+  if (!cover_url) {
+    try {
+      const gen = await generateCoverImage(title, body_md);
+      if (gen.ok) {
+        await getPool().query(`UPDATE posts SET cover_image_id = $1 WHERE id = $2`, [gen.id, id]);
+        cover = "generated";
+        coverUrl = gen.url;
+      } else {
+        cover = "failed";
+        coverError = gen.error;
+      }
+    } catch (err) {
+      cover = "failed";
+      coverError = (err as Error).message ?? "cover generation failed";
+      console.error("[relay/blog] cover generation failed:", err);
+    }
+  }
+
   const status = !effectivePublished
     ? "draft"
     : publish_at && publish_at.getTime() > Date.now()
@@ -321,6 +352,9 @@ export async function POST(request: Request) {
       language,
       status,
       url: `https://pregnawell.com/${language}/blog/${slug}`,
+      cover,
+      cover_url: coverUrl,
+      cover_error: coverError,
     },
     { status: 201 }
   );
@@ -349,7 +383,10 @@ export async function GET(request: Request) {
   return NextResponse.json({
     ok: true,
     endpoint: "POST /api/relay/blog",
-    note: "Posts created via Relay default to DRAFT and need to be published from /admin.",
+    note:
+      "Posts created via Relay default to DRAFT and need to be published from /admin. " +
+      "If no cover_url is sent, a Gemini thumbnail is generated automatically " +
+      "(Arabic title -> Arabic text on the image, English title -> English text).",
     accepts: {
       required: ["title", "content"],
       optional: [

@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ensureInitialized, getPool } from "@/lib/db";
 import { slugify } from "@/lib/blog";
 import type { Locale } from "@/lib/i18n";
@@ -47,7 +49,7 @@ function buildPrompt(title: string, bodyForContext: string, language: Locale): s
     `CRITICAL: The blog body is context for you to understand the topic. Do not render any of the ` +
     `body text in the image. The only text in the image is the title.\n` +
     `LAYOUT — STRICT: The frame divides into two zones.\n` +
-    `• Right half = TEXT ZONE. Completely empty, clean, evenly lit cream surface. No objects, no ` +
+    `• Right half = TEXT ZONE. Completely empty, clean, evenly lit ivory-cream surface. No objects, no ` +
     `props, no shadows cast into it, no shapes, no partial objects entering from any edge. Nothing ` +
     `whatsoever may sit behind, under, beside or overlapping the title. This zone contains only the ` +
     `flat cream backdrop and the text.\n` +
@@ -75,29 +77,78 @@ function buildPrompt(title: string, bodyForContext: string, language: Locale): s
     `three or four lines. ` +
     titleDirective +
     `The exact title to render, verbatim: "${title}"\n` +
-    `Base colour: deep purple #442F71.\n` +
+    `Base colour: deep ink violet #2A2352.\n` +
+    `Draw one thin ink-violet horizontal rule just above the title block and another just below ` +
+    `it, spanning the width of the title — the brand's framed-headline motif. The rules are ` +
+    `hairline-thin, elegant, never thick bars.\n` +
     `HIGHLIGHTS: From the title, choose yourself the one or two phrases that carry the most meaning ` +
     `— the words that tell a scrolling reader what this article is about. Prefer the core subject of ` +
     `the article and its main promise or outcome. Skip connecting words, prepositions and filler. ` +
     `Each chosen phrase should be two to three words, and the two phrases must not sit adjacent to ` +
     `one another.\n` +
-    `Set the chosen phrases in white inside solid rounded-corner boxes filled with dusty rose ` +
-    `#A96273, like a marker highlight. The boxes hug the text tightly and sit inline within the ` +
+    `Set the chosen phrases in white inside solid rounded-corner boxes filled with mauve-rose ` +
+    `#B06E80, like a marker highlight. The boxes hug the text tightly and sit inline within the ` +
     `sentence, never on their own line.\n` +
     `Do not draw any brackets, square brackets, parentheses, quotation marks, asterisks or any ` +
     `other punctuation around the highlighted phrases. The highlight is the coloured box alone. The ` +
     `words inside it appear exactly as they do in normal running text, with no added characters of ` +
     `any kind. The remaining words of the title stay in deep purple with no box.\n` +
-    `COLOUR: Warm cream #EDD8C1 surface and backdrop. Objects styled in dusty rose #A96273, teal ` +
-    `green #4B7C73 and deep purple #442F71 tones. Grade the whole image warm, muted and ` +
-    `low-saturation within this four-colour palette. No competing hues.\n` +
+    `COLOUR: Warm ivory-cream #FBF8F5 surface and backdrop, with a very subtle soft-lilac #E7D9EF ` +
+    `wash drifting in from one upper corner — the brand gradient. Objects styled in mauve-rose ` +
+    `#B06E80, sage green #A9B18E and soft violet #453C8C tones. Grade the whole image warm, ` +
+    `bright, airy and low-saturation within this palette — editorial and premium, never dark, ` +
+    `never cool-toned. No competing hues.\n` +
+    `LOGO SPACE: Keep the bottom-right corner of the frame completely clear — plain backdrop ` +
+    `only. The brand wordmark is added there afterwards. Never draw any logo, wordmark, ` +
+    `watermark or brand name yourself.\n` +
     `Aspect ratio 16:9.`
   );
 }
 
+// Stamps the real PregnaWell wordmark onto the bottom-right corner of a
+// generated cover, so the logo is always pixel-perfect instead of AI-drawn.
+// Non-fatal: any failure returns the original image untouched.
+async function stampWordmark(
+  image: Buffer,
+  mime: string
+): Promise<{ buf: Buffer; mime: string }> {
+  try {
+    const sharp = (await import("sharp")).default;
+    const meta = await sharp(image).metadata();
+    const width = meta.width ?? 0;
+    const height = meta.height ?? 0;
+    if (!width || !height) return { buf: image, mime };
+
+    const logoPath = join(process.cwd(), "public", "assets", "logo-wordmark.png");
+    const logoWidth = Math.round(width * 0.13);
+    const margin = Math.round(width * 0.032);
+    const logo = await sharp(await readFile(logoPath))
+      .resize({ width: logoWidth })
+      .png()
+      .toBuffer();
+    const logoHeight = (await sharp(logo).metadata()).height ?? 0;
+
+    const out = await sharp(image)
+      .composite([
+        {
+          input: logo,
+          left: width - logoWidth - margin,
+          top: height - logoHeight - margin,
+        },
+      ])
+      .png()
+      .toBuffer();
+    return { buf: out, mime: "image/png" };
+  } catch (err) {
+    console.warn("[coverImage] wordmark stamp failed:", (err as Error).message);
+    return { buf: image, mime };
+  }
+}
+
 // Generates a 16:9 blog cover with Gemini and stores it in the `images`
 // table. The rendered title language follows the title's script: Arabic
-// characters → Arabic RTL text, otherwise English.
+// characters → Arabic RTL text, otherwise English. The PregnaWell wordmark
+// is composited onto the result in code (see stampWordmark).
 export async function generateCoverImage(
   title: string,
   bodyMd: string
@@ -172,19 +223,23 @@ export async function generateCoverImage(
   if (!ALLOWED_IMAGE_TYPES.has(mime)) {
     return { ok: false, error: `Unsupported image type from Gemini: ${mime}` };
   }
-  const buf = Buffer.from(inline.data, "base64");
-  if (buf.length === 0) return { ok: false, error: "Gemini returned an empty image." };
-  if (buf.length > MAX_IMAGE_BYTES) {
+  const rawBuf = Buffer.from(inline.data, "base64");
+  if (rawBuf.length === 0) return { ok: false, error: "Gemini returned an empty image." };
+  if (rawBuf.length > MAX_IMAGE_BYTES) {
     return { ok: false, error: "Generated image exceeded size limit." };
   }
 
+  const stamped = await stampWordmark(rawBuf, mime);
+  const finalBuf = stamped.buf.length <= MAX_IMAGE_BYTES ? stamped.buf : rawBuf;
+  const finalMime = stamped.buf.length <= MAX_IMAGE_BYTES ? stamped.mime : mime;
+
   await ensureInitialized();
   const id = randomUUID();
-  const ext = mime.split("/")[1] ?? "png";
+  const ext = finalMime.split("/")[1] ?? "png";
   const filename = `${slugify(cleanTitle) || "cover"}-gemini.${ext}`;
   await getPool().query(
     `INSERT INTO images (id, filename, mime_type, size, data) VALUES ($1, $2, $3, $4, $5)`,
-    [id, filename, mime, buf.length, buf]
+    [id, filename, finalMime, finalBuf.length, finalBuf]
   );
   return { ok: true, url: `/api/images/${id}`, id };
 }

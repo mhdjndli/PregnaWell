@@ -148,6 +148,10 @@ html[lang="ar"] .font-display {
   padding-inline-start: 1.25rem; /* logical: indent on the start side */
   line-height: 1.8;
 }
+/* Tailwind preflight resets list-style to none; restore markers in articles. */
+.prose-pregna ul { list-style: disc; }
+.prose-pregna ol { list-style: decimal; }
+.prose-pregna ul ul { list-style: circle; }
 .prose-pregna li { margin-bottom: 0.4rem; }
 .prose-pregna blockquote {
   border-inline-start: 4px solid var(--brand-rose-soft); /* logical: mirrors in RTL */

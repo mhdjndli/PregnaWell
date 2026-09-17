@@ -151,7 +151,7 @@ export default async function BlogPostPage(
               </div>
 
               {post.cover && (
-                <div className="relative mt-8 overflow-hidden rounded-2xl ring-1 ring-[var(--brand-purple)]/10">
+                <div className="mt-8 overflow-hidden rounded-2xl ring-1 ring-[var(--brand-purple)]/10">
                   <Image
                     src={post.cover}
                     alt={post.title}
@@ -162,13 +162,14 @@ export default async function BlogPostPage(
                     priority
                     unoptimized={!post.cover.startsWith("/")}
                   />
-                  {post.author && (
-                    <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
-                      <span className="inline-flex items-center gap-2 rounded-full bg-white/90 backdrop-blur px-4 py-1.5 text-xs font-semibold text-[var(--brand-purple-deep)] ring-1 ring-black/5 shadow-sm">
-                        {dict.blog.by} {post.author}
-                      </span>
-                    </div>
-                  )}
+                </div>
+              )}
+
+              {post.author && (
+                <div className="mt-3 flex" dir={dir}>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-cream)] px-4 py-1.5 text-xs font-semibold text-[var(--brand-purple-deep)] ring-1 ring-[var(--brand-purple)]/10">
+                    {dict.blog.by} {post.author}
+                  </span>
                 </div>
               )}
 

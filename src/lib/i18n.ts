@@ -405,8 +405,9 @@ PregnaWell now spans a free masterclass, a fertility self-assessment, and an ong
   },
   blog: {
     eyebrow: "Articles",
-    title: "Articles for women who want to understand their bodies.",
-    subtitle: "Plain-language explainers, field notes from clinic, and tools you can use this week.",
+    title: "Articles on fertility, pregnancy, and postpartum — for women who want to understand their bodies.",
+    subtitle:
+      "Plain-language explainers on fertility, pregnancy, and recovery after birth — field notes from clinic, and tools you can use this week.",
     empty: {
       title: "Articles are on the way.",
       body: "Our first posts go live shortly. Check back soon.",
@@ -705,9 +706,9 @@ const ar: Dict = {
   },
   blog: {
     eyebrow: "مقالات",
-    title: "مقالات للنساء اللواتي يردن فهم أجسادهن.",
+    title: "مقالات في الخصوبة والحمل وما بعد الولادة، للنساء اللواتي يردن فهم أجسادهن.",
     subtitle:
-      "شروحات بلغة بسيطة، وملاحظات من العيادة، وأدوات يمكنك استخدامها هذا الأسبوع.",
+      "شروحات بلغة بسيطة عن الخصوبة والحمل والتعافي بعد الولادة، وملاحظات من العيادة، وأدوات يمكنك استخدامها هذا الأسبوع.",
     empty: {
       title: "المقالات في الطريق.",
       body: "أول مقالاتنا ستُنشر قريباً. عودي لنا بعد قليل.",

@@ -204,15 +204,20 @@ export async function POST(request: Request) {
   const finalBody = appendSourcesSection(body_md, externalLinks, language);
 
   const rawSlug = pickString(payload.slug).trim();
-  const slug = slugify(rawSlug || title);
+  // Arabic posts always get an Arabic slug. If the sender supplied an
+  // ASCII/English slug for an Arabic post, ignore it and derive the slug
+  // from the (Arabic) title so /ar/blog URLs stay in the content language.
+  const slugSource =
+    language === "ar" && rawSlug && !ARABIC_RE.test(rawSlug) ? title : rawSlug || title;
+  const slug = slugify(slugSource);
   if (!slug) {
     return badRequest("Could not derive a slug from the title.", {
       slug: "slug must contain at least one letter or digit.",
     });
   }
-  if (!/^[a-z0-9-]+$/.test(slug)) {
+  if (!/^[\p{L}\p{N}-]+$/u.test(slug)) {
     return badRequest("Invalid slug.", {
-      slug: "slug may only contain lowercase letters, digits, and hyphens.",
+      slug: "slug may only contain letters, digits, and hyphens.",
     });
   }
 

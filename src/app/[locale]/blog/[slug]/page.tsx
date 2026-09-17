@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
-import { formatDate, getPublicSlugs, getPublicPost } from "@/lib/blog";
+import { formatDate, getPublicSlugs, getPublicPost, getSlugRedirect } from "@/lib/blog";
 import { categoryLabel, getDict, isLocale, locales, type Locale } from "@/lib/i18n";
 import { site } from "@/lib/site";
 import { JsonLd, pageMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
@@ -61,6 +61,12 @@ export default async function BlogPostPage(
   const slug = decodeURIComponent(rawSlug);
   const { locale, post } = await loadPost(rawLocale, slug);
   if (!post) {
+    // Renamed slugs (e.g. Arabic posts that originally had English slugs)
+    // 301 to their current home so old indexed URLs keep working.
+    const renamed = await getSlugRedirect(slug, locale).catch(() => null);
+    if (renamed) {
+      permanentRedirect(`/${locale}/blog/${encodeURIComponent(renamed)}`);
+    }
     // The libraries are per-language. If this slug lives in the other
     // language's library (old mixed-library URLs that Google indexed),
     // send readers and crawlers to its real home.

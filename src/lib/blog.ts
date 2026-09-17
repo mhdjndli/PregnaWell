@@ -193,17 +193,18 @@ function rowToPost(row: BlogRow): BlogPost {
 
 export { formatDate } from "./format";
 
-// Unicode-aware: Arabic titles keep their Arabic letters instead of being
-// reduced to an empty/transliterated English slug. Diacritics and tatweel are
-// stripped so the slug stays stable however the title was typed.
-export function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .trim()
-    .normalize("NFC")
-    .replace(/['"\u2018\u2019\u201C\u201D]/g, "")
-    .replace(/[\u0640\u064B-\u065F\u0670]/g, "")
-    .replace(/[^\p{L}\p{N}]+/gu, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
+export { slugify } from "./slug";
+
+// Where an old slug 301s to (see slug_redirects in db.ts). Returns the
+// current slug for `slug` in `language`, or null when no redirect exists.
+export async function getSlugRedirect(
+  slug: string,
+  language: Locale
+): Promise<string | null> {
+  await ensureInitialized();
+  const { rows } = await getPool().query<{ new_slug: string }>(
+    `SELECT new_slug FROM slug_redirects WHERE old_slug = $1 AND language = $2 LIMIT 1`,
+    [slug, language]
+  );
+  return rows[0]?.new_slug ?? null;
 }

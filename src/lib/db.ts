@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { slugify } from "./slug";
 
 // Railway's private network (postgres.railway.internal) is IPv6-only.
 // Node 18+ defaults to IPv4 first, which makes the lookup fail with
@@ -102,6 +103,16 @@ CREATE INDEX IF NOT EXISTS posts_publish_at_idx ON posts (publish_at);
 CREATE INDEX IF NOT EXISTS posts_published_idx ON posts (published);
 CREATE INDEX IF NOT EXISTS posts_language_idx ON posts (language);
 
+-- 301 map for renamed post slugs (e.g. Arabic posts that originally landed
+-- with English slugs). The blog post page consults this on a slug miss.
+CREATE TABLE IF NOT EXISTS slug_redirects (
+  old_slug TEXT NOT NULL,
+  language TEXT NOT NULL,
+  new_slug TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (old_slug, language)
+);
+
 -- Cached Google Search Console URL-inspection results for the admin panel.
 CREATE TABLE IF NOT EXISTS gsc_inspections (
   url TEXT PRIMARY KEY,
@@ -127,6 +138,7 @@ export async function ensureInitialized(): Promise<void> {
   const pool = getPool();
   await pool.query(SCHEMA);
   await seedFromFiles(pool);
+  await migrateArabicSlugs(pool);
   global._pgInitDone = true;
 }
 
@@ -168,6 +180,13 @@ async function seedLanguageFromDir(pool: Pool, language: "en" | "ar", dir: strin
     const fm = data as SeedFrontmatter;
     if (!fm.title) continue;
     const slug = (fm.slug ?? file.replace(/\.(md|mdx)$/i, "")).trim();
+    // If this slug was renamed (slug_redirects), the post already exists
+    // under its new slug - do not resurrect it under the old one.
+    const renamed = await pool.query(
+      `SELECT 1 FROM slug_redirects WHERE old_slug = $1 AND language = $2 LIMIT 1`,
+      [slug, language]
+    );
+    if ((renamed.rowCount ?? 0) > 0) continue;
     const publishAt = fm.date ? new Date(fm.date) : new Date();
     const published = !fm.draft;
     await pool.query(
@@ -190,5 +209,47 @@ async function seedLanguageFromDir(pool: Pool, language: "en" | "ar", dir: strin
         publishAt,
       ]
     );
+  }
+}
+
+// One-time (idempotent) data migration: Arabic posts that landed with
+// English slugs get an Arabic slug derived from their title, and the old
+// slug is recorded in slug_redirects so existing URLs 301 to the new one.
+// Posts whose slug is already Arabic don't match the ASCII regex and are
+// untouched, so this is a no-op after the first run.
+async function migrateArabicSlugs(pool: Pool) {
+  const { rows } = await pool.query<{ id: string; slug: string; title: string }>(
+    `SELECT id, slug, title FROM posts WHERE language = 'ar' AND slug ~ '^[a-z0-9-]+$'`
+  );
+  for (const row of rows) {
+    const base = slugify(row.title);
+    if (!base || base === row.slug || /^[a-z0-9-]+$/.test(base)) continue;
+
+    // Uniquify against live posts (two Arabic posts can share a title).
+    let next = base;
+    for (let i = 2; i <= 20; i++) {
+      const clash = await pool.query(
+        `SELECT 1 FROM posts WHERE slug = $1 AND language = 'ar' AND id <> $2 LIMIT 1`,
+        [next, row.id]
+      );
+      if ((clash.rowCount ?? 0) === 0) break;
+      next = `${base.slice(0, 76)}-${i}`;
+    }
+
+    await pool.query(
+      `INSERT INTO slug_redirects (old_slug, language, new_slug) VALUES ($1, 'ar', $2)
+       ON CONFLICT (old_slug, language) DO UPDATE SET new_slug = EXCLUDED.new_slug`,
+      [row.slug, next]
+    );
+    // Flatten any older redirects that pointed at the slug being renamed.
+    await pool.query(
+      `UPDATE slug_redirects SET new_slug = $1 WHERE language = 'ar' AND new_slug = $2`,
+      [next, row.slug]
+    );
+    await pool.query(`UPDATE posts SET slug = $1, updated_at = NOW() WHERE id = $2`, [
+      next,
+      row.id,
+    ]);
+    console.log(`[db] slug migrated: ar/${row.slug} -> ar/${next}`);
   }
 }

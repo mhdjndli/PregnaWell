@@ -152,6 +152,32 @@ html[lang="ar"] .font-display {
 .prose-pregna ul { list-style: disc; }
 .prose-pregna ol { list-style: decimal; }
 .prose-pregna ul ul { list-style: circle; }
+
+/* Tables (e.g. from relayed markdown). display:block + overflow-x keeps a
+   wide table scrollable inside the article column instead of breaking the
+   page layout on small screens. text-align:start follows RTL/LTR. */
+.prose-pregna table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin-block: 1.5rem;
+  font-size: 0.95em;
+  line-height: 1.7;
+}
+.prose-pregna th,
+.prose-pregna td {
+  border: 1px solid rgba(61, 42, 110, 0.14);
+  padding: 0.6rem 0.9rem;
+  text-align: start;
+}
+.prose-pregna th {
+  background: var(--brand-blush);
+  color: var(--brand-purple-deep);
+  font-weight: 600;
+}
+.prose-pregna tbody tr:nth-child(even) {
+  background: var(--brand-cream);
+}
 .prose-pregna li { margin-bottom: 0.4rem; }
 .prose-pregna blockquote {
   border-inline-start: 4px solid var(--brand-rose-soft); /* logical: mirrors in RTL */

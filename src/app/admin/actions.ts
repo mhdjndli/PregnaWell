@@ -277,7 +277,17 @@ function readPostInput(formData: FormData): PostInput {
     meta_title,
     meta_description,
     language,
-    publish_at: status === "scheduled" ? publish_at : status === "published" ? publish_at ?? new Date() : null,
+    // "published" means live now: a leftover future date (from a previous
+    // "scheduled" state) would silently re-derive the post as scheduled, so
+    // clamp future dates to now. Past dates are kept (backdating is fine).
+    publish_at:
+      status === "scheduled"
+        ? publish_at
+        : status === "published"
+          ? publish_at && publish_at.getTime() <= Date.now()
+            ? publish_at
+            : new Date()
+          : null,
     published,
   };
 }

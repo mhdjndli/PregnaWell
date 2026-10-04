@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { slugify } from "./slug";
+import { nameBareSourcesInBackground } from "./nameSources";
 
 // Railway's private network (postgres.railway.internal) is IPv6-only.
 // Node 18+ defaults to IPv4 first, which makes the lookup fail with
@@ -139,6 +140,9 @@ export async function ensureInitialized(): Promise<void> {
   await pool.query(SCHEMA);
   await seedFromFiles(pool);
   await migrateArabicSlugs(pool);
+  // Fire-and-forget data fix: name the bare-URL source bullets in stored
+  // posts (one Gemini call per affected post; must never delay a request).
+  nameBareSourcesInBackground(pool);
   global._pgInitDone = true;
 }
 

@@ -14,8 +14,10 @@
 import type { Pool } from "pg";
 
 const SOURCES_HEADING_RX = /^#{2,3}\s*(?:المصادر|المراجع|Sources|References)\s*:?\s*$/;
-// A "bare" bullet shows a URL as its own anchor text.
-const BARE_BULLET_RX = /^-\s*\[https?:\/\/[^\]]+\]\((https?:\/\/[^)\s]+)\)\s*$/;
+// A "bare" bullet shows a URL as its own anchor text. The URL part is
+// matched greedily to the line's last ")" so DOI URLs with inner
+// parentheses (S0022-0302(20)30784-0) are captured whole.
+const BARE_BULLET_RX = /^-\s*\[https?:\/\/[^\]]+\]\((https?:\/\/\S+)\)\s*$/;
 
 let started = false;
 
@@ -33,6 +35,16 @@ async function run(pool: Pool): Promise<void> {
     console.log("[nameSources] GEMINI_API_KEY missing, skipping");
     return;
   }
+  // Deterministic cleanup first: English database/journal brand names must
+  // stay in Latin script (the client's standing rule); an earlier naming
+  // pass transliterated PubMed as بابمد.
+  await pool.query(
+    `UPDATE posts
+     SET body_md = REPLACE(REPLACE(body_md, 'بابمد سنترال', 'PubMed Central'), 'بابمد', 'PubMed'),
+         updated_at = now()
+     WHERE body_md LIKE '%بابمد%'`
+  );
+
   const { rows } = await pool.query<{
     id: string;
     language: string;
@@ -119,6 +131,11 @@ descriptive title of what the source covers. Example anchor:
 "منظمة الصحة العالمية (2016): توصيات مكملات الحديد اليومية للحوامل".
 Never output a URL as the anchor. If a source is only identifiable by its
 domain, use the domain's organization name and a neutral description.
+English-named journals, databases and institutions KEEP their Latin names
+even in Arabic anchors (PubMed Central, Cochrane Library, Nature Medicine,
+Journal of Dairy Science); never transliterate them into Arabic letters.
+Organizations with established Arabic names use them (منظمة الصحة العالمية,
+الكلية الأمريكية لأطباء النساء والتوليد).
 
 URLS:
 ${urls.map((u, i) => `${i + 1}. ${u}`).join("\n")}

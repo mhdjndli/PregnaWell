@@ -76,6 +76,12 @@ export default async function BlogPostPage(
       if (elsewhere) {
         permanentRedirect(`/${other}/blog/${encodeURIComponent(slug)}`);
       }
+      // Old mixed-library URL whose slug was also renamed in the other
+      // library (e.g. /en/blog/<old English slug of an Arabic post>).
+      const renamedElsewhere = await getSlugRedirect(slug, other).catch(() => null);
+      if (renamedElsewhere) {
+        permanentRedirect(`/${other}/blog/${encodeURIComponent(renamedElsewhere)}`);
+      }
     }
     notFound();
   }

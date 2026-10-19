@@ -17,8 +17,17 @@ export const runtime = "nodejs";
 // GET /api/gsc/summary?days=7|28|90|180   (default 28)
 //
 // Read-only feed of the /admin/search-console dashboard for trusted partner
-// dashboards (e.g. exeedagency.com). Same code path as the admin page, so the
-// numbers always match.
+// dashboards (e.g. the EXEED agency dashboard). Same code path as the admin
+// page, so the numbers always match.
+//
+// apiVersion 2 payload (`performance`, see GscPerformanceSummary):
+//   totals, series (daily clicks/impressions/ctr/position), queries, pages,
+//   queryPages (query x page pairs), countries, devices, searchAppearance,
+//   searchTypes, hiddenQueries, insights (opportunities, lowCtrPages,
+//   cannibalization, rising/declining/new/lost queries), content (every
+//   published article with its performance), sitemaps.
+// v1 fields (topQueries / topPages, 10 rows each) are still included.
+// Responses are cached server-side for 5 minutes per range.
 //
 // Authentication: Authorization: Bearer <GSC_SHARE_TOKEN>
 // The endpoint is disabled (404) until GSC_SHARE_TOKEN is set.
@@ -27,6 +36,7 @@ export const runtime = "nodejs";
 type SummaryResult =
   | {
       ok: true;
+      apiVersion: 2;
       generatedAt: string;
       performance: GscPerformanceSummary | null;
       performanceError: string | null;
@@ -85,6 +95,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json<SummaryResult>({
     ok: true,
+    apiVersion: 2,
     generatedAt: new Date().toISOString(),
     performance,
     performanceError,

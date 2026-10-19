@@ -144,11 +144,18 @@ export type SearchAnalyticsRow = {
   position: number;
 };
 
+export type SearchDimension = "date" | "query" | "page" | "country" | "device" | "searchAppearance";
+
+// "web" is the default Search results tab; the others are reported separately
+// by Google. discover / googleNews don't support the query dimension.
+export type SearchType = "web" | "image" | "video" | "news" | "discover" | "googleNews";
+
 export async function querySearchAnalytics(options: {
   startDate: string; // YYYY-MM-DD
   endDate: string; // YYYY-MM-DD
-  dimensions?: ("date" | "query" | "page" | "country" | "device")[];
-  rowLimit?: number;
+  dimensions?: SearchDimension[];
+  rowLimit?: number; // API max is 25,000 per request
+  searchType?: SearchType;
 }): Promise<SearchAnalyticsRow[]> {
   const site = encodeURIComponent(getSiteUrl());
   const data = await gscFetch<{ rows?: SearchAnalyticsRow[] }>(
@@ -157,7 +164,8 @@ export async function querySearchAnalytics(options: {
       startDate: options.startDate,
       endDate: options.endDate,
       dimensions: options.dimensions ?? [],
-      rowLimit: options.rowLimit ?? 1000,
+      rowLimit: Math.min(options.rowLimit ?? 1000, 25000),
+      type: options.searchType ?? "web",
       dataState: "all",
     }
   );

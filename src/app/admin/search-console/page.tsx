@@ -14,6 +14,7 @@ import { getAllSiteUrls } from "@/lib/siteUrls";
 import AdminShell from "@/components/admin/AdminShell";
 import TrendChart from "@/components/admin/gsc/TrendChart";
 import IndexingPanel from "@/components/admin/gsc/IndexingPanel";
+import GscExplorer from "@/components/admin/gsc/GscExplorer";
 
 export const dynamic = "force-dynamic";
 
@@ -53,8 +54,7 @@ export default async function SearchConsolePage({
   const current = summary?.totals.current ?? totalsOf([]);
   const previous = summary?.totals.previous ?? totalsOf([]);
   const series = summary?.series ?? [];
-  const topQueries = summary?.topQueries ?? [];
-  const topPages = summary?.topPages ?? [];
+  const hidden = summary?.hiddenQueries;
   const sitemaps = summary?.sitemaps ?? [];
 
   const urls = await getAllSiteUrls();
@@ -96,6 +96,12 @@ export default async function SearchConsolePage({
               delta={delta(previous.position, current.position)} // lower is better
             />
           </div>
+          {hidden && hidden.impressions > 0 && (
+            <p className="mt-3 text-xs text-[var(--brand-muted)]">
+              {`${pct(hidden.impressionShare)} of impressions and ${pct(hidden.clickShare)} of clicks come from queries Google keeps private (too rare to report), so query tables add up to less than these totals.`}
+              {!hidden.exact && " Part of this gap is rows beyond the API limit."}
+            </p>
+          )}
 
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             <TrendChart
@@ -110,33 +116,7 @@ export default async function SearchConsolePage({
             />
           </div>
 
-          <div className="mt-6 grid gap-4 lg:grid-cols-2">
-            <RowsTable
-              title="Top queries"
-              nameHeader="Query"
-              rows={topQueries.map((r) => ({
-                name: r.keys?.[0] ?? "",
-                href: null,
-                clicks: r.clicks,
-                impressions: r.impressions,
-                position: r.position,
-              }))}
-            />
-            <RowsTable
-              title="Top pages"
-              nameHeader="Page"
-              rows={topPages.map((r) => {
-                const full = r.keys?.[0] ?? "";
-                return {
-                  name: full.replace("https://pregnawell.com", "") || "/",
-                  href: full,
-                  clicks: r.clicks,
-                  impressions: r.impressions,
-                  position: r.position,
-                };
-              })}
-            />
-          </div>
+          {summary && <GscExplorer summary={summary} />}
 
           {sitemaps.length > 0 && (
             <div className="mt-6 rounded-2xl bg-white p-5 ring-1 ring-[var(--brand-purple)]/10">
@@ -210,6 +190,10 @@ function Header({ days }: { days: number }) {
   );
 }
 
+function pct(v: number): string {
+  return `${Math.round(v * 100)}%`;
+}
+
 function delta(now: number, before: number): number | null {
   if (!Number.isFinite(now) || !Number.isFinite(before) || before === 0) return null;
   return (now - before) / before;
@@ -248,66 +232,6 @@ function Stat({
           {positive ? "▲" : "▼"} {Math.abs(delta * 100).toFixed(0)}% vs previous period
         </p>
       )}
-    </div>
-  );
-}
-
-function RowsTable({
-  title,
-  nameHeader,
-  rows,
-}: {
-  title: string;
-  nameHeader: string;
-  rows: { name: string; href: string | null; clicks: number; impressions: number; position: number }[];
-}) {
-  return (
-    <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-[var(--brand-purple)]/10">
-      <p className="px-5 pt-5 text-xs font-semibold uppercase tracking-wider text-[var(--brand-muted)]">
-        {title}
-      </p>
-      <table className="mt-3 w-full text-sm">
-        <thead>
-          <tr className="border-b border-[var(--brand-purple)]/10 text-left text-xs uppercase tracking-wider text-[var(--brand-muted)]">
-            <th className="px-5 py-2 font-semibold">{nameHeader}</th>
-            <th className="px-3 py-2 text-right font-semibold">Clicks</th>
-            <th className="px-3 py-2 text-right font-semibold">Impr.</th>
-            <th className="px-5 py-2 text-right font-semibold">Pos.</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.length === 0 && (
-            <tr>
-              <td colSpan={4} className="px-5 py-8 text-center text-sm text-[var(--brand-muted)]">
-                No data for this period yet.
-              </td>
-            </tr>
-          )}
-          {rows.map((r) => (
-            <tr key={r.name} className="border-b border-[var(--brand-purple)]/5 last:border-0">
-              <td className="max-w-0 truncate px-5 py-2.5 text-[var(--brand-ink)]" dir="auto">
-                {r.href ? (
-                  <a
-                    href={r.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-mono text-xs text-[var(--brand-purple-deep)] hover:text-[var(--brand-rose)]"
-                  >
-                    {r.name}
-                  </a>
-                ) : (
-                  r.name
-                )}
-              </td>
-              <td className="px-3 py-2.5 text-right tabular-nums">{r.clicks.toLocaleString("en-US")}</td>
-              <td className="px-3 py-2.5 text-right tabular-nums">{r.impressions.toLocaleString("en-US")}</td>
-              <td className="px-5 py-2.5 text-right tabular-nums text-[var(--brand-muted)]">
-                {r.position.toFixed(1)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }

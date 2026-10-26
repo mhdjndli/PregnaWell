@@ -132,6 +132,26 @@ CREATE TABLE IF NOT EXISTS gsc_inspections (
 -- www-twin columns existed.
 ALTER TABLE gsc_inspections ADD COLUMN IF NOT EXISTS www_verdict TEXT;
 ALTER TABLE gsc_inspections ADD COLUMN IF NOT EXISTS www_coverage_state TEXT;
+
+-- One row per click from a blog post into the funnel (fertility score,
+-- masterclass, booking). Slug/title are snapshotted so the log survives a
+-- post rename or delete. Read by /admin/blog-conversions.
+CREATE TABLE IF NOT EXISTS blog_cta_clicks (
+  id BIGSERIAL PRIMARY KEY,
+  post_id UUID REFERENCES posts(id) ON DELETE SET NULL,
+  slug TEXT NOT NULL,
+  language TEXT NOT NULL,
+  post_title TEXT NOT NULL DEFAULT '',
+  cta TEXT NOT NULL,
+  placement TEXT NOT NULL,
+  destination TEXT NOT NULL,
+  visitor_id TEXT,
+  device TEXT,
+  country TEXT,
+  clicked_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS blog_cta_clicks_clicked_at_idx ON blog_cta_clicks (clicked_at);
+CREATE INDEX IF NOT EXISTS blog_cta_clicks_post_idx ON blog_cta_clicks (post_id, clicked_at);
 `;
 
 export async function ensureInitialized(): Promise<void> {

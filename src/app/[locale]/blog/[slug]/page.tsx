@@ -6,6 +6,7 @@ import { formatDate, getPublicSlugs, getPublicPost, getSlugRedirect } from "@/li
 import { categoryLabel, getDict, isLocale, locales, type Locale } from "@/lib/i18n";
 import { site } from "@/lib/site";
 import { JsonLd, pageMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
+import BlogCtaTracker from "@/components/BlogCtaTracker";
 
 type Params = { locale: string; slug: string };
 
@@ -127,6 +128,7 @@ export default async function BlogPostPage(
   return (
     <article className="pb-24">
       <JsonLd data={[articleLd, breadcrumbLd]} />
+      <BlogCtaTracker postId={post.id} />
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute -top-32 -end-24 h-[420px] w-[420px] rounded-full bg-[var(--brand-rose-soft)]/25 blur-3xl" />
@@ -185,7 +187,7 @@ export default async function BlogPostPage(
                 </div>
               )}
 
-              <div className="mt-10" dir={dir} lang={post.language}>
+              <div className="mt-10" dir={dir} lang={post.language} data-cta-placement="in_article">
                 <div className="prose-pregna" dangerouslySetInnerHTML={{ __html: post.html }} />
               </div>
 
@@ -222,7 +224,7 @@ export default async function BlogPostPage(
                   body: dict.blog.keepGoing.body,
                 };
             return (
-              <div className="mt-10">
+              <div className="mt-10" data-cta-placement="cta_box">
                 <div className="rounded-3xl bg-[var(--brand-purple-deep)] text-white p-8 lg:p-10">
                   <p className="text-xs uppercase tracking-[0.25em] text-[var(--brand-rose-soft)] font-semibold">
                     {cta.eyebrow}

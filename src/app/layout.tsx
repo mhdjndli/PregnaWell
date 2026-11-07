@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Inter, Fraunces, Tajawal } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { dirOf, localeFromPathname } from "@/lib/i18n";
 
@@ -71,6 +72,11 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[var(--brand-cream)] text-[var(--brand-ink)]">
         {children}
+        {/* Site-wide tracking — loads on every route (public + admin). */}
+        <Script
+          src="https://track.pregnawell.com/api/hub/v1/cmw6qfist00d9nr02xi0c5wqr"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

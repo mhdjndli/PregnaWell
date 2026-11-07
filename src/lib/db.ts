@@ -134,7 +134,7 @@ ALTER TABLE gsc_inspections ADD COLUMN IF NOT EXISTS www_verdict TEXT;
 ALTER TABLE gsc_inspections ADD COLUMN IF NOT EXISTS www_coverage_state TEXT;
 
 -- One row per click from a blog post into the funnel (fertility score,
--- masterclass, booking). Slug/title are snapshotted so the log survives a
+-- masterclass, booking) or to WhatsApp. Slug/title are snapshotted so the log survives a
 -- post rename or delete. Read by /admin/blog-conversions.
 CREATE TABLE IF NOT EXISTS blog_cta_clicks (
   id BIGSERIAL PRIMARY KEY,

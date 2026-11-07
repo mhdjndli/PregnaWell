@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+import { isFunnelHost, isWhatsAppHost } from "@/lib/ctaTargets";
 
-// Logs clicks from a blog post into the funnel (pregnawell.clinic links) to
-// /api/track/cta. Listens on the document so it catches both the end-of-post
-// CTA box and links inside the article body; the nearest
-// [data-cta-placement] ancestor says which one it was.
+// Logs clicks from a blog post into the funnel (pregnawell.clinic links) or
+// WhatsApp to /api/track/cta. Listens on the document so it catches the
+// end-of-post CTA box, links inside the article body and the floating
+// WhatsApp button; the nearest [data-cta-placement] ancestor says which one
+// it was.
 
-const FUNNEL_HOST = "pregnawell.clinic";
 const VISITOR_KEY = "pw_vid";
 
 function visitorId(): string | null {
@@ -33,7 +34,7 @@ export default function BlogCtaTracker({ postId }: { postId: string }) {
       const scope = a.closest<HTMLElement>("[data-cta-placement]");
       if (!scope) return;
       const host = a.hostname;
-      if (host !== FUNNEL_HOST && !host.endsWith(`.${FUNNEL_HOST}`)) return;
+      if (!isFunnelHost(host) && !isWhatsAppHost(host)) return;
 
       const payload = JSON.stringify({
         postId,

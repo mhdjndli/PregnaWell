@@ -129,6 +129,8 @@ type Dict = {
     filters: { all: string };
     keepGoing: { eyebrow: string; title: string; body: string };
     assess: { eyebrow: string; title: string; body: string };
+    askDuring: { eyebrow: string; title: string; body: string };
+    askAfter: { eyebrow: string; title: string; body: string };
   };
   language: { en: string; ar: string; switchLabel: string };
 };
@@ -427,6 +429,18 @@ PregnaWell now spans a free masterclass, a fertility self-assessment, and an ong
       title: "Check your fertility score",
       body:
         "A quick 5-minute self-assessment that surfaces what's actually moving the needle in your fertility journey.",
+    },
+    askDuring: {
+      eyebrow: "Have a question?",
+      title: "Ask us about your nutrition during pregnancy",
+      body:
+        "Message us on WhatsApp about what you eat and the supplements you take, and we'll get back to you personally.",
+    },
+    askAfter: {
+      eyebrow: "Have a question?",
+      title: "Ask us about your nutrition after birth",
+      body:
+        "Message us on WhatsApp about nutrition after birth and while breastfeeding, and we'll get back to you personally.",
     },
   },
   language: { en: "English", ar: "العربية", switchLabel: "Language" },
@@ -728,6 +742,18 @@ const ar: Dict = {
       title: "مقياس الخصوبة الذكي",
       body:
         "تقييم ذاتي سريع مدّته ٥ دقائق يكشف لكِ ما يُحدث الفرق فعلاً في رحلة الخصوبة.",
+    },
+    askDuring: {
+      eyebrow: "هل لديكِ سؤال؟",
+      title: "اسألينا عن تغذيتك خلال الحمل",
+      body:
+        "راسلينا على واتساب بما يشغلك حول طعامك ومكمّلاتك خلال الحمل، وسنرد عليك شخصياً.",
+    },
+    askAfter: {
+      eyebrow: "هل لديكِ سؤال؟",
+      title: "اسألينا عن تغذيتك بعد الولادة",
+      body:
+        "راسلينا على واتساب بما يشغلك حول تغذيتك بعد الولادة وأثناء الرضاعة، وسنرد عليك شخصياً.",
     },
   },
   language: { en: "English", ar: "العربية", switchLabel: "اللغة" },

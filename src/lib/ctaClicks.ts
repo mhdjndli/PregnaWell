@@ -1,5 +1,6 @@
 import "server-only";
 import { ensureInitialized, getPool } from "./db";
+import { isFunnelHost, isWhatsAppHost } from "./ctaTargets";
 import { site } from "./site";
 import type { Locale } from "./i18n";
 
@@ -7,31 +8,27 @@ import type { Locale } from "./i18n";
 // Blog CTA click tracking.
 //
 // Every click from a blog post into the funnel (pregnawell.clinic: the
-// fertility score app, the masterclass VSL, the booking widget) is logged as
-// one row in blog_cta_clicks with the post, which CTA, where on the page it
-// sat, and the exact timestamp. The admin "Blog conversions" page reads it.
+// fertility score app, the masterclass VSL, the booking widget) or to
+// WhatsApp is logged as one row in blog_cta_clicks with the post, which CTA,
+// where on the page it sat, and the exact timestamp. The admin "Blog conversions" page reads it.
 // ===========================================================================
 
-export type CtaId = "fertility_score" | "masterclass" | "booking" | "other_funnel";
-export type CtaPlacement = "cta_box" | "in_article";
+export type CtaId = "fertility_score" | "masterclass" | "booking" | "whatsapp" | "other_funnel";
+export type CtaPlacement = "cta_box" | "in_article" | "floating_button";
 
 export const CTA_LABELS: Record<CtaId, string> = {
   fertility_score: "Fertility Score",
   masterclass: "Masterclass",
   booking: "Book a call",
+  whatsapp: "WhatsApp",
   other_funnel: "Other funnel page",
 };
 
 export const PLACEMENT_LABELS: Record<CtaPlacement, string> = {
   cta_box: "End-of-post CTA",
   in_article: "In-article link",
+  floating_button: "Floating WhatsApp button",
 };
-
-const FUNNEL_HOST = "pregnawell.clinic";
-
-function isFunnelHost(host: string): boolean {
-  return host === FUNNEL_HOST || host.endsWith(`.${FUNNEL_HOST}`);
-}
 
 function samePage(a: URL, b: string): boolean {
   try {
@@ -42,7 +39,7 @@ function samePage(a: URL, b: string): boolean {
   }
 }
 
-/** Funnel CTA for a link target, or null when the link is not a funnel link. */
+/** CTA for a link target, or null when the link is not one we track. */
 export function classifyCta(href: string): CtaId | null {
   let url: URL;
   try {
@@ -50,6 +47,7 @@ export function classifyCta(href: string): CtaId | null {
   } catch {
     return null;
   }
+  if (isWhatsAppHost(url.hostname)) return "whatsapp";
   if (!isFunnelHost(url.hostname)) return null;
   if (samePage(url, site.ctas.fertilityScore)) return "fertility_score";
   if (samePage(url, site.ctas.masterclass)) return "masterclass";

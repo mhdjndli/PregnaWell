@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 
 const CLICKS_COLOR = "#6b4ea3";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const CTA_COLUMNS: CtaId[] = ["fertility_score", "masterclass", "booking"];
+const CTA_COLUMNS: CtaId[] = ["fertility_score", "masterclass", "booking", "whatsapp"];
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -67,8 +67,8 @@ export default async function BlogConversionsPage({
         <div>
           <h1 className="font-display text-3xl text-[var(--brand-purple-deep)]">Blog conversions</h1>
           <p className="mt-1 text-sm text-[var(--brand-muted)]">
-            Every click from a blog post into the funnel — Fertility Score, Masterclass and
-            booking links. Times are Dubai time (GST).
+            Every click from a blog post into the funnel or WhatsApp — Fertility Score,
+            Masterclass, booking and WhatsApp links. Times are Dubai time (GST).
           </p>
         </div>
         <div className="flex items-center gap-1 rounded-full bg-white p-1 ring-1 ring-[var(--brand-purple)]/10">
@@ -159,7 +159,7 @@ export default async function BlogConversionsPage({
               <Empty />
             ) : (
               <div className="mt-3 overflow-x-auto rounded-2xl bg-white ring-1 ring-[var(--brand-purple)]/10">
-                <table className="w-full min-w-[760px] text-sm">
+                <table className="w-full min-w-[860px] text-sm">
                   <thead>
                     <tr className="border-b border-[var(--brand-purple)]/10 text-left text-xs uppercase tracking-wider text-[var(--brand-muted)]">
                       <th className="px-4 py-3 font-semibold">Post</th>
@@ -339,7 +339,7 @@ function Empty() {
   return (
     <div className="mt-3 rounded-2xl bg-white p-8 text-center text-sm text-[var(--brand-muted)] ring-1 ring-[var(--brand-purple)]/10">
       No CTA clicks in this period yet. Clicks show up here the moment a reader taps a
-      funnel link on any blog post.
+      funnel or WhatsApp link on any blog post.
     </div>
   );
 }

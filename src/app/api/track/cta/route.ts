@@ -7,13 +7,13 @@ export const runtime = "nodejs";
 // POST /api/track/cta
 //
 // Fired by BlogCtaTracker (navigator.sendBeacon) when a reader clicks a
-// funnel link on a blog post. Body: { postId, href, placement, visitorId }.
+// funnel or WhatsApp link on a blog post. Body: { postId, href, placement, visitorId }.
 // The server re-derives everything that matters (post, CTA type) from the
 // DB and the link target, so a forged beacon can at most add a click to a
 // real public post. Always answers 204 so the page never waits on it.
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const PLACEMENTS: readonly CtaPlacement[] = ["cta_box", "in_article"];
+const PLACEMENTS: readonly CtaPlacement[] = ["cta_box", "in_article", "floating_button"];
 
 export async function POST(request: Request) {
   const done = new NextResponse(null, { status: 204 });

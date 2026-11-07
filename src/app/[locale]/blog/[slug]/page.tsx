@@ -208,6 +208,15 @@ export default async function BlogPostPage(
 
           {(() => {
             const preFertility = post.category === "before";
+            // Pregnant and postpartum readers aren't the fertility funnel's
+            // audience. Uncategorised posts include fertility articles, so
+            // they stay on the masterclass.
+            const ask =
+              post.category === "during"
+                ? dict.blog.askDuring
+                : post.category === "after"
+                  ? dict.blog.askAfter
+                  : null;
             const cta = preFertility
               ? {
                   href: site.ctas.fertilityScore,
@@ -216,13 +225,21 @@ export default async function BlogPostPage(
                   title: dict.blog.assess.title,
                   body: dict.blog.assess.body,
                 }
-              : {
-                  href: site.ctas.masterclass,
-                  label: dict.cta.watchNow,
-                  eyebrow: dict.blog.keepGoing.eyebrow,
-                  title: dict.blog.keepGoing.title,
-                  body: dict.blog.keepGoing.body,
-                };
+              : ask
+                ? {
+                    href: site.ctas.whatsapp,
+                    label: dict.cta.inquireWhatsapp,
+                    eyebrow: ask.eyebrow,
+                    title: ask.title,
+                    body: ask.body,
+                  }
+                : {
+                    href: site.ctas.masterclass,
+                    label: dict.cta.watchNow,
+                    eyebrow: dict.blog.keepGoing.eyebrow,
+                    title: dict.blog.keepGoing.title,
+                    body: dict.blog.keepGoing.body,
+                  };
             return (
               <div className="mt-10" data-cta-placement="cta_box">
                 <div className="rounded-3xl bg-[var(--brand-purple-deep)] text-white p-8 lg:p-10">

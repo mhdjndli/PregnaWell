@@ -9,6 +9,7 @@ export default function WhatsAppButton({ locale }: { locale: Locale }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={dict.cta.chat}
+      data-cta-placement="floating_button"
       className="group fixed bottom-6 end-6 z-50 flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-white shadow-[0_15px_40px_-12px_rgba(37,211,102,0.7)] transition hover:scale-105"
     >
       <svg

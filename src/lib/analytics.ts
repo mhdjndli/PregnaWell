@@ -54,31 +54,67 @@ type RawReport = {
   rows?: { dimensionValues?: { value?: string }[]; metricValues?: { value?: string }[] }[];
 };
 
+// GA caps concurrent requests per property (10 on standard properties, and
+// each report inside a batch counts). Every call goes through this
+// process-wide gate so a page load, the realtime refresh and a second admin
+// tab together never exceed it.
+const MAX_CONCURRENT = 4;
+let active = 0;
+const waiting: (() => void)[] = [];
+
+function acquire(): Promise<void> {
+  if (active < MAX_CONCURRENT) {
+    active++;
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => waiting.push(resolve));
+}
+
+function release() {
+  // Hand the slot straight to the next waiter so nobody can jump the queue.
+  const next = waiting.shift();
+  if (next) next();
+  else active--;
+}
+
 async function gaFetch<T>(path: string, body: unknown): Promise<T> {
   const propertyId = getPropertyId();
   if (!propertyId) {
     throw new Error("Google Analytics is not configured. Set GA_PROPERTY_ID to the numeric GA4 property ID.");
   }
-  const token = await getAccessToken(SCOPE);
-  const res = await fetch(`${API}/properties/${propertyId}:${path}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-    cache: "no-store",
-  });
-  const data = (await res.json().catch(() => ({}))) as T & {
-    error?: { code?: number; message?: string; status?: string };
-  };
-  if (!res.ok) {
-    const message = data.error?.message ?? `HTTP ${res.status}`;
-    if (res.status === 403) {
-      throw new Error(
-        `Google Analytics denied access (${message}). Make sure the "Google Analytics Data API" is enabled in the service account's Cloud project, and the service account email was added as a Viewer in GA -> Admin -> Property access management for property ${propertyId}.`
-      );
+  await acquire();
+  try {
+    for (let attempt = 1; ; attempt++) {
+      const token = await getAccessToken(SCOPE);
+      const res = await fetch(`${API}/properties/${propertyId}:${path}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        cache: "no-store",
+      });
+      const data = (await res.json().catch(() => ({}))) as T & {
+        error?: { code?: number; message?: string; status?: string };
+      };
+      if (res.ok) return data;
+
+      const message = data.error?.message ?? `HTTP ${res.status}`;
+      // Concurrency limits clear as soon as in-flight requests finish (ours or
+      // another tab's), so back off briefly and retry. Hourly/daily token
+      // quotas won't clear that fast, so those fail straight away.
+      if (res.status === 429 && /concurrent/i.test(message) && attempt < 4) {
+        await new Promise((r) => setTimeout(r, 400 * attempt));
+        continue;
+      }
+      if (res.status === 403) {
+        throw new Error(
+          `Google Analytics denied access (${message}). Make sure the "Google Analytics Data API" is enabled in the service account's Cloud project, and the service account email was added as a Viewer in GA -> Admin -> Property access management for property ${propertyId}.`
+        );
+      }
+      throw new Error(`Google Analytics API error: ${message}`);
     }
-    throw new Error(`Google Analytics API error: ${message}`);
+  } finally {
+    release();
   }
-  return data;
 }
 
 function toApiRequest(r: ReportRequest) {
@@ -107,17 +143,11 @@ function parseReport(report: RawReport): ReportRow[] {
   }));
 }
 
-// The API accepts at most 5 reports per batch. Batches run in parallel; a few
-// concurrent requests stay well under GA's per-property concurrency cap.
+// One request per report: batching doesn't help with GA's concurrency cap
+// (each report in a batch counts), and single reports queue fairly behind
+// the gate in gaFetch.
 export async function runReports(requests: ReportRequest[]): Promise<ReportRow[][]> {
-  const chunks: ReportRequest[][] = [];
-  for (let i = 0; i < requests.length; i += 5) chunks.push(requests.slice(i, i + 5));
-  const batches = await Promise.all(
-    chunks.map((chunk) =>
-      gaFetch<{ reports?: RawReport[] }>("batchRunReports", { requests: chunk.map(toApiRequest) })
-    )
-  );
-  return batches.flatMap((data, i) => chunks[i].map((_, j) => parseReport(data.reports?.[j] ?? {})));
+  return Promise.all(requests.map((r) => gaFetch<RawReport>("runReport", toApiRequest(r)).then(parseReport)));
 }
 
 // Realtime covers the last 30 minutes and has its own (smaller) dimension and

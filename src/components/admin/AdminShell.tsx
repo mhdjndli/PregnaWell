@@ -29,6 +29,16 @@ const NAV = [
     ),
   },
   {
+    href: "/admin/analytics",
+    label: "Analytics",
+    match: (p: string) => p.startsWith("/admin/analytics"),
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-4.5 w-4.5">
+        <path d="M4 16.5V11M8 16.5V7M12 16.5V9.5M16 16.5V4" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
     href: "/admin/search-console",
     label: "Search Console",
     match: (p: string) => p.startsWith("/admin/search-console"),

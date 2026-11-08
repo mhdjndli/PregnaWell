@@ -1,10 +1,8 @@
 import "server-only";
-import { createSign } from "node:crypto";
+import { getAccessToken, getServiceAccount } from "@/lib/googleAuth";
 
-// Google Search Console API client authenticated with a service account.
-// No SDK dependency: we mint the OAuth2 access token ourselves by signing a
-// JWT with the service account's private key (RS256) and exchanging it at
-// Google's token endpoint.
+// Google Search Console API client authenticated with a service account
+// (token minting lives in lib/googleAuth, shared with the Analytics client).
 //
 // Setup (one-time, see .env.example):
 //   1. Google Cloud Console -> create a service account, enable the
@@ -14,100 +12,18 @@ import { createSign } from "node:crypto";
 //      service account email as a user (Full permission recommended so the
 //      URL Inspection API works).
 
-const TOKEN_URL = "https://oauth2.googleapis.com/token";
 const SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
-
-type ServiceAccount = { clientEmail: string; privateKey: string };
 
 export function getSiteUrl(): string {
   return process.env.GSC_SITE_URL || "sc-domain:pregnawell.com";
-}
-
-function getServiceAccount(): ServiceAccount | null {
-  const json = process.env.GSC_SERVICE_ACCOUNT_JSON;
-  if (json) {
-    try {
-      const parsed = JSON.parse(json) as { client_email?: string; private_key?: string };
-      if (parsed.client_email && parsed.private_key) {
-        return { clientEmail: parsed.client_email, privateKey: parsed.private_key };
-      }
-    } catch {
-      // fall through to the split variables
-    }
-  }
-  const email = process.env.GSC_SERVICE_ACCOUNT_EMAIL;
-  const key = process.env.GSC_SERVICE_ACCOUNT_PRIVATE_KEY;
-  if (email && key) {
-    // Railway/env UIs often store the PEM with literal "\n" sequences.
-    return { clientEmail: email, privateKey: key.replace(/\\n/g, "\n") };
-  }
-  return null;
 }
 
 export function isGscConfigured(): boolean {
   return getServiceAccount() !== null;
 }
 
-function b64url(input: Buffer | string): string {
-  return Buffer.from(input).toString("base64url");
-}
-
-let cachedToken: { token: string; expiresAt: number } | null = null;
-
-async function getAccessToken(): Promise<string> {
-  if (cachedToken && Date.now() < cachedToken.expiresAt - 60_000) {
-    return cachedToken.token;
-  }
-  const account = getServiceAccount();
-  if (!account) {
-    throw new Error(
-      "Search Console is not configured. Set GSC_SERVICE_ACCOUNT_JSON (or GSC_SERVICE_ACCOUNT_EMAIL + GSC_SERVICE_ACCOUNT_PRIVATE_KEY)."
-    );
-  }
-  const iat = Math.floor(Date.now() / 1000);
-  const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
-  const claims = b64url(
-    JSON.stringify({
-      iss: account.clientEmail,
-      scope: SCOPE,
-      aud: TOKEN_URL,
-      iat,
-      exp: iat + 3600,
-    })
-  );
-  const signer = createSign("RSA-SHA256");
-  signer.update(`${header}.${claims}`);
-  const signature = signer.sign(account.privateKey).toString("base64url");
-  const assertion = `${header}.${claims}.${signature}`;
-
-  const res = await fetch(TOKEN_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-      assertion,
-    }),
-  });
-  const data = (await res.json()) as {
-    access_token?: string;
-    expires_in?: number;
-    error?: string;
-    error_description?: string;
-  };
-  if (!res.ok || !data.access_token) {
-    throw new Error(
-      `Google token exchange failed: ${data.error ?? res.status} ${data.error_description ?? ""}`.trim()
-    );
-  }
-  cachedToken = {
-    token: data.access_token,
-    expiresAt: Date.now() + (data.expires_in ?? 3600) * 1000,
-  };
-  return cachedToken.token;
-}
-
 async function gscFetch<T>(url: string, body?: unknown): Promise<T> {
-  const token = await getAccessToken();
+  const token = await getAccessToken(SCOPE);
   const res = await fetch(url, {
     method: body === undefined ? "GET" : "POST",
     headers: {

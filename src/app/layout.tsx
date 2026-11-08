@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Inter, Fraunces, Tajawal } from "next/font/google";
 import Script from "next/script";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { dirOf, localeFromPathname } from "@/lib/i18n";
 
@@ -64,6 +65,11 @@ export default async function RootLayout({
   const pathname = h.get("x-pathname") ?? "/en";
   const locale = localeFromPathname(pathname);
   const dir = dirOf(locale);
+  // Read at request time so the ID can change in Railway without a rebuild.
+  // Only public routes pass through the proxy (which sets x-pathname), so its
+  // absence means /admin — skipped so our own sessions don't pollute reports.
+  const gaId = process.env.GA_MEASUREMENT_ID;
+  const showGa = Boolean(gaId) && h.has("x-pathname");
   return (
     <html
       lang={locale}
@@ -78,6 +84,7 @@ export default async function RootLayout({
           strategy="afterInteractive"
         />
       </body>
+      {showGa && <GoogleAnalytics gaId={gaId!} />}
     </html>
   );
 }

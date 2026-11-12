@@ -103,25 +103,15 @@ export default function Footer({ locale }: { locale: Locale }) {
       <div className="border-t border-[var(--brand-purple)]/10" dir="ltr">
         <div className="mx-auto max-w-7xl px-6 lg:px-10 py-6 text-xs leading-relaxed text-[var(--brand-muted)]">
           <p className="font-semibold text-[var(--brand-purple)]">PregnaWell is operated by:</p>
-          <div className="mt-4 grid gap-6 md:grid-cols-2">
-            <div>
-              <p className="whitespace-pre-line">
-                {`PregnaWell Health Advisory - FZCO
+          <div className="mt-4">
+            <p className="whitespace-pre-line">
+              {`PregnaWell Health Advisory - FZCO
 Dubai Silicon Oasis, United Arab Emirates
 Trade License No. 77576 | Registration No. 75827
 Licensed by Dubai Integrated Economic Zones Authority (DIEZ)
 IFZA Properties, DSO-IFZA, Dubai Silicon Oasis, Dubai, UAE
 +971 50 312 4863`}
-              </p>
-            </div>
-            <div>
-              <p className="whitespace-pre-line">
-                {`PregnaWell Inc.
-1505 Laperriere Ave Suite 390
-Ottawa, ON K1Z 7T1
-Canada`}
-              </p>
-            </div>
+            </p>
           </div>
         </div>
       </div>
